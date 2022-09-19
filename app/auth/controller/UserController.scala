@@ -1,6 +1,6 @@
 package auth.controller
 
-import auth.domain.User
+import auth.domain.{Permission, Role, User}
 import auth.domain.repository.UserRepository
 import play.api.libs.json.{Json, OFormat}
 import play.api.mvc.{Action, AnyContent, ControllerComponents, InjectedController, Request}
@@ -19,13 +19,11 @@ class UserController @Inject()(override val controllerComponents: ControllerComp
     User(3, "test3", "123456", "s", "dsasd")
     )
 
-  implicit val format: OFormat[User] = Json.format[User]
-
   def getAll = Action.async { implicit request: Request[AnyContent] =>
       userRepository.list().map((users: Seq[User]) => Ok(Json.toJson(users)))
   }
 
-  def getById(userId: Long): Action[AnyContent] = Action {
+  def getById(userId: Long) = Action {
     val foundItem: Option[User] = todoList.find((_: User).id == userId)
     foundItem match {
       case Some(item) => Ok(Json.toJson(item))
