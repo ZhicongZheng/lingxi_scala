@@ -14,15 +14,15 @@ object Dependencies {
   }
 
   object Compiles {
-    lazy val config: ModuleID = "com.typesafe" % "config" % Versions.config
+    lazy val config = "com.typesafe" % "config" % Versions.config
 
-    lazy val play: Seq[ModuleID] = Seq(
+    lazy val play = Seq(
       "com.typesafe.play" %% "play-slick" % Versions.slick
     )
 
     lazy val postgresql = "org.postgresql" % "postgresql" % Versions.postgresql
 
-    lazy val scalaTest: ModuleID = "org.scalatestplus.play" %% "scalatestplus-play" % Versions.scalaTest % Test
+    lazy val scalaTest = "org.scalatestplus.play" %% "scalatestplus-play" % Versions.scalaTest % Test
 
   }
 

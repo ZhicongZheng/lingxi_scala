@@ -1,6 +1,6 @@
-package auth.domain.repository.dao
+package auth.repository.dao
 
-import auth.domain.repository.table.{UserTableSchema, UserTable}
+import auth.repository.po.{UserPo, UserTable}
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfig}
 import slick.jdbc.PostgresProfile
 import slick.jdbc.PostgresProfile.api._
@@ -15,10 +15,14 @@ class UserDao @Inject()(dbConfigProvider: DatabaseConfigProvider)
 
   override protected val dbConfig = dbConfigProvider.get[PostgresProfile]
 
-  private val users = TableQuery[UserTableSchema]
+  private val users = TableQuery[UserTable]
 
-  def list(): Future[Seq[UserTable]] = {
+  def list(): Future[Seq[UserPo]] = {
     db.run(users.result)
+  }
+
+  def findByUsername(username: String): Future[Option[UserPo]] = {
+    db.run(users.filter(_.username === username).result.headOption)
   }
 
 

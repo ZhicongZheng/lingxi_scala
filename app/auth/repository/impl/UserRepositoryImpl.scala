@@ -1,9 +1,7 @@
-package auth.domain.repository.impl
+package auth.repository.impl
 
-import auth.domain.User
-import auth.domain.repository.UserRepository
-import auth.domain.repository.dao.UserDao
-import auth.domain.repository.table.UserTable
+import auth.domain.{User, UserRepository}
+import auth.repository.dao.UserDao
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -15,10 +13,12 @@ class UserRepositoryImpl @Inject()(userDao: UserDao)
   override def findById(id: Long): Future[User] = ???
 
   override def list(): Future[Seq[User]] = {
-    userDao.list().map(users => users.map(u => User.apply(u)))
+    userDao.list().map(users => users.map(u => u.toDo))
   }
 
-  override def findByUsername(username: String): Future[Option[User]] = ???
+  override def findByUsername(username: String): Future[Option[User]] = {
+    userDao.findByUsername(username).map(userPoOpt => userPoOpt.map(po => po.toDo))
+  }
 
   override def create(user: User): Future[User] = ???
 

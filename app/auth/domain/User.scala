@@ -1,30 +1,25 @@
 package auth.domain
 
-import auth.domain.repository.table.UserTable
-import play.api.libs.json.{Json, OFormat}
-
 import java.time.LocalDateTime
+import scala.concurrent.Future
 
-final case class User(override val id: Long,
+final case class User(id: Long,
                       username: String,
                       password: String,
                       avatar: String,
                       nickName: String,
-                      override val createBy: Long = 0L,
-                      override val updateBy: Long = 0L,
-                      override val createAt: LocalDateTime = LocalDateTime.now(),
-                      override val updateAt: Option[LocalDateTime] = None
-                     ) extends BaseEntity {
+                      roles: Option[Seq[Role]] = None,
+                      createBy: Long = 0L,
+                      updateBy: Long = 0L,
+                      createAt: LocalDateTime = LocalDateTime.now(),
+                      updateAt: Option[LocalDateTime] = None) extends BaseInfo {
 
-
-}
-
-object User {
-
-  implicit val format: OFormat[User] = Json.format[User]
-
-  def apply(table: UserTable): User = {
-    User(table.id, table.username, table.password, table.avatar, table.nickName, table.createBy, table.updateBy, table.createAt, table.updateAt)
+  def login(reqPassword: String): Future[String] = {
+    Future.successful("")
   }
 
 }
+
+
+
+

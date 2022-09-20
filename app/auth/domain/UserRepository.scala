@@ -1,6 +1,4 @@
-package auth.domain.repository
-
-import auth.domain.User
+package auth.domain
 
 import scala.concurrent.Future
 

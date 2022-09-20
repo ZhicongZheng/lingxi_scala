@@ -1,0 +1,51 @@
+package auth.repository.po
+
+import auth.domain.{BaseInfo, Permission}
+import slick.jdbc.PostgresProfile.api._
+import slick.lifted.Tag
+
+import java.time.LocalDateTime
+
+
+final case class PermissionPo(id: Long,
+                              `type`: String,
+                              value: String,
+                              createBy: Long = 0L,
+                              updateBy: Long = 0L,
+                              createAt: LocalDateTime = LocalDateTime.now(),
+                              updateAt: Option[LocalDateTime] = None) extends BaseInfo with BasePo[Permission] {
+
+  override def toDo: Permission = Permission(id, `type`, value, None, createBy, updateBy, createAt, updateAt)
+}
+
+class PermissionTable(tag: Tag) extends Table[PermissionPo](tag, "permissions") {
+
+  def id = column[Long]("id", O.PrimaryKey)
+
+  def `type` = column[String]("type")
+
+  def value = column[String]("value")
+
+  def createBy = column[Long]("create_by")
+
+  def updateBy = column[Long]("update_by")
+
+  def createAt = column[LocalDateTime]("create_at")
+
+  def updateAt = column[Option[LocalDateTime]]("update_at")
+
+
+  override def * = (id, `type`, value, createBy, updateBy, createAt, updateAt) <> (PermissionPo.tupled, PermissionPo.unapply)
+}
+
+
+class RolePermissionTable(tag: Tag) extends Table[(Long, Long, Long)](tag, "user_roles") {
+
+  def id = column[Long]("id", O.PrimaryKey)
+
+  def roleId = column[Long]("role_id")
+
+  def permissionId = column[Long]("permission_id")
+
+  override def * = (id, roleId, permissionId)
+}

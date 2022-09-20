@@ -2,16 +2,12 @@ package auth.domain
 
 import java.time.LocalDateTime
 
-final case class Role(override val id: Long,
+final case class Role(id: Long,
                       code: String,
                       name: String,
-                      users: Seq[User] = Seq.empty,
-                      Permissions: Seq[Permission] = Seq.empty,
-                      override val createBy: Long = 0L,
-                      override val updateBy: Long = 0L,
-                      override val createAt: LocalDateTime = LocalDateTime.now(),
-                      override val updateAt: Option[LocalDateTime] = None) extends BaseEntity {
-
-
-
-}
+                      users: Option[Seq[User]] = None,
+                      Permissions: Option[Seq[Permission]] = None,
+                      createBy: Long = 0L,
+                      updateBy: Long = 0L,
+                      createAt: LocalDateTime = LocalDateTime.now(),
+                      updateAt: Option[LocalDateTime] = None) extends BaseInfo

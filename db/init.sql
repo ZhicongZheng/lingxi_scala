@@ -10,3 +10,35 @@ CREATE TABLE IF NOT EXISTS users(
  create_at      TIMESTAMP       NOT NULL DEFAULT current_timestamp,
  update_at      TIMESTAMP       NOT NULL default current_timestamp
 );
+
+CREATE TABLE IF NOT EXISTS user_roles(
+ id             SERIAL PRIMARY KEY,
+ user_id        BIGINT    NOT NULL,
+ role_id        BIGINT    NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS roles(
+ id             SERIAL PRIMARY KEY,
+ code           VARCHAR (50)    UNIQUE NOT NULL,
+ name           VARCHAR (50)    NOT NULL,
+ create_by      BIGINT          NOT NULL DEFAULT 0,
+ update_by      BIGINT          NOT NULL DEFAULT 0,
+ create_at      TIMESTAMP       NOT NULL DEFAULT current_timestamp,
+ update_at      TIMESTAMP       NOT NULL default current_timestamp
+);
+
+CREATE TABLE IF NOT EXISTS user_roles(
+ id             SERIAL PRIMARY KEY,
+ role_id        BIGINT    NOT NULL,
+ permission_id  BIGINT    NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS permissions(
+ id             SERIAL PRIMARY KEY,
+ type           VARCHAR (50)    NOT NULL,
+ `value`        VARCHAR (50)    NOT NULL,
+ create_by      BIGINT          NOT NULL DEFAULT 0,
+ update_by      BIGINT          NOT NULL DEFAULT 0,
+ create_at      TIMESTAMP       NOT NULL DEFAULT current_timestamp,
+ update_at      TIMESTAMP       NOT NULL default current_timestamp
+);
