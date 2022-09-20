@@ -43,5 +43,5 @@ class UserTable(tag: Tag) extends Table[UserPo](tag, "users") {
 
   def updateAt = column[Option[LocalDateTime]]("update_at")
 
-  override def * = (id, username, password, avatar, nickName, createBy, updateBy(), createAt, updateAt()) <> (UserPo.tupled, UserPo.unapply)
+  override def * = (id, username, password, avatar, nickName, createBy, updateBy, createAt, updateAt) <> (UserPo.tupled, UserPo.unapply)
 }

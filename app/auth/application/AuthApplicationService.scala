@@ -16,9 +16,6 @@ class AuthApplicationService @Inject() (val userRepository: UserRepository) {
       case Some(user) => user.login(loginRequest.password)
       case None => Future.failed(new IllegalAccessException())
     }
-
-    val userOptFuture = userRepository.findByUsername(loginRequest.username)
-    userOptFuture
     Future.successful("")
   }
 
