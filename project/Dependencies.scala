@@ -12,12 +12,15 @@ object Dependencies {
     val slick = "5.0.2"
     val postgresql = "42.5.0"
     val jwt = "0.4.5"
+    val bcrypt = "0.4"
   }
 
   object Compiles {
     lazy val config = "com.typesafe" % "config" % Versions.config
 
     lazy val jwt = "com.jason-goodwin" %% "authentikat-jwt" % Versions.jwt
+
+    lazy val bcrypt = "org.mindrot" % "jbcrypt" % Versions.bcrypt
 
     lazy val play: Seq[ModuleID] = Seq(
       "com.typesafe.play" %% "play-slick" % Versions.slick
@@ -32,6 +35,6 @@ object Dependencies {
   import Compiles._
 
   lazy val dependencies: Setting[Seq[ModuleID]] =
-    libraryDependencies ++= Seq(config, postgresql, guice, jwt, scalaTest) ++ play
+    libraryDependencies ++= Seq(config, postgresql, guice, jwt, bcrypt, scalaTest) ++ play
 
 }
