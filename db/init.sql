@@ -27,7 +27,7 @@ CREATE TABLE IF NOT EXISTS roles(
  update_at      TIMESTAMP       NOT NULL default current_timestamp
 );
 
-CREATE TABLE IF NOT EXISTS user_roles(
+CREATE TABLE IF NOT EXISTS role_permissions(
  id             SERIAL PRIMARY KEY,
  role_id        BIGINT    NOT NULL,
  permission_id  BIGINT    NOT NULL
@@ -42,3 +42,9 @@ CREATE TABLE IF NOT EXISTS permissions(
  create_at      TIMESTAMP       NOT NULL DEFAULT current_timestamp,
  update_at      TIMESTAMP       NOT NULL default current_timestamp
 );
+
+INSERT INTO users(id, username, password, avatar, email, nick_name) VALUES (1, 'lingxi', '123456', '/avatar.png', 'admin@qq.com', '灵犀');
+
+INSERT INTO roles(id, code, name) VALUES (1, 'SUPER_ADMIN', '超级管理员');
+
+INSERT INTO user_roles(user_id, role_id) VALUES (1, 1);

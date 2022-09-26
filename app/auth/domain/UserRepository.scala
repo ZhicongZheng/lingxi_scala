@@ -4,7 +4,7 @@ import scala.concurrent.Future
 
 trait UserRepository {
 
-  def findById(id: Long): Future[User]
+  def findById(id: Long): Future[Option[User]]
 
   def list(): Future[Seq[User]]
 
