@@ -2,7 +2,7 @@ package common
 
 import akka.NotUsed
 import akka.actor.ActorSystem
-import akka.event.Logging
+import akka.event.{Logging, LoggingAdapter}
 import akka.stream.scaladsl.Flow
 import akka.util.ByteString
 import play.api.Logging
@@ -16,7 +16,7 @@ class AccumulatorFlowFilter @Inject()(actorSystem: ActorSystem)(implicit ec: Exe
 
   private val logger = org.slf4j.LoggerFactory.getLogger("application.AccumulatorFlowFilter")
 
-  private implicit val logging = Logging(actorSystem.eventStream, logger.getName)
+  private implicit val logging: LoggingAdapter = Logging(actorSystem.eventStream, logger.getName)
 
 
   override def apply(next: EssentialAction): EssentialAction = (requestHeader: RequestHeader) => {
