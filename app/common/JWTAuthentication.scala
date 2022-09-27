@@ -2,38 +2,37 @@ package common
 
 import auth.domain.{User, UserRepository}
 import play.api.http.HeaderNames
-import play.api.libs.json.Json
 import play.api.mvc.Results.{Ok, Unauthorized}
-import play.api.mvc.{ActionBuilder, AnyContent, BodyParser, BodyParsers, Request, Result, WrappedRequest}
-import utils.Jwt
+import play.api.mvc._
 
 import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future, blocking}
+import scala.concurrent.{ExecutionContext, Future}
+import scala.util.{Failure, Success, Try}
 
 case class UserRequest[A](user: User, request: Request[A]) extends WrappedRequest(request)
 
-class JWTAuthentication @Inject()(parser: BodyParsers.Default)
+class JWTAuthentication @Inject()(parser: BodyParsers.Default,
+                                  defaultSessionCookieBaker: DefaultSessionCookieBaker,
+                                  userRepository: UserRepository)
                                  (implicit ec: ExecutionContext)
   extends ActionBuilder[UserRequest, AnyContent] {
+
+  val jwt: JWTCookieDataCodec = defaultSessionCookieBaker.jwtCodec
 
   def invokeBlock[A](request: Request[A], block: UserRequest[A] => Future[Result]): Future[Result] = {
 
     val jwtToken: String = request.headers.get(HeaderNames.AUTHORIZATION).getOrElse("")
 
-    if (Jwt.isValidToken(jwtToken)) {
-      Jwt.decodePayload(jwtToken).fold(Future.successful(Unauthorized("Invalid credential"))) { payload: String =>
 
-        val userId = Json.parse(payload).validate[Long].asOpt.get
-
-        // Replace this block with data source
-        if (userId > 1) {
-          Future.successful(Ok("Authorization successful"))
-        } else {
-          Future.successful(Unauthorized("Invalid credential"))
-        }
-      }
-    } else {
-      Future.successful(Unauthorized("Invalid credential"))
+    Try(jwt.decode(jwtToken)) match {
+      case Success(claim) =>
+        claim.get("id").map { userId =>
+          userRepository.findById(userId.toLong).flatMap {
+            case Some(_) => Future.successful(Ok("Authorization successful"))
+            case None => Future.successful(Unauthorized("Invalid credential"))
+          }
+        }.getOrElse(Future.successful(Unauthorized("Invalid credential")))
+      case Failure(_) => Future.successful(Unauthorized("Invalid credential"))
     }
   }
 

@@ -5,20 +5,18 @@ import sbt._
 object Dependencies {
 
   object Versions {
-    val scala = "2.12.13"
+    val scala = "2.13.8"
     val config = "1.4.2"
     val scalaTest = "5.1.0"
     val playJson = "2.9.3"
     val slick = "5.0.2"
     val postgresql = "42.5.0"
-    val jwt = "0.4.5"
     val bcrypt = "0.4"
   }
 
   object Compiles {
     lazy val config = "com.typesafe" % "config" % Versions.config
 
-    lazy val jwt = "com.jason-goodwin" %% "authentikat-jwt" % Versions.jwt
 
     lazy val bcrypt = "org.mindrot" % "jbcrypt" % Versions.bcrypt
 
@@ -35,6 +33,6 @@ object Dependencies {
   import Compiles._
 
   lazy val dependencies: Setting[Seq[ModuleID]] =
-    libraryDependencies ++= Seq(config, postgresql, guice, jwt, bcrypt, scalaTest) ++ play
+    libraryDependencies ++= Seq(config, postgresql, guice, bcrypt, scalaTest) ++ play
 
 }

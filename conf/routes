@@ -2,5 +2,5 @@ GET     /users                       auth.controller.UserController.getAll
 
 GET     /users/:userId               auth.controller.UserController.getById(userId: Long)
 
-POST    /login                       auth.controller.AuthWriteController.login
+POST    /admin/login                 auth.controller.AuthWriteController.login
 
