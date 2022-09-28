@@ -2,7 +2,9 @@ package auth.controller
 
 import auth.application.AuthApplicationService
 import auth.application.dto.LoginRequest
+import common.ResultHelper
 import common.exceptions.BizException
+import play.api.http.HeaderNames
 import play.api.libs.json.Json
 import play.api.mvc.{AnyContent, ControllerComponents, InjectedController, Request}
 
@@ -16,8 +18,10 @@ class AuthWriteController @Inject()(override val controllerComponents: Controlle
 
   def login = Action.async { implicit  request: Request[AnyContent] =>
     val loginRequest = Json.fromJson[LoginRequest](request.body.asJson.get)
-    authApplicationService.login(loginRequest.get).map(token => Ok(token)).recover { case ex: BizException =>
-      Ok(Json.obj("code" -> 0,"msg" -> ex.getMessage))
+    authApplicationService.login(loginRequest.get).map { token =>
+      Ok(ResultHelper.success(None)).withHeaders((HeaderNames.AUTHORIZATION, token))
+    }.recover { case ex: BizException =>
+      Ok(ResultHelper.fail(ex))
     }
   }
 

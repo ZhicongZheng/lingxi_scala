@@ -4,3 +4,4 @@ GET     /users/:userId               auth.controller.UserController.getById(user
 
 POST    /admin/login                 auth.controller.AuthWriteController.login
 
+GET     /admin/currentUserInfo       auth.controller.AuthReadController.currentUserInfo

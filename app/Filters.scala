@@ -1,4 +1,4 @@
-import common.AccumulatorFlowFilter
+import common.LoggingFilter
 import play.api.http.{DefaultHttpFilters, EnabledFilters}
 
 import javax.inject.Inject
@@ -8,8 +8,8 @@ import javax.inject.Inject
  * @param defaultFilters 系统默认的 Filter
  */
 class Filters @Inject()(defaultFilters: EnabledFilters,
-                        accumulatorFlowFilter: AccumulatorFlowFilter)
-  extends DefaultHttpFilters(defaultFilters.filters :+ accumulatorFlowFilter: _*) {
+                        loggingFilter: LoggingFilter)
+  extends DefaultHttpFilters(defaultFilters.filters :+ loggingFilter: _*) {
 
 
 }

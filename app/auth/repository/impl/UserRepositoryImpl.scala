@@ -10,7 +10,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class UserRepositoryImpl @Inject()(userDao: UserDao)
                                   (implicit ec: ExecutionContext) extends UserRepository{
 
-  override def findById(id: Long): Future[Option[User]] = ???
+  override def findById(id: Long): Future[Option[User]] = userDao.findById(id).map(userPoOpt => userPoOpt.map(po => po.toDo))
 
   override def list(): Future[Seq[User]] = {
     userDao.list().map(users => users.map(u => u.toDo))

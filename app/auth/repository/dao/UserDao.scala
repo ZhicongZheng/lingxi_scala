@@ -25,5 +25,9 @@ class UserDao @Inject()(dbConfigProvider: DatabaseConfigProvider)
     db.run(users.filter(_.username === username).result.headOption)
   }
 
+  def findById(id: Long): Future[Option[UserPo]] = {
+    db.run(users.filter(_.id === id).result.headOption)
+  }
+
 
 }
