@@ -21,7 +21,7 @@ class AuthWriteController @Inject()(override val controllerComponents: Controlle
     authApplicationService.login(loginRequest.get).map { token =>
       Ok(ResultHelper.success(None)).withHeaders((HeaderNames.AUTHORIZATION, token))
     }.recover { case ex: BizException =>
-      Ok(ResultHelper.fail(ex))
+      Ok(ResultHelper.fail(ex.getResponseCode))
     }
   }
 

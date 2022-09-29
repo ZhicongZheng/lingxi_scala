@@ -1,4 +1,4 @@
-import common.LoggingFilter
+import common.{JwtFilter, LoggingFilter}
 import play.api.http.{DefaultHttpFilters, EnabledFilters}
 
 import javax.inject.Inject
@@ -8,8 +8,9 @@ import javax.inject.Inject
  * @param defaultFilters 系统默认的 Filter
  */
 class Filters @Inject()(defaultFilters: EnabledFilters,
-                        loggingFilter: LoggingFilter)
-  extends DefaultHttpFilters(defaultFilters.filters :+ loggingFilter: _*) {
+                        loggingFilter: LoggingFilter,
+                        jwtFilter: JwtFilter)
+  extends DefaultHttpFilters(defaultFilters.filters :+ jwtFilter :+ loggingFilter: _*) {
 
 
 }
