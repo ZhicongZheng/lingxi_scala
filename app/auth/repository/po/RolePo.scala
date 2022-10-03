@@ -17,33 +17,36 @@ final case class RolePo(id: Long,
   override def toDo: Role = Role(id, code, name, None, None, createBy, updateBy, createAt, updateAt)
 }
 
-class RoleTable(tag: Tag) extends Table[RolePo](tag, "roles") {
+object RolePo {
 
-  def id = column[Long]("id", O.PrimaryKey)
+  class RoleTable(tag: Tag) extends Table[RolePo](tag, "roles") {
 
-  def code = column[String]("code")
+    def id = column[Long]("id", O.PrimaryKey, O.AutoInc)
 
-  def name = column[String]("name")
+    def code = column[String]("code")
 
-  def createBy = column[Long]("create_by")
+    def name = column[String]("name")
 
-  def updateBy = column[Long]("update_by")
+    def createBy = column[Long]("create_by")
 
-  def createAt = column[LocalDateTime]("create_at")
+    def updateBy = column[Long]("update_by")
 
-  def updateAt = column[Option[LocalDateTime]]("update_at")
+    def createAt = column[LocalDateTime]("create_at")
 
+    def updateAt = column[Option[LocalDateTime]]("update_at")
 
-  override def * = (id, code, name, createBy, updateBy, createAt, updateAt) <> (RolePo.tupled, RolePo.unapply)
-}
+    override def * = (id, code, name, createBy, updateBy, createAt, updateAt) <> ((RolePo.apply _).tupled, RolePo.unapply)
+  }
 
-class UserRoleTable(tag: Tag) extends Table[(Long, Long, Long)](tag, "user_roles") {
+  class UserRoleTable(tag: Tag) extends Table[(Long, Long, Long)](tag, "user_roles") {
 
-  def id = column[Long]("id", O.PrimaryKey)
+    def id = column[Long]("id", O.PrimaryKey, O.AutoInc)
 
-  def userId = column[Long]("user_id")
+    def userId = column[Long]("user_id")
 
-  def roleId = column[Long]("role_id")
+    def roleId = column[Long]("role_id")
 
-  override def * = (id, userId, roleId)
+    override def * = (id, userId, roleId)
+  }
+
 }

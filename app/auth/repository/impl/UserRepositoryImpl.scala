@@ -1,30 +1,56 @@
 package auth.repository.impl
 
 import auth.domain.{User, UserRepository}
-import auth.repository.dao.UserDao
+import auth.repository.po.PermissionPo.PermissionTable
+import auth.repository.po.RolePo.RoleTable
+import auth.repository.po.UserPo
+import auth.repository.po.UserPo.UserTable
+import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfig}
+import slick.jdbc.PostgresProfile
+import slick.jdbc.PostgresProfile.api._
+import slick.lifted.TableQuery
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class UserRepositoryImpl @Inject()(userDao: UserDao)
-                                  (implicit ec: ExecutionContext) extends UserRepository{
+class UserRepositoryImpl @Inject()(dbConfigProvider: DatabaseConfigProvider)(implicit ec: ExecutionContext)
+  extends UserRepository with HasDatabaseConfig[PostgresProfile] {
 
-  override def findById(id: Long): Future[Option[User]] = userDao.findById(id).map(userPoOpt => userPoOpt.map(po => po.toDo))
+  override protected val dbConfig = dbConfigProvider.get[PostgresProfile]
+
+  private val users = TableQuery[UserTable]
+
+  private val roles = TableQuery[RoleTable]
+
+  private val permissions = TableQuery[PermissionTable]
+
+  override def findById(id: Long): Future[Option[User]] = {
+    db.run(users.filter(_.id === id).result.headOption).map(userPoOpt => userPoOpt.map(po => po.toDo))
+  }
 
   override def list(): Future[Seq[User]] = {
-    userDao.list().map(users => users.map(u => u.toDo))
+    db.run(users.result).map(users => users.map(u => u.toDo))
   }
 
   override def findByUsername(username: String): Future[Option[User]] = {
-    userDao.findByUsername(username).map(userPoOpt => userPoOpt.map(po => po.toDo))
+    db.run(users.filter(_.username === username).result.headOption).map(userPoOpt => userPoOpt.map(po => po.toDo))
   }
 
-  override def create(user: User): Future[User] = ???
+  override def create(user: User): Future[User] = {
+    val po = UserPo.fromDo(user)
+    db.run(users += po).map(_ => user.copy(id = po.id))
+  }
 
-  override def update(user: User): Future[User] = ???
+  override def update(user: User): Future[Long] = {
+    db.run(users.filter(_.id === user.id)
+      .map(u => (u.username, u.updateAt))
+      .update(user.username, user.updateAt)
+      .map(_.toLong))
+  }
 
-  override def delete(id: Long): Future[User] = ???
-
+  override def delete(id: Long): Future[Long] = {
+    db.run(users.filter(_.id === id).delete.map(_.toLong))
+  }
 
 }

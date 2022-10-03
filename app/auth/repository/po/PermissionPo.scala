@@ -18,34 +18,40 @@ final case class PermissionPo(id: Long,
   override def toDo: Permission = Permission(id, `type`, value, None, createBy, updateBy, createAt, updateAt)
 }
 
-class PermissionTable(tag: Tag) extends Table[PermissionPo](tag, "permissions") {
+object PermissionPo {
 
-  def id = column[Long]("id", O.PrimaryKey)
+  class PermissionTable(tag: Tag) extends Table[PermissionPo](tag, "permissions") {
 
-  def `type` = column[String]("type")
+    def id = column[Long]("id", O.PrimaryKey, O.AutoInc)
 
-  def value = column[String]("value")
+    def `type` = column[String]("type")
 
-  def createBy = column[Long]("create_by")
+    def value = column[String]("value")
 
-  def updateBy = column[Long]("update_by")
+    def createBy = column[Long]("create_by")
 
-  def createAt = column[LocalDateTime]("create_at")
+    def updateBy = column[Long]("update_by")
 
-  def updateAt = column[Option[LocalDateTime]]("update_at")
+    def createAt = column[LocalDateTime]("create_at")
 
+    def updateAt = column[Option[LocalDateTime]]("update_at")
 
-  override def * = (id, `type`, value, createBy, updateBy, createAt, updateAt) <> (PermissionPo.tupled, PermissionPo.unapply)
+    override def * = (id, `type`, value, createBy, updateBy, createAt, updateAt) <> ((PermissionPo.apply _) .tupled, PermissionPo.unapply)
+  }
+
+  class RolePermissionTable(tag: Tag) extends Table[(Long, Long, Long)](tag, "user_roles") {
+
+    def id = column[Long]("id", O.PrimaryKey)
+
+    def roleId = column[Long]("role_id")
+
+    def permissionId = column[Long]("permission_id")
+
+    override def * = (id, roleId, permissionId)
+  }
+
 }
 
 
-class RolePermissionTable(tag: Tag) extends Table[(Long, Long, Long)](tag, "user_roles") {
 
-  def id = column[Long]("id", O.PrimaryKey)
 
-  def roleId = column[Long]("role_id")
-
-  def permissionId = column[Long]("permission_id")
-
-  override def * = (id, roleId, permissionId)
-}
