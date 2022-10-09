@@ -19,20 +19,25 @@ class JwtFilter @Inject()(sessionCookieBaker: DefaultSessionCookieBaker)
                          (implicit val mat: Materializer, ec: ExecutionContext) extends Filter with Logging {
 
   val jwt: JWTCookieDataCodec = sessionCookieBaker.jwtCodec
+  val bearerLen: Int = "Bearer ".length
 
   override def apply(f: RequestHeader => Future[Result])(rh: RequestHeader): Future[Result] = {
     if (noAuthRoute.contains(rh.path)) {
       return f.apply(rh)
     }
 
-    val jwtToken = rh.headers.get(HeaderNames.AUTHORIZATION).getOrElse("")
-
-    Try(jwt.decode(jwtToken)) match {
-      case Success(claim) if claim.nonEmpty =>
-        claim.get(Constant.userId).foreach(userId => rh.headers.add((Constant.userId, userId)))
-        f.apply(rh)
-      case _ => Future.successful(Unauthorized("Invalid credential"))
-    }
+    val headers = rh.headers
+    headers.get(HeaderNames.AUTHORIZATION)
+      .map(token => token.substring(bearerLen))
+      .fold(Future.successful(Unauthorized("Invalid credential"))) { jwtToken =>
+        Try(jwt.decode(jwtToken)) match {
+          case Success(claim) if claim.nonEmpty =>
+            val requestHeader = claim.get(Constant.userId)
+              .map(userId => rh.withHeaders(headers.add((Constant.userId, userId)))).getOrElse(rh)
+            f.apply(requestHeader)
+          case _ => Future.successful(Unauthorized("Invalid credential"))
+        }
+      }
   }
 }
 
