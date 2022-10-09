@@ -1,6 +1,7 @@
-package common
+package common.actions
 
 import auth.domain.{User, UserRepository}
+import common.{Constant, ResponseCode, ResultHelper}
 import play.api.mvc.Results.Ok
 import play.api.mvc._
 

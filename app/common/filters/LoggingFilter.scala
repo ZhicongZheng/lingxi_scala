@@ -1,7 +1,7 @@
-package common
+package common.filters
 
 import akka.stream.Materializer
-import play.api.{Logger, Logging}
+import play.api.Logging
 import play.api.mvc.{Filter, RequestHeader, Result}
 import play.api.routing.{HandlerDef, Router}
 

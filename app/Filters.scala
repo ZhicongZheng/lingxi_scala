@@ -1,4 +1,4 @@
-import common.{JwtFilter, LoggingFilter}
+import common.filters.{JwtFilter, LoggingFilter}
 import play.api.http.{DefaultHttpFilters, EnabledFilters}
 
 import javax.inject.Inject

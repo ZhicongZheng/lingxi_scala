@@ -2,7 +2,8 @@ package auth.controller
 
 import auth.application.AuthApplicationService
 import auth.application.dto.UserDto
-import common.{UserAction, ResultHelper, UserRequest}
+import common.actions.{UserAction, UserRequest}
+import common.ResultHelper
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, ControllerComponents, InjectedController}
 
@@ -15,7 +16,7 @@ class AuthReadController @Inject()(override val controllerComponents: Controller
 
   def currentUserInfo : Action[AnyContent] = authedAction { implicit request: UserRequest[AnyContent] =>
     val currentUser = UserDto.fromDo(request.user)
-    Ok(ResultHelper.success(Some(Json.toJson(currentUser))))
+    Ok(ResultHelper.success(Json.toJson(currentUser)))
   }
 
 }

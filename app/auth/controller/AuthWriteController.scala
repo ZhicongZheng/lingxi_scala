@@ -5,7 +5,7 @@ import auth.application.dto.LoginRequest
 import common.ResultHelper
 import common.exceptions.BizException
 import play.api.http.HeaderNames
-import play.api.libs.json.Json
+import play.api.libs.json.{JsError, Json}
 import play.api.mvc._
 
 import javax.inject.{Inject, Singleton}
@@ -17,15 +17,11 @@ class AuthWriteController @Inject()(override val controllerComponents: Controlle
                                     authApplicationService: AuthApplicationService)
   extends InjectedController {
 
-  def login: Action[AnyContent] = Action.async { implicit request: Request[AnyContent] =>
-    request.body.asJson.map { json =>
-      val loginRequest = Json.fromJson[LoginRequest](json)
-      authApplicationService.login(loginRequest.get).map { token =>
-        Ok(ResultHelper.success(None)).withHeaders((HeaderNames.AUTHORIZATION, token))
-      }.recover { case ex: BizException =>
-        Ok(ResultHelper.fail(ex.getResponseCode))
-      }
-    } getOrElse Future.successful(BadRequest("Expecting Json data"))
+  def login = Action(parse.json[LoginRequest]).async { request =>
+    authApplicationService.login(request.body).map { token =>
+      Ok(ResultHelper.success()).withHeaders((HeaderNames.AUTHORIZATION, token))
+    }.recover { case ex: BizException =>
+      Ok(ResultHelper.fail(ex.getResponseCode))
+    }
   }
-
 }

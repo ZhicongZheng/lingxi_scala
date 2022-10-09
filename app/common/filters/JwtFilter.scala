@@ -1,7 +1,8 @@
-package common
+package common.filters
 
 import akka.stream.Materializer
-import common.JwtFilter.noAuthRoute
+import common.Constant
+import common.filters.JwtFilter.noAuthRoute
 import play.api.Logging
 import play.api.http.HeaderNames
 import play.api.mvc.Results.Unauthorized
