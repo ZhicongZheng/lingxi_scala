@@ -8,6 +8,8 @@ trait BaseRepository[T <: BaseInfo] {
 
   def list(): Future[Seq[T]]
 
+  def count(): Future[Int]
+
   def create(d: T): Future[T]
 
   def update(d: T): Future[Long]

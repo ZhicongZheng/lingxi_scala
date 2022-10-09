@@ -53,4 +53,5 @@ class UserRepositoryImpl @Inject()(dbConfigProvider: DatabaseConfigProvider)(imp
     db.run(users.filter(_.id === id).delete.map(_.toLong))
   }
 
+  override def count(): Future[Int] = db.run(users.size.result)
 }
