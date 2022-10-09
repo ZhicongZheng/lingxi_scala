@@ -6,4 +6,4 @@ organization := "com.lingxi"
 version := "1.0.0-SNAPSHOT"
 scalaVersion := Versions.scala
 
-lazy val root = (project in file(".")).enablePlugins(PlayScala).settings(dependencies)
+lazy val root = (project in file(".")).enablePlugins(PlayScala, ScalafmtPlugin).settings(dependencies)

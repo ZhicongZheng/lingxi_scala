@@ -36,7 +36,7 @@ object PermissionPo {
 
     def updateAt = column[Option[LocalDateTime]]("update_at")
 
-    override def * = (id, `type`, value, createBy, updateBy, createAt, updateAt) <> ((PermissionPo.apply _) .tupled, PermissionPo.unapply)
+    override def * = (id, `type`, value, createBy, updateBy, createAt, updateAt) <> ((PermissionPo.apply _).tupled, PermissionPo.unapply)
   }
 
   class RolePermissionTable(tag: Tag) extends Table[(Long, Long, Long)](tag, "user_roles") {

@@ -1,7 +1,7 @@
 package auth.domain
 
-import common.{Constant, ResponseCode}
 import common.exceptions.BizException
+import common.{Constant, ResponseCode}
 import org.mindrot.jbcrypt.BCrypt
 import play.api.mvc.JWTCookieDataCodec
 

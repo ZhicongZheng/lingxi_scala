@@ -9,9 +9,13 @@ import java.time.LocalDateTime
 trait BaseInfo {
 
   def id: Long
+
   def createBy: Long
+
   def updateBy(): Long
+
   def createAt: LocalDateTime
+
   def updateAt(): Option[LocalDateTime]
 
 }

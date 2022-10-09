@@ -2,15 +2,13 @@ package auth.application
 
 import auth.application.dto.LoginRequest
 import auth.domain.UserRepository
+import common.ResponseCode
 import common.exceptions.BizException
-import common.{Constant, ResponseCode}
-import org.mindrot.jbcrypt.BCrypt
 import play.api.mvc.{DefaultSessionCookieBaker, JWTCookieDataCodec}
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
-import scala.util.{Success, Try}
 
 @Singleton
 class AuthApplicationService @Inject()(val userRepository: UserRepository,
