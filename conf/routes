@@ -1,3 +1,7 @@
+->      /                            api.ApiRouter
+
+GET     /                            controllers.Default.redirect(to = "./docs/")
+
 GET     /users                       auth.controller.UserController.getAll
 
 GET     /users/:userId               auth.controller.UserController.getById(userId: Long)
