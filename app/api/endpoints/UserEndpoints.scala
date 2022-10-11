@@ -1,7 +1,7 @@
 package api.endpoints
 
 import sttp.model.StatusCode
-import sttp.tapir.{ endpoint, statusCode, Endpoint }
+import sttp.tapir.{Endpoint, endpoint, statusCode}
 
 import javax.inject.Singleton
 

@@ -5,7 +5,7 @@ import sttp.apispec.openapi.Info
 import sttp.apispec.openapi.circe.yaml.RichOpenAPI
 import sttp.tapir.docs.openapi.OpenAPIDocsInterpreter
 
-import javax.inject.{ Inject, Singleton }
+import javax.inject.{Inject, Singleton}
 
 @Singleton
 class ApiDocumentation @Inject() (userEndpoints: UserEndpoints) {

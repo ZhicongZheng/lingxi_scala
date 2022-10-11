@@ -6,14 +6,16 @@ import slick.lifted.Tag
 
 import java.time.LocalDateTime
 
-
-final case class PermissionPo(id: Long,
-                              `type`: String,
-                              value: String,
-                              createBy: Long = 0L,
-                              updateBy: Long = 0L,
-                              createAt: LocalDateTime = LocalDateTime.now(),
-                              updateAt: Option[LocalDateTime] = None) extends BaseInfo with BasePo[Permission] {
+final case class PermissionPo(
+  id: Long,
+  `type`: String,
+  value: String,
+  createBy: Long = 0L,
+  updateBy: Long = 0L,
+  createAt: LocalDateTime = LocalDateTime.now(),
+  updateAt: Option[LocalDateTime] = None
+) extends BaseInfo
+    with BasePo[Permission] {
 
   override def toDo: Permission = Permission(id, `type`, value, None, createBy, updateBy, createAt, updateAt)
 }
@@ -36,7 +38,15 @@ object PermissionPo {
 
     def updateAt = column[Option[LocalDateTime]]("update_at")
 
-    override def * = (id, `type`, value, createBy, updateBy, createAt, updateAt) <> ((PermissionPo.apply _).tupled, PermissionPo.unapply)
+    override def * = (
+      id,
+      `type`,
+      value,
+      createBy,
+      updateBy,
+      createAt,
+      updateAt
+    ) <> ((PermissionPo.apply _).tupled, PermissionPo.unapply)
   }
 
   class RolePermissionTable(tag: Tag) extends Table[(Long, Long, Long)](tag, "user_roles") {
@@ -51,7 +61,3 @@ object PermissionPo {
   }
 
 }
-
-
-
-

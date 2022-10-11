@@ -2,7 +2,7 @@ package common.filters
 
 import akka.stream.Materializer
 import common.Constant
-import common.filters.JwtFilter.{ bearerLen, failureResult, noAuthRoute }
+import common.filters.JwtFilter.{bearerLen, failureResult, noAuthRoute}
 import play.api.Logging
 import play.api.http.HeaderNames
 import play.api.mvc.Results.Unauthorized
@@ -10,8 +10,8 @@ import play.api.mvc._
 
 import java.util.regex.Pattern
 import javax.inject.Inject
-import scala.concurrent.{ ExecutionContext, Future }
-import scala.util.{ Success, Try }
+import scala.concurrent.{ExecutionContext, Future}
+import scala.util.{Success, Try}
 
 /** jwt 过滤器
  */

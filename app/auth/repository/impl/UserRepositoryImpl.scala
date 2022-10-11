@@ -14,8 +14,9 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class UserRepositoryImpl @Inject()(dbConfigProvider: DatabaseConfigProvider)(implicit ec: ExecutionContext)
-  extends UserRepository with HasDatabaseConfig[PostgresProfile] {
+class UserRepositoryImpl @Inject() (dbConfigProvider: DatabaseConfigProvider)(implicit ec: ExecutionContext)
+    extends UserRepository
+    with HasDatabaseConfig[PostgresProfile] {
 
   override protected val dbConfig = dbConfigProvider.get[PostgresProfile]
 
@@ -25,33 +26,31 @@ class UserRepositoryImpl @Inject()(dbConfigProvider: DatabaseConfigProvider)(imp
 
   private val permissions = TableQuery[PermissionTable]
 
-  override def findById(id: Long): Future[Option[User]] = {
+  override def findById(id: Long): Future[Option[User]] =
     db.run(users.filter(_.id === id).result.headOption).map(userPoOpt => userPoOpt.map(po => po.toDo))
-  }
 
-  override def list(): Future[Seq[User]] = {
+  override def list(): Future[Seq[User]] =
     db.run(users.result).map(users => users.map(u => u.toDo))
-  }
 
-  override def findByUsername(username: String): Future[Option[User]] = {
+  override def findByUsername(username: String): Future[Option[User]] =
     db.run(users.filter(_.username === username).result.headOption).map(userPoOpt => userPoOpt.map(po => po.toDo))
-  }
 
   override def create(user: User): Future[User] = {
     val po = UserPo.fromDo(user)
     db.run(users += po).map(_ => user.copy(id = po.id))
   }
 
-  override def update(user: User): Future[Long] = {
-    db.run(users.filter(_.id === user.id)
-      .map(u => (u.username, u.updateAt))
-      .update(user.username, user.updateAt)
-      .map(_.toLong))
-  }
+  override def update(user: User): Future[Long] =
+    db.run(
+      users
+        .filter(_.id === user.id)
+        .map(u => (u.username, u.updateAt))
+        .update(user.username, user.updateAt)
+        .map(_.toLong)
+    )
 
-  override def delete(id: Long): Future[Long] = {
+  override def delete(id: Long): Future[Long] =
     db.run(users.filter(_.id === id).delete.map(_.toLong))
-  }
 
   override def count(): Future[Int] = db.run(users.size.result)
 }

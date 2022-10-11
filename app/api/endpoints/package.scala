@@ -1,7 +1,7 @@
 package api
 
 import sttp.model.StatusCode
-import sttp.tapir.{ endpoint, statusCode, Endpoint, TapirAuth }
+import sttp.tapir.{Endpoint, TapirAuth, endpoint, statusCode}
 
 package object endpoints {
 

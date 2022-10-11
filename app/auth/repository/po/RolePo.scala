@@ -6,13 +6,16 @@ import slick.lifted.Tag
 
 import java.time.LocalDateTime
 
-final case class RolePo(id: Long,
-                        code: String,
-                        name: String,
-                        createBy: Long = 0L,
-                        updateBy: Long = 0L,
-                        createAt: LocalDateTime = LocalDateTime.now(),
-                        updateAt: Option[LocalDateTime] = None) extends BaseInfo with BasePo[Role] {
+final case class RolePo(
+  id: Long,
+  code: String,
+  name: String,
+  createBy: Long = 0L,
+  updateBy: Long = 0L,
+  createAt: LocalDateTime = LocalDateTime.now(),
+  updateAt: Option[LocalDateTime] = None
+) extends BaseInfo
+    with BasePo[Role] {
 
   override def toDo: Role = Role(id, code, name, None, None, createBy, updateBy, createAt, updateAt)
 }
@@ -35,7 +38,8 @@ object RolePo {
 
     def updateAt = column[Option[LocalDateTime]]("update_at")
 
-    override def * = (id, code, name, createBy, updateBy, createAt, updateAt) <> ((RolePo.apply _).tupled, RolePo.unapply)
+    override def * =
+      (id, code, name, createBy, updateBy, createAt, updateAt) <> ((RolePo.apply _).tupled, RolePo.unapply)
   }
 
   class UserRoleTable(tag: Tag) extends Table[(Long, Long, Long)](tag, "user_roles") {

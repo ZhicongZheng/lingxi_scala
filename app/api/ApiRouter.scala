@@ -10,16 +10,16 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class ApiRouter @Inject()(apiDocumentation: ApiDocumentation)(implicit
-                                                              val materializer: Materializer,
-                                                              ec: ExecutionContext) extends SimpleRouter {
+class ApiRouter @Inject() (apiDocumentation: ApiDocumentation)(implicit
+  val materializer: Materializer,
+  ec: ExecutionContext
+) extends SimpleRouter {
 
   private val playServerOptions: PlayServerOptions = PlayServerOptions.default(materializer, ec)
-  private val interpreter = PlayServerInterpreter(playServerOptions)
+  private val interpreter                          = PlayServerInterpreter(playServerOptions)
 
-  override def routes: Routes = {
+  override def routes: Routes =
     openApiRoute
-  }
 
   // Doc will be on /docs
   private val openApiRoute: Routes = interpreter.toRoutes(SwaggerUI[Future](apiDocumentation.openApiYaml))

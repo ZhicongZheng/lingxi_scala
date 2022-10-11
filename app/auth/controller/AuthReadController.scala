@@ -10,9 +10,11 @@ import play.api.mvc.{Action, AnyContent, ControllerComponents, InjectedControlle
 import javax.inject.{Inject, Singleton}
 
 @Singleton
-class AuthReadController @Inject()(override val controllerComponents: ControllerComponents,
-                                   authApplicationService: AuthApplicationService,
-                                   authedAction: UserAction) extends InjectedController {
+class AuthReadController @Inject() (
+  override val controllerComponents: ControllerComponents,
+  authApplicationService: AuthApplicationService,
+  authedAction: UserAction
+) extends InjectedController {
 
   def currentUserInfo: Action[AnyContent] = authedAction { implicit request: UserRequest[AnyContent] =>
     val currentUser = UserDto.fromDo(request.user)

@@ -2,9 +2,7 @@ package auth.domain
 
 import java.time.LocalDateTime
 
-
-/**
- * 基础领域对象
+/** 基础领域对象
  */
 trait BaseInfo {
 
