@@ -2,10 +2,10 @@ package common.filters
 
 import akka.stream.Materializer
 import play.api.Logging
-import play.api.mvc.{Filter, RequestHeader, Result}
+import play.api.mvc.{ Filter, RequestHeader, Result }
 
 import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.{ ExecutionContext, Future }
 
 /** 请求耗时过滤器
  */
@@ -15,14 +15,12 @@ class LoggingFilter @Inject() (implicit val mat: Materializer, ec: ExecutionCont
     val startTime = System.currentTimeMillis()
 
     nextFilter(requestHeader).map { result =>
-//      val handlerDef: HandlerDef = requestHeader.attrs(Router.Attrs.HandlerDef)
-//      val action = handlerDef.controller + "." + handlerDef.method
+      val path        = requestHeader.path
       val endTime     = System.currentTimeMillis
       val requestTime = endTime - startTime
 
-      logger.info(s"took ${requestTime}ms and returned ${result.header.status}")
+      logger.info(s"path: $path, status: ${result.header.status}, took ${requestTime}ms")
       result.withHeaders("Request-Time" -> requestTime.toString)
-
     }
 
   }

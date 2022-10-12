@@ -2,8 +2,7 @@ package auth.application
 
 import auth.application.dto.LoginRequest
 import auth.domain.UserRepository
-import common.ResponseCode
-import common.exceptions.BizException
+import common.result.{Errors, NO_USER}
 import play.api.mvc.{DefaultSessionCookieBaker, JWTCookieDataCodec}
 
 import javax.inject.{Inject, Singleton}
@@ -18,10 +17,10 @@ class AuthApplicationService @Inject() (
 
   val jwt: JWTCookieDataCodec = defaultSessionCookieBaker.jwtCodec
 
-  def login(loginRequest: LoginRequest): Future[String] =
+  def login(loginRequest: LoginRequest): Future[Either[Errors, String]] =
     userRepository.findByUsername(loginRequest.username) map {
       case Some(user) => user.login(loginRequest.password, jwt)
-      case None       => throw new BizException(ResponseCode.NO_USER)
+      case None       => Left(NO_USER)
     }
 
 }

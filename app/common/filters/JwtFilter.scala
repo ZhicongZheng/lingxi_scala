@@ -2,7 +2,7 @@ package common.filters
 
 import akka.stream.Materializer
 import common.Constant
-import common.filters.JwtFilter.{bearerLen, failureResult, noAuthRoute}
+import common.filters.JwtFilter.{ bearerLen, failureResult, noAuthRoute }
 import play.api.Logging
 import play.api.http.HeaderNames
 import play.api.mvc.Results.Unauthorized
@@ -10,8 +10,8 @@ import play.api.mvc._
 
 import java.util.regex.Pattern
 import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
-import scala.util.{Success, Try}
+import scala.concurrent.{ ExecutionContext, Future }
+import scala.util.{ Success, Try }
 
 /** jwt 过滤器
  */
@@ -25,7 +25,6 @@ class JwtFilter @Inject() (sessionCookieBaker: DefaultSessionCookieBaker)(implic
 
   override def apply(f: RequestHeader => Future[Result])(rh: RequestHeader): Future[Result] = {
     val path = rh.path
-    logger.info(s"path: $path")
     if (noAuthRoute.exists(p => p.matcher(path).find())) {
       return f.apply(rh)
     }

@@ -1,12 +1,12 @@
 package auth.domain
 
-import common.exceptions.BizException
-import common.{Constant, ResponseCode}
+import common.Constant
+import common.result.{ Errors, LOGIN_FAILED }
 import org.mindrot.jbcrypt.BCrypt
 import play.api.mvc.JWTCookieDataCodec
 
 import java.time.LocalDateTime
-import scala.util.{Success, Try}
+import scala.util.{ Success, Try }
 
 final case class User(
   id: Long,
@@ -22,10 +22,10 @@ final case class User(
   updateAt: Option[LocalDateTime] = None
 ) extends BaseInfo {
 
-  def login(pwd: String, jwt: JWTCookieDataCodec): String =
+  def login(pwd: String, jwt: JWTCookieDataCodec): Either[Errors, String] =
     Try(BCrypt.checkpw(pwd, password)) match {
-      case Success(res) if res => jwt.encode(Map(Constant.userId -> id.toString))
-      case _                   => throw new BizException(ResponseCode.LOGIN_FAILED)
+      case Success(res) if res => Right(jwt.encode(Map(Constant.userId -> id.toString)))
+      case _                   => Left(LOGIN_FAILED)
     }
 
 }

@@ -1,12 +1,13 @@
 package common.actions
 
-import auth.domain.{User, UserRepository}
-import common.{Constant, ResponseCode, ResultHelper}
+import auth.domain.{ User, UserRepository }
+import common.result.{ NO_USER, TOKEN_CHECK_ERROR }
+import common.{ Constant, ResultHelper }
 import play.api.mvc.Results.Ok
 import play.api.mvc._
 
 import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.{ ExecutionContext, Future }
 
 case class UserRequest[A](user: User, request: Request[A]) extends WrappedRequest(request)
 
@@ -18,9 +19,9 @@ class UserAction @Inject() (parser: BodyParsers.Default, userRepository: UserRep
       case Some(userId) =>
         userRepository.findById(userId).flatMap {
           case Some(user) => block.apply(UserRequest(user, request))
-          case None       => Future.successful(Ok(ResultHelper.fail(ResponseCode.NO_USER)))
+          case None       => Future.successful(Ok(ResultHelper.fail(NO_USER)))
         }
-      case None => Future.successful(Ok(ResultHelper.fail(ResponseCode.TOKEN_CHECK_ERROR)))
+      case None => Future.successful(Ok(ResultHelper.fail(TOKEN_CHECK_ERROR)))
     }
 
   override def parser: BodyParser[AnyContent] = parser

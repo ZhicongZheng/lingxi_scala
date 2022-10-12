@@ -9,7 +9,7 @@ object Dependencies {
     val config = "1.4.2"
     val scalaTest = "5.1.0"
     val playJson = "2.9.3"
-    val slick = "5.0.2"
+    val slick = "5.1.0"
     val postgresql = "42.5.0"
     val bcrypt = "0.4"
     val tapir = "1.1.2"
