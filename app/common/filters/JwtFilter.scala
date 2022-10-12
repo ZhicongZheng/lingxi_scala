@@ -2,16 +2,16 @@ package common.filters
 
 import akka.stream.Materializer
 import common.Constant
-import common.filters.JwtFilter.{ bearerLen, failureResult, noAuthRoute }
+import common.filters.JwtFilter.{bearerLen, failureResult, noAuthRoute}
+import common.result.TOKEN_CHECK_ERROR
 import play.api.Logging
 import play.api.http.HeaderNames
-import play.api.mvc.Results.Unauthorized
 import play.api.mvc._
 
 import java.util.regex.Pattern
 import javax.inject.Inject
-import scala.concurrent.{ ExecutionContext, Future }
-import scala.util.{ Success, Try }
+import scala.concurrent.{ExecutionContext, Future}
+import scala.util.{Success, Try}
 
 /** jwt 过滤器
  */
@@ -25,7 +25,7 @@ class JwtFilter @Inject() (sessionCookieBaker: DefaultSessionCookieBaker)(implic
 
   override def apply(f: RequestHeader => Future[Result])(rh: RequestHeader): Future[Result] = {
     val path = rh.path
-    if (noAuthRoute.exists(p => p.matcher(path).find())) {
+    if ( "/" == path || noAuthRoute.exists(p => p.matcher(path).find())) {
       return f.apply(rh)
     }
 
@@ -49,11 +49,10 @@ class JwtFilter @Inject() (sessionCookieBaker: DefaultSessionCookieBaker)(implic
 
 object JwtFilter {
   val noAuthRoute: Seq[Pattern] = Seq(
-    Pattern.compile("/"),
-    Pattern.compile("/admin/login"),
+    Pattern.compile("/users/login"),
     Pattern.compile("/docs/*"),
     Pattern.compile("/*.ico")
   )
   val bearerLen: Int                = "Bearer ".length
-  val failureResult: Future[Result] = Future.successful(Unauthorized("Invalid credential"))
+  val failureResult: Future[Result] = Future.successful(common.Results.fail(TOKEN_CHECK_ERROR))
 }

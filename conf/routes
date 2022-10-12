@@ -2,10 +2,6 @@
 
 GET     /                            controllers.Default.redirect(to = "./docs/")
 
-GET     /users                       auth.controller.UserController.getAll
+POST    /users/login                 auth.controller.AuthWriteController.login
 
-GET     /users/:userId               auth.controller.UserController.getById(userId: Long)
-
-POST    /admin/login                 auth.controller.AuthWriteController.login
-
-GET     /admin/currentUserInfo       auth.controller.AuthReadController.currentUserInfo
+GET     /users/current               auth.controller.AuthReadController.current

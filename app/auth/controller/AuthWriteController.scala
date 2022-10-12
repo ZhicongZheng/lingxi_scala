@@ -2,7 +2,7 @@ package auth.controller
 
 import auth.application.AuthApplicationService
 import auth.application.dto.LoginRequest
-import common.ResultHelper
+import common.Results
 import play.api.http.HeaderNames
 import play.api.mvc._
 
@@ -19,9 +19,9 @@ class AuthWriteController @Inject() (
     authApplicationService
       .login(request.body)
       .map {
-        case Left(error)   => Ok(ResultHelper.fail(error))
+        case Left(error)  => Results.fail(error)
         case Right(token) => Ok.withHeaders((HeaderNames.AUTHORIZATION, token))
       }
-      .recover(ex => InternalServerError(ResultHelper.fail(ex)))
+      .recover(ex => Results.fail(ex))
   }
 }

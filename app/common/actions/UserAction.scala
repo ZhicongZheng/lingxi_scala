@@ -2,8 +2,7 @@ package common.actions
 
 import auth.domain.{ User, UserRepository }
 import common.result.{ NO_USER, TOKEN_CHECK_ERROR }
-import common.{ Constant, ResultHelper }
-import play.api.mvc.Results.Ok
+import common.{ Constant, Results }
 import play.api.mvc._
 
 import javax.inject.Inject
@@ -19,9 +18,9 @@ class UserAction @Inject() (parser: BodyParsers.Default, userRepository: UserRep
       case Some(userId) =>
         userRepository.findById(userId).flatMap {
           case Some(user) => block.apply(UserRequest(user, request))
-          case None       => Future.successful(Ok(ResultHelper.fail(NO_USER)))
+          case None       => Future.successful(Results.fail(NO_USER))
         }
-      case None => Future.successful(Ok(ResultHelper.fail(TOKEN_CHECK_ERROR)))
+      case None => Future.successful(Results.fail(TOKEN_CHECK_ERROR))
     }
 
   override def parser: BodyParser[AnyContent] = parser
