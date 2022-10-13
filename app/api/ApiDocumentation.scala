@@ -17,7 +17,8 @@ class ApiDocumentation @Inject() (userEndpoints: UserEndpoints) {
   private val openApiDocs = OpenAPIDocsInterpreter().toOpenAPI(
     List(
       loginEndpoint,
-      currentUserEndpoint
+      currentUserEndpoint,
+      listByPageEndpoint
     ),
     openApiInfo
   )

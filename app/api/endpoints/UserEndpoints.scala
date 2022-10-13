@@ -1,7 +1,8 @@
 package api.endpoints
 
-import _root_.auth.application.dto.{ LoginRequest, UserDto }
-import sttp.model.{ HeaderNames, StatusCode }
+import _root_.auth.application.dto.{LoginRequest, UserDto}
+import common.PageDto
+import sttp.model.{HeaderNames, StatusCode}
 import sttp.tapir._
 import sttp.tapir.generic.auto.schemaForCaseClass
 import sttp.tapir.json.play.jsonBody
@@ -30,5 +31,12 @@ class UserEndpoints {
     .description("获取当前用户信息，包括基本信息/权限/角色等，但是不包括密码")
     .in("current")
     .out(jsonBody[UserDto])
+
+  val listByPageEndpoint = baseSecuredUserEndpoint
+    .name("listByPage")
+    .summary("分页获取用户")
+    .description("分页的方式获取用户列表，支持排序")
+    .in(query[Int]("page") / query[Int]("size") / query[Option[String]]("sort"))
+    .out(jsonBody[PageDto[UserDto]])
 
 }

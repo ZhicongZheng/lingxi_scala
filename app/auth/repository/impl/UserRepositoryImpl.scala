@@ -1,17 +1,18 @@
 package auth.repository.impl
 
-import auth.domain.{User, UserRepository}
+import auth.domain.{ User, UserRepository }
 import auth.repository.po.PermissionPo.PermissionTable
 import auth.repository.po.RolePo.RoleTable
 import auth.repository.po.UserPo
 import auth.repository.po.UserPo.UserTable
-import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfig}
+import common.{ PageDto, PageQuery }
+import play.api.db.slick.{ DatabaseConfigProvider, HasDatabaseConfig }
 import slick.jdbc.PostgresProfile
 import slick.jdbc.PostgresProfile.api._
 import slick.lifted.TableQuery
 
-import javax.inject.{Inject, Singleton}
-import scala.concurrent.{ExecutionContext, Future}
+import javax.inject.{ Inject, Singleton }
+import scala.concurrent.{ ExecutionContext, Future }
 
 @Singleton
 class UserRepositoryImpl @Inject() (dbConfigProvider: DatabaseConfigProvider)(implicit ec: ExecutionContext)
@@ -53,4 +54,12 @@ class UserRepositoryImpl @Inject() (dbConfigProvider: DatabaseConfigProvider)(im
     db.run(users.filter(_.id === id).delete.map(_.toLong))
 
   override def count(): Future[Int] = db.run(users.size.result)
+
+  override def listByPage(pageQuery: PageQuery): Future[PageDto[User]] =
+    db.run {
+      for {
+        userPos <- users.drop(pageQuery.offset).take(pageQuery.limit).result
+        count   <- users.length.result
+      } yield PageDto(pageQuery.page, pageQuery.size, count, userPos.map(_.toDo))
+    }
 }

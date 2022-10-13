@@ -7,7 +7,7 @@ import play.api.mvc._
 
 object Results {
 
-  def success[T](data: T)(implicit tjs: Writes[T]): Result = Ok(Json.obj("code" -> 0, "data" -> Json.toJson(data)))
+  def success[T](data: T)(implicit tjs: Writes[T]): Result = Ok(Json.toJson(data))
 
   def fail(error: Errors): Result = error.httpStatus(Json.obj("code" -> error.code, "message" -> error.message))
 

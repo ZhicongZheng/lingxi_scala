@@ -1,7 +1,8 @@
 package auth.application
 
-import auth.application.dto.LoginRequest
+import auth.application.dto.{LoginRequest, UserDto}
 import auth.domain.UserRepository
+import common.{PageDto, PageQuery}
 import common.result.{Errors, NO_USER}
 import play.api.mvc.{DefaultSessionCookieBaker, JWTCookieDataCodec}
 
@@ -22,5 +23,7 @@ class AuthApplicationService @Inject() (
       case Some(user) => user.login(loginRequest.password, jwt)
       case None       => Left(NO_USER)
     }
+
+  def listByPage(pageQuery: PageQuery): Future[PageDto[UserDto]] = userRepository.listByPage(pageQuery).map(_.map(UserDto.fromDo))
 
 }
