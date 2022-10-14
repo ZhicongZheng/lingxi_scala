@@ -13,7 +13,7 @@ final case class RolePo(
   createBy: Long = 0L,
   updateBy: Long = 0L,
   createAt: LocalDateTime = LocalDateTime.now(),
-  updateAt: Option[LocalDateTime] = None
+  updateAt: LocalDateTime = LocalDateTime.now()
 ) extends BaseInfo
     with BasePo[Role] {
 
@@ -36,7 +36,8 @@ object RolePo {
 
     def createAt = column[LocalDateTime]("create_at")
 
-    def updateAt = column[Option[LocalDateTime]]("update_at")
+    def updateAt = column[LocalDateTime]("update_at")
+
 
     override def * =
       (id, code, name, createBy, updateBy, createAt, updateAt) <> ((RolePo.apply _).tupled, RolePo.unapply)

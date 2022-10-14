@@ -19,7 +19,7 @@ final case class User(
   createBy: Long = 0L,
   updateBy: Long = 0L,
   createAt: LocalDateTime = LocalDateTime.now(),
-  updateAt: Option[LocalDateTime] = None
+  updateAt: LocalDateTime = LocalDateTime.now()
 ) extends BaseInfo {
 
   def login(pwd: String, jwt: JWTCookieDataCodec): Either[Errors, String] =

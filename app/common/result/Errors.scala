@@ -1,5 +1,6 @@
 package common.result
 
+import play.api.mvc
 import play.api.mvc.Results
 import play.api.mvc.Results.{ Status, _ }
 
@@ -19,3 +20,5 @@ case object LOGIN_FAILED extends Errors { val code = 10001; val message = "登�
 case object TOKEN_CHECK_ERROR extends Errors {
   val code = 10004; val message = "登录状态校验失败，请重新登录！"; override val httpStatus: Results.Status = Unauthorized
 }
+
+case object USER_EXIST extends Errors { val code = 10005; val message = "用户名已存在"; override val httpStatus: mvc.Results.Status = Conflict }

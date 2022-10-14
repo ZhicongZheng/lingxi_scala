@@ -14,6 +14,6 @@ trait BaseInfo {
 
   def createAt: LocalDateTime
 
-  def updateAt(): Option[LocalDateTime]
+  def updateAt(): LocalDateTime
 
 }

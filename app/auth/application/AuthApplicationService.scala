@@ -1,12 +1,12 @@
 package auth.application
 
-import auth.application.dto.{LoginRequest, UserDto}
+import auth.application.dto.{ CreateUserRequest, LoginRequest, UserDto }
 import auth.domain.UserRepository
-import common.{PageDto, PageQuery}
-import common.result.{Errors, NO_USER}
-import play.api.mvc.{DefaultSessionCookieBaker, JWTCookieDataCodec}
+import common.result.{ Errors, NO_USER, USER_EXIST }
+import common.{ PageDto, PageQuery }
+import play.api.mvc.{ DefaultSessionCookieBaker, JWTCookieDataCodec }
 
-import javax.inject.{Inject, Singleton}
+import javax.inject.{ Inject, Singleton }
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
@@ -25,5 +25,14 @@ class AuthApplicationService @Inject() (
     }
 
   def listByPage(pageQuery: PageQuery): Future[PageDto[UserDto]] = userRepository.listByPage(pageQuery).map(_.map(UserDto.fromDo))
+
+  def deleteUser(id: Int): Future[Int] = userRepository.delete(id)
+
+  def createUser(request: CreateUserRequest): Future[Either[Errors, Long]] =
+    userRepository.findByUsername(request.username) flatMap {
+      case Some(_) => Future.successful(Left(USER_EXIST))
+      case None =>
+        userRepository.create(request).map(id => Right(id))
+    }
 
 }

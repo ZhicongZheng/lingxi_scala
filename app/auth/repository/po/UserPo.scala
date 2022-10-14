@@ -15,7 +15,7 @@ final case class UserPo(
   createBy: Long = 0L,
   updateBy: Long = 0L,
   createAt: LocalDateTime = LocalDateTime.now(),
-  updateAt: Option[LocalDateTime] = None
+  updateAt: LocalDateTime = LocalDateTime.now()
 ) extends BaseInfo
     with BasePo[User] {
 
@@ -47,7 +47,8 @@ object UserPo {
 
     def createAt = column[LocalDateTime]("create_at")
 
-    def updateAt = column[Option[LocalDateTime]]("update_at")
+    def updateAt = column[LocalDateTime]("update_at")
+
 
     override def * = (
       id,

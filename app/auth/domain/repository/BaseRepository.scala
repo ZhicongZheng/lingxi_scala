@@ -12,10 +12,10 @@ trait BaseRepository[T <: BaseInfo] {
 
   def count(): Future[Int]
 
-  def create(d: T): Future[T]
+  def create(d: T): Future[Long]
 
-  def update(d: T): Future[Long]
+  def update(d: T): Future[Int]
 
-  def delete(id: Long): Future[Long]
+  def delete(id: Long): Future[Int]
 
 }

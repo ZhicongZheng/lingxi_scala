@@ -2,7 +2,7 @@ package auth.repository.impl
 
 import auth.domain.{ User, UserRepository }
 import auth.repository.po.PermissionPo.PermissionTable
-import auth.repository.po.RolePo.RoleTable
+import auth.repository.po.RolePo.{ RoleTable, UserRoleTable }
 import auth.repository.po.UserPo
 import auth.repository.po.UserPo.UserTable
 import common.{ PageDto, PageQuery }
@@ -25,6 +25,8 @@ class UserRepositoryImpl @Inject() (dbConfigProvider: DatabaseConfigProvider)(im
 
   private val roles = TableQuery[RoleTable]
 
+  private val userRoles = TableQuery[UserRoleTable]
+
   private val permissions = TableQuery[PermissionTable]
 
   override def findById(id: Long): Future[Option[User]] =
@@ -36,22 +38,26 @@ class UserRepositoryImpl @Inject() (dbConfigProvider: DatabaseConfigProvider)(im
   override def findByUsername(username: String): Future[Option[User]] =
     db.run(users.filter(_.username === username).result.headOption).map(userPoOpt => userPoOpt.map(po => po.toDo))
 
-  override def create(user: User): Future[User] = {
+  override def create(user: User): Future[Long] = {
     val po = UserPo.fromDo(user)
-    db.run(users += po).map(_ => user.copy(id = po.id))
+    db.run((users returning users.map(_.id)) += po)
   }
 
-  override def update(user: User): Future[Long] =
+  override def update(user: User): Future[Int] =
     db.run(
       users
         .filter(_.id === user.id)
         .map(u => (u.username, u.updateAt))
         .update(user.username, user.updateAt)
-        .map(_.toLong)
     )
 
-  override def delete(id: Long): Future[Long] =
-    db.run(users.filter(_.id === id).delete.map(_.toLong))
+  override def delete(id: Long): Future[Int] =
+    db.run {
+      for {
+        delUserCount <- users.filter(_.id === id).delete
+        _            <- userRoles.filter(_.userId === id).delete
+      } yield delUserCount
+    }
 
   override def count(): Future[Int] = db.run(users.size.result)
 

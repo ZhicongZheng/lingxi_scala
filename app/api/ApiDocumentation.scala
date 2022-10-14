@@ -18,7 +18,9 @@ class ApiDocumentation @Inject() (userEndpoints: UserEndpoints) {
     List(
       loginEndpoint,
       currentUserEndpoint,
-      listByPageEndpoint
+      listByPageEndpoint,
+      deleteUserEndpoint,
+      createUserEndpoint
     ),
     openApiInfo
   )

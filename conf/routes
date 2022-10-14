@@ -7,3 +7,7 @@ POST        /users/login          auth.controller.AuthWriteController.login
 GET         /users/current        auth.controller.AuthReadController.current
 
 GET         /users                auth.controller.AuthReadController.listByPage(page: Int ?= 1,size: Int ?= 10, sort: Option[String])
+
+DELETE      /users/$id<[0-9]+>    auth.controller.AuthWriteController.deleteUser(id: Int)
+
+POST        /users                auth.controller.AuthWriteController.createUser
