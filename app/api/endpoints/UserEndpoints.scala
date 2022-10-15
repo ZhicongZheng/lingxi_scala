@@ -1,20 +1,19 @@
 package api.endpoints
 
-import _root_.auth.application.dto.{CreateUserRequest, LoginRequest, UserDto}
+import _root_.auth.application.dto.{ CreateUserRequest, LoginRequest, UserDto }
 import common.PageDto
-import sttp.model.{HeaderNames, StatusCode}
+import sttp.model.{ HeaderNames, StatusCode }
 import sttp.tapir._
 import sttp.tapir.generic.auto.schemaForCaseClass
 import sttp.tapir.json.play.jsonBody
 
-import javax.inject.Singleton
-
-@Singleton
-class UserEndpoints {
+object UserEndpoints {
 
   private val baseUserEndpoint = endpoint.in("users").tag("Users API")
 
   private val baseSecuredUserEndpoint = securedWithBearerEndpoint.in("users").tag("Users API")
+
+  val endpoints = List(loginEndpoint, currentUserEndpoint, listByPageEndpoint, deleteUserEndpoint, createUserEndpoint)
 
   val loginEndpoint = baseUserEndpoint.post
     .name("login")
@@ -55,6 +54,3 @@ class UserEndpoints {
     .out(jsonBody[Long])
 
 }
-
-
-
