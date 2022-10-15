@@ -1,7 +1,7 @@
 package auth.controller
 
 import auth.application.AuthApplicationService
-import auth.application.dto.{ CreateUserRequest, LoginRequest }
+import auth.application.dto.{ ChangePasswordRequest, CreateUserRequest, LoginRequest }
 import common.Results
 import common.actions.UserAction
 import play.api.http.HeaderNames
@@ -40,5 +40,12 @@ class AuthWriteController @Inject() (
         case Right(userId) => Created(Json.toJson(userId))
       }
       .recover(ex => Results.fail(ex))
+  }
+
+  def changePwd = authedAction(parse.json[ChangePasswordRequest]) async { request =>
+    authApplicationService.changePwd(request.user.id, request.body) map {
+      case Left(error) => Results.fail(error)
+      case Right(_)    => Ok
+    }
   }
 }

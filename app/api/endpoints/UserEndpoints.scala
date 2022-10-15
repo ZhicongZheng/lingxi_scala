@@ -1,6 +1,6 @@
 package api.endpoints
 
-import _root_.auth.application.dto.{ CreateUserRequest, LoginRequest, UserDto }
+import _root_.auth.application.dto.{ ChangePasswordRequest, CreateUserRequest, LoginRequest, UserDto }
 import common.PageDto
 import sttp.model.{ HeaderNames, StatusCode }
 import sttp.tapir._
@@ -12,8 +12,6 @@ object UserEndpoints {
   private val baseUserEndpoint = endpoint.in("users").tag("Users API")
 
   private val baseSecuredUserEndpoint = securedWithBearerEndpoint.in("users").tag("Users API")
-
-  val endpoints = List(loginEndpoint, currentUserEndpoint, listByPageEndpoint, deleteUserEndpoint, createUserEndpoint)
 
   val loginEndpoint = baseUserEndpoint.post
     .name("login")
@@ -52,5 +50,14 @@ object UserEndpoints {
     .in(jsonBody[CreateUserRequest])
     .out(statusCode(StatusCode.Created))
     .out(jsonBody[Long])
+
+  val changePwdEndpoint = baseSecuredUserEndpoint.put
+    .name("changeUserPwd")
+    .summary("修改密码")
+    .description("当前登陆用户修改密码")
+    .in("password")
+    .in(jsonBody[ChangePasswordRequest])
+    .out(statusCode(StatusCode.Ok))
+    .errorOut(jsonBody[ErrorMessage])
 
 }

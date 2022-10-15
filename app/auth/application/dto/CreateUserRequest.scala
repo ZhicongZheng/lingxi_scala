@@ -13,5 +13,5 @@ object CreateUserRequest {
 
   implicit val format = Json.format[CreateUserRequest]
 
-  implicit def requestToDo(request: CreateUserRequest): User = User(-1, request.username, request.password, request.avatar, request.nickName)
+  implicit def requestToDo(request: CreateUserRequest): User = User.create(request.username, request.password, request.avatar, request.nickName)
 }

@@ -2,6 +2,6 @@ package auth.repository.po
 
 trait BasePo[T] {
 
-  def toDo: T
+   implicit def toDo: T
 
 }

@@ -1,6 +1,6 @@
 package auth.repository.po
 
-import auth.domain.{BaseInfo, Permission}
+import auth.domain.{ BaseInfo, Permission }
 import slick.jdbc.PostgresProfile.api._
 import slick.lifted.Tag
 
@@ -17,7 +17,7 @@ final case class PermissionPo(
 ) extends BaseInfo
     with BasePo[Permission] {
 
-  override def toDo: Permission = Permission(id, `type`, value, None, createBy, updateBy, createAt, updateAt)
+  implicit override def toDo: Permission = Permission(id, `type`, value, None, createBy, updateBy, createAt, updateAt)
 }
 
 object PermissionPo {

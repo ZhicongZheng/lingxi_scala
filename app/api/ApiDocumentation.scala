@@ -5,7 +5,7 @@ import sttp.apispec.openapi.Info
 import sttp.apispec.openapi.circe.yaml.RichOpenAPI
 import sttp.tapir.docs.openapi.OpenAPIDocsInterpreter
 
-import javax.inject.{Inject, Singleton}
+import javax.inject.Singleton
 
 @Singleton
 class ApiDocumentation {
@@ -20,6 +20,7 @@ class ApiDocumentation {
       UserEndpoints.listByPageEndpoint,
       UserEndpoints.deleteUserEndpoint,
       UserEndpoints.createUserEndpoint,
+      UserEndpoints.changePwdEndpoint,
       FileEndpoints.uploadEndpoint
     ),
     openApiInfo

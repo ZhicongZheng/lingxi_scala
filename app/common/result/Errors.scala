@@ -23,4 +23,6 @@ case object TOKEN_CHECK_ERROR extends Errors {
 
 case object USER_EXIST extends Errors { val code = 10005; val message = "用户名已存在"; override val httpStatus: mvc.Results.Status = Conflict }
 
-case object FILE_EMPTY extends Errors{ val code = 10006; val message = "上传文件为空"}
+case object FILE_EMPTY extends Errors{ val code = 10006; val message = "上传文件为空" }
+
+case object OLD_PWD_ERROR extends Errors{ val code = 10007; val message = "旧密码错误" }

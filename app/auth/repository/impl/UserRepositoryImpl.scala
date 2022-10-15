@@ -11,6 +11,7 @@ import slick.jdbc.PostgresProfile
 import slick.jdbc.PostgresProfile.api._
 import slick.lifted.TableQuery
 
+import java.time.LocalDateTime
 import javax.inject.{ Inject, Singleton }
 import scala.concurrent.{ ExecutionContext, Future }
 
@@ -44,12 +45,7 @@ class UserRepositoryImpl @Inject() (dbConfigProvider: DatabaseConfigProvider)(im
   }
 
   override def update(user: User): Future[Int] =
-    db.run(
-      users
-        .filter(_.id === user.id)
-        .map(u => (u.username, u.updateAt))
-        .update(user.username, user.updateAt)
-    )
+    db.run(users.filter(_.id === user.id).update(user.copy(updateAt = LocalDateTime.now())))
 
   override def delete(id: Long): Future[Int] =
     db.run {

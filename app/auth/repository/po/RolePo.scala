@@ -17,7 +17,7 @@ final case class RolePo(
 ) extends BaseInfo
     with BasePo[Role] {
 
-  override def toDo: Role = Role(id, code, name, None, None, createBy, updateBy, createAt, updateAt)
+  implicit override def toDo: Role = Role(id, code, name, None, None, createBy, updateBy, createAt, updateAt)
 }
 
 object RolePo {

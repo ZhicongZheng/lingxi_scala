@@ -1,8 +1,8 @@
 package auth.application
 
-import auth.application.dto.{ CreateUserRequest, LoginRequest, UserDto }
-import auth.domain.UserRepository
-import common.result.{ Errors, NO_USER, USER_EXIST }
+import auth.application.dto.{ ChangePasswordRequest, CreateUserRequest, LoginRequest, UserDto }
+import auth.domain.{ User, UserRepository }
+import common.result.{ Errors, NO_USER, OLD_PWD_ERROR, USER_EXIST }
 import common.{ PageDto, PageQuery }
 import play.api.mvc.{ DefaultSessionCookieBaker, JWTCookieDataCodec }
 
@@ -31,8 +31,16 @@ class AuthApplicationService @Inject() (
   def createUser(request: CreateUserRequest): Future[Either[Errors, Long]] =
     userRepository.findByUsername(request.username) flatMap {
       case Some(_) => Future.successful(Left(USER_EXIST))
-      case None =>
-        userRepository.create(request).map(id => Right(id))
+      case None    => userRepository.create(request).map(id => Right(id))
+    }
+
+  def changePwd(userId: Long, request: ChangePasswordRequest): Future[Either[Errors, Unit]] =
+    userRepository.findById(userId) flatMap {
+      case None => Future.successful(Left(NO_USER))
+      case Some(user) =>
+        if (user.checkPwd(request.oldPassword)) {
+          userRepository.update(user.copy(password = User.entryPwd(request.newPassword))).map(_ => Right())
+        } else Future.successful(Left(OLD_PWD_ERROR))
     }
 
 }

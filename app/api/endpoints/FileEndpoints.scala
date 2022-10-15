@@ -2,14 +2,13 @@ package api.endpoints
 
 import sttp.model.{Part, StatusCode}
 import sttp.tapir._
+//can not delete
 import sttp.tapir.generic.auto._
 
 object FileEndpoints {
   private val baseEndpoint = securedWithBearerEndpoint.in("files").tag("File API")
 
   final case class MultipartInput(file: Part[TapirFile]) extends Serializable
-
-  val endpoints = List(uploadEndpoint)
 
   val uploadEndpoint = baseEndpoint.post
     .name("fileUpload")

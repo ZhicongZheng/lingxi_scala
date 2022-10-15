@@ -12,4 +12,6 @@ DELETE      /users/$id<[0-9]+>    auth.controller.AuthWriteController.deleteUser
 
 POST        /users                auth.controller.AuthWriteController.createUser
 
+PUT         /users/password   auth.controller.AuthWriteController.changePwd
+
 POST        /files/upload          controller.FileController.upload

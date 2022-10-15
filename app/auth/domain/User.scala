@@ -28,4 +28,15 @@ final case class User(
       case _                   => Left(LOGIN_FAILED)
     }
 
+  def checkPwd(oldPassword: String): Boolean = Try(BCrypt.checkpw(oldPassword, password)).getOrElse(false)
+
+}
+
+object User {
+
+  def create(username: String, password: String, avatar: String, nickName: String): User = {
+    User(-1, username, entryPwd(password), avatar, nickName)
+  }
+
+  def entryPwd(password: String): String = BCrypt.hashpw(password, BCrypt.gensalt())
 }
