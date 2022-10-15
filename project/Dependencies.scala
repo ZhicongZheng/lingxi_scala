@@ -13,6 +13,7 @@ object Dependencies {
     val postgresql = "42.5.0"
     val bcrypt = "0.4"
     val tapir = "1.1.2"
+    val aliyunOss = "3.15.2"
   }
 
   object Compiles {
@@ -35,6 +36,8 @@ object Dependencies {
 
     lazy val postgresql = "org.postgresql" % "postgresql" % Versions.postgresql
 
+    val aliyunOss = "com.aliyun.oss" % "aliyun-sdk-oss" % "3.15.2"
+
     lazy val scalaTest = "org.scalatestplus.play" %% "scalatestplus-play" % Versions.scalaTest % Test
 
   }
@@ -42,6 +45,6 @@ object Dependencies {
   import Compiles._
 
   lazy val dependencies: Setting[Seq[ModuleID]] =
-    libraryDependencies ++= Seq(config, postgresql, guice, bcrypt, scalaTest) ++ play ++ tapir
+    libraryDependencies ++= Seq(config, postgresql, guice, bcrypt, aliyunOss, scalaTest) ++ play ++ tapir
 
 }

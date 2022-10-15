@@ -11,3 +11,5 @@ GET         /users                auth.controller.AuthReadController.listByPage(
 DELETE      /users/$id<[0-9]+>    auth.controller.AuthWriteController.deleteUser(id: Int)
 
 POST        /users                auth.controller.AuthWriteController.createUser
+
+POST        /files/upload          controller.FileController.upload
