@@ -1,12 +1,12 @@
 package auth.domain
 
 import common.Constant
-import common.result.{ Errors, LOGIN_FAILED }
+import common.result.{Errors, LOGIN_FAILED}
 import org.mindrot.jbcrypt.BCrypt
 import play.api.mvc.JWTCookieDataCodec
 
 import java.time.LocalDateTime
-import scala.util.{ Success, Try }
+import scala.util.{Success, Try}
 
 final case class User(
   id: Long,

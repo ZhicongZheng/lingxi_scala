@@ -2,7 +2,7 @@ package common.filters
 
 import akka.stream.Materializer
 import common.Constant
-import common.filters.AuthenticationFilter.{ bearerLen, failureResult, noAuthRoute }
+import common.filters.AuthenticationFilter.{bearerLen, failureResult, noAuthRoute}
 import common.result.TOKEN_CHECK_ERROR
 import play.api.Logging
 import play.api.http.HeaderNames
@@ -10,8 +10,8 @@ import play.api.mvc._
 
 import java.util.regex.Pattern
 import javax.inject.Inject
-import scala.concurrent.{ ExecutionContext, Future }
-import scala.util.{ Success, Try }
+import scala.concurrent.{ExecutionContext, Future}
+import scala.util.{Success, Try}
 
 /** 认证过滤器，使用JWT bearer token
  */

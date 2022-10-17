@@ -1,14 +1,14 @@
 package common.actions
 
-import auth.domain.repository.{ PermissionRepository, RoleRepository, UserRepository }
+import auth.domain.repository.{PermissionRepository, RoleRepository, UserRepository}
 import common.Constant
-import common.actions.AuthorizedRequest.{ failureResult, parsePermission }
+import common.actions.AuthorizedRequest.{failureResult, parsePermission}
 import common.result.PERMISSION_DENIED
-import play.api.mvc.{ ActionRefiner, BodyParsers, Result, WrappedRequest }
-import play.api.routing.{ HandlerDef, Router }
+import play.api.mvc.{ActionRefiner, BodyParsers, Result, WrappedRequest}
+import play.api.routing.{HandlerDef, Router}
 
-import javax.inject.{ Inject, Singleton }
-import scala.concurrent.{ ExecutionContext, Future }
+import javax.inject.{Inject, Singleton}
+import scala.concurrent.{ExecutionContext, Future}
 
 case class AuthorizedRequest[A](request: UserRequest[A]) extends WrappedRequest(request)
 

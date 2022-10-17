@@ -1,13 +1,13 @@
 package auth.application
 
-import auth.application.dto.{ ChangePasswordRequest, CreateUserRequest, LoginRequest, UserDto }
+import auth.application.dto.{ChangePasswordRequest, CreateUserRequest, LoginRequest, UserDto}
 import auth.domain.User
 import auth.domain.repository.UserRepository
-import common.result.{ Errors, NO_USER, OLD_PWD_ERROR, USER_EXIST }
-import common.{ PageDto, PageQuery }
-import play.api.mvc.{ DefaultSessionCookieBaker, JWTCookieDataCodec }
+import common.result.{Errors, NO_USER, OLD_PWD_ERROR, USER_EXIST}
+import common.{PageDto, PageQuery}
+import play.api.mvc.{DefaultSessionCookieBaker, JWTCookieDataCodec}
 
-import javax.inject.{ Inject, Singleton }
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
@@ -40,7 +40,7 @@ class AuthApplicationService @Inject() (
       case None => Future.successful(Left(NO_USER))
       case Some(user) =>
         if (user.checkPwd(request.oldPassword)) {
-          userRepository.update(user.copy(password = User.entryPwd(request.newPassword))).map(_ => Right())
+          userRepository.update(user.copy(password = User.entryPwd(request.newPassword))).map(_ => Right(()))
         } else Future.successful(Left(OLD_PWD_ERROR))
     }
 

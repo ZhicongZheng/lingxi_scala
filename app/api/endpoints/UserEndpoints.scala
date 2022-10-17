@@ -1,8 +1,8 @@
 package api.endpoints
 
-import _root_.auth.application.dto.{ ChangePasswordRequest, CreateUserRequest, LoginRequest, UserDto }
+import _root_.auth.application.dto.{ChangePasswordRequest, CreateUserRequest, LoginRequest, UserDto}
 import common.PageDto
-import sttp.model.{ HeaderNames, StatusCode }
+import sttp.model.{HeaderNames, StatusCode}
 import sttp.tapir._
 import sttp.tapir.generic.auto.schemaForCaseClass
 import sttp.tapir.json.play.jsonBody

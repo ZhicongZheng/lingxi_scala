@@ -1,6 +1,6 @@
 package auth.repository.po
 
-import auth.domain.{ BaseInfo, Permission }
+import auth.domain.{BaseInfo, Permission}
 import slick.jdbc.PostgresProfile.api._
 import slick.lifted.Tag
 

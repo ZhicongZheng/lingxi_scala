@@ -2,7 +2,7 @@ package common.result
 
 import play.api.mvc
 import play.api.mvc.Results
-import play.api.mvc.Results.{ Status, _ }
+import play.api.mvc.Results.{Status, _}
 
 trait Errors {
 
@@ -27,6 +27,6 @@ case object PERMISSION_DENIED extends Errors {
 
 case object USER_EXIST extends Errors { val code = 10005; val message = "用户名已存在"; override val httpStatus: mvc.Results.Status = Conflict }
 
-case object FILE_EMPTY extends Errors{ val code = 10006; val message = "上传文件为空" }
+case object FILE_EMPTY extends Errors { val code = 10006; val message = "上传文件为空" }
 
-case object OLD_PWD_ERROR extends Errors{ val code = 10007; val message = "旧密码错误" }
+case object OLD_PWD_ERROR extends Errors { val code = 10007; val message = "旧密码错误" }

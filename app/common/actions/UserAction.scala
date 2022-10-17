@@ -2,12 +2,12 @@ package common.actions
 
 import auth.domain.User
 import auth.domain.repository.UserRepository
-import common.result.{ NO_USER, TOKEN_CHECK_ERROR }
-import common.{ Constant, Results }
+import common.result.{NO_USER, TOKEN_CHECK_ERROR}
+import common.{Constant, Results}
 import play.api.mvc._
 
-import javax.inject.{ Inject, Singleton }
-import scala.concurrent.{ ExecutionContext, Future }
+import javax.inject.{Inject, Singleton}
+import scala.concurrent.{ExecutionContext, Future}
 
 case class UserRequest[A](user: User, request: Request[A]) extends WrappedRequest(request)
 

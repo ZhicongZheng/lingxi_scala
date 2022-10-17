@@ -2,14 +2,14 @@ package auth.repository.impl
 
 import auth.domain.Permission
 import auth.domain.repository.PermissionRepository
-import auth.repository.po.PermissionPo.{ PermissionTable, RolePermissionTable }
-import play.api.db.slick.{ DatabaseConfigProvider, HasDatabaseConfig }
+import auth.repository.po.PermissionPo.{PermissionTable, RolePermissionTable}
+import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfig}
 import slick.jdbc.PostgresProfile
 import slick.jdbc.PostgresProfile.api._
 import slick.lifted.TableQuery
 
-import javax.inject.{ Inject, Singleton }
-import scala.concurrent.{ ExecutionContext, Future }
+import javax.inject.{Inject, Singleton}
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class PermissionRepositoryImpl @Inject() (dbConfigProvider: DatabaseConfigProvider)(implicit ec: ExecutionContext)

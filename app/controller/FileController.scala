@@ -4,10 +4,10 @@ import common.Results
 import common.actions.UserAction
 import common.oss.OssRepository
 import common.result.FILE_EMPTY
-import play.api.mvc.{ ControllerComponents, InjectedController }
+import play.api.mvc.{ControllerComponents, InjectedController}
 
 import java.io.FileInputStream
-import javax.inject.{ Inject, Singleton }
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 

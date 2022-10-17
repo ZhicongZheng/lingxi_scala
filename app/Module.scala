@@ -1,7 +1,7 @@
-import auth.domain.repository.{ PermissionRepository, RoleRepository, UserRepository }
-import auth.repository.impl.{ PermissionRepositoryImpl, RoleRepositoryImpl, UserRepositoryImpl }
-import com.google.inject.{ AbstractModule, Singleton }
-import common.oss.{ AliyunOssRepository, OssRepository }
+import auth.domain.repository.{PermissionRepository, RoleRepository, UserRepository}
+import auth.repository.impl.{PermissionRepositoryImpl, RoleRepositoryImpl, UserRepositoryImpl}
+import com.google.inject.{AbstractModule, Singleton}
+import common.oss.{AliyunOssRepository, OssRepository}
 
 class Module extends AbstractModule {
 

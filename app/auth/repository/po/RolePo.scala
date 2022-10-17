@@ -38,7 +38,6 @@ object RolePo {
 
     def updateAt = column[LocalDateTime]("update_at")
 
-
     override def * =
       (id, code, name, createBy, updateBy, createAt, updateAt) <> ((RolePo.apply _).tupled, RolePo.unapply)
   }

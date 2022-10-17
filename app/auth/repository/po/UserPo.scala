@@ -50,7 +50,6 @@ object UserPo {
 
     def updateAt = column[LocalDateTime]("update_at")
 
-
     override def * = (
       id,
       username,

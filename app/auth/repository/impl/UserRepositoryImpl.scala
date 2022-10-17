@@ -3,18 +3,18 @@ package auth.repository.impl
 import auth.domain.User
 import auth.domain.repository.UserRepository
 import auth.repository.po.PermissionPo.PermissionTable
-import auth.repository.po.RolePo.{ RoleTable, UserRoleTable }
+import auth.repository.po.RolePo.{RoleTable, UserRoleTable}
 import auth.repository.po.UserPo
 import auth.repository.po.UserPo.UserTable
-import common.{ PageDto, PageQuery }
-import play.api.db.slick.{ DatabaseConfigProvider, HasDatabaseConfig }
+import common.{PageDto, PageQuery}
+import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfig}
 import slick.jdbc.PostgresProfile
 import slick.jdbc.PostgresProfile.api._
 import slick.lifted.TableQuery
 
 import java.time.LocalDateTime
-import javax.inject.{ Inject, Singleton }
-import scala.concurrent.{ ExecutionContext, Future }
+import javax.inject.{Inject, Singleton}
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class UserRepositoryImpl @Inject() (dbConfigProvider: DatabaseConfigProvider)(implicit ec: ExecutionContext)

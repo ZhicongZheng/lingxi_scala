@@ -1,6 +1,6 @@
 package auth.domain.repository
 
-import auth.domain.{ BaseInfo, Role }
+import auth.domain.{BaseInfo, Role}
 
 import scala.concurrent.Future
 

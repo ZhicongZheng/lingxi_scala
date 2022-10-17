@@ -3,11 +3,11 @@ package api
 import akka.stream.Materializer
 import play.api.routing.Router.Routes
 import play.api.routing.SimpleRouter
-import sttp.tapir.server.play.{ PlayServerInterpreter, PlayServerOptions }
+import sttp.tapir.server.play.{PlayServerInterpreter, PlayServerOptions}
 import sttp.tapir.swagger.SwaggerUI
 
-import javax.inject.{ Inject, Singleton }
-import scala.concurrent.{ ExecutionContext, Future }
+import javax.inject.{Inject, Singleton}
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class ApiRouter @Inject() (apiDocumentation: ApiDocumentation)(implicit

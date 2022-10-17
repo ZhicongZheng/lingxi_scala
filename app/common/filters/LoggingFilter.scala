@@ -2,10 +2,10 @@ package common.filters
 
 import akka.stream.Materializer
 import play.api.Logging
-import play.api.mvc.{ Filter, RequestHeader, Result }
+import play.api.mvc.{Filter, RequestHeader, Result}
 
 import javax.inject.Inject
-import scala.concurrent.{ ExecutionContext, Future }
+import scala.concurrent.{ExecutionContext, Future}
 
 /** 请求耗时过滤器
  */

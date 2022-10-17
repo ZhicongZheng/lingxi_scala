@@ -13,7 +13,7 @@ object Results extends Logging {
   def fail(error: Errors): Result = error.httpStatus(Json.obj("code" -> error.code, "message" -> error.message))
 
   def fail(ex: Throwable): Result = {
-    logger.error("",ex)
+    logger.error("", ex)
     InternalServerError(Json.obj("message" -> ex.getMessage))
   }
 

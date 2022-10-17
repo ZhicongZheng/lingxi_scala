@@ -1,14 +1,14 @@
 package common.oss
 
-import com.aliyun.oss.{ OSS, OSSClientBuilder }
-import play.api.{ Configuration, Logging }
+import com.aliyun.oss.{OSS, OSSClientBuilder}
+import play.api.{Configuration, Logging}
 
-import java.io.{ ByteArrayInputStream, ByteArrayOutputStream, InputStream }
-import java.util.zip.{ CRC32, CheckedInputStream }
-import javax.inject.{ Inject, Singleton }
+import java.io.{ByteArrayInputStream, ByteArrayOutputStream, InputStream}
+import java.util.zip.{CRC32, CheckedInputStream}
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
-import scala.util.{ Failure, Success, Try }
+import scala.util.{Failure, Success, Try}
 
 trait OssRepository {
 
@@ -23,11 +23,11 @@ trait OssRepository {
     val buffer                                 = Array.ofDim[Byte](1024)
     val checkedInputStream: CheckedInputStream = new CheckedInputStream(input, new CRC32)
     val outStream                              = new ByteArrayOutputStream()
-    def read:Int = checkedInputStream.read(buffer, 0 ,buffer.length)
+    def read: Int                              = checkedInputStream.read(buffer, 0, buffer.length)
 
     var len = read
-    while ( len > 1) {
-      outStream.write(buffer, 0 ,len)
+    while (len > 1) {
+      outStream.write(buffer, 0, len)
       len = read
     }
     outStream.flush()

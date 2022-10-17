@@ -10,11 +10,10 @@ object BizException {
 
   def apply(errCode: Int, errMsg: String): BizException = {
 
-    val err = Some(
-      new Errors {
-        override val code: Int       = errCode
-        override val message: String = errMsg
-      })
+    val err = Some(new Errors {
+      override val code: Int       = errCode
+      override val message: String = errMsg
+    })
     BizException(errCode, errMsg, err)
   }
 }

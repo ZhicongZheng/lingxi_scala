@@ -1,14 +1,14 @@
 package auth.controller
 
 import auth.application.AuthApplicationService
-import auth.application.dto.{ ChangePasswordRequest, CreateUserRequest, LoginRequest }
+import auth.application.dto.{ChangePasswordRequest, CreateUserRequest, LoginRequest}
 import common.Results
 import common.actions.UserAction
 import play.api.http.HeaderNames
 import play.api.libs.json.Json
 import play.api.mvc._
 
-import javax.inject.{ Inject, Singleton }
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext.Implicits.global
 
 @Singleton

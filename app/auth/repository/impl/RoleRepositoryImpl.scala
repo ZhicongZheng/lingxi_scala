@@ -1,15 +1,15 @@
 package auth.repository.impl
 
 import auth.domain.repository.RoleRepository
-import auth.domain.{ BaseInfo, Role }
-import auth.repository.po.RolePo.{ RoleTable, UserRoleTable }
-import play.api.db.slick.{ DatabaseConfigProvider, HasDatabaseConfig }
+import auth.domain.{BaseInfo, Role}
+import auth.repository.po.RolePo.{RoleTable, UserRoleTable}
+import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfig}
 import slick.jdbc.PostgresProfile
 import slick.jdbc.PostgresProfile.api._
 import slick.lifted.TableQuery
 
-import javax.inject.{ Inject, Singleton }
-import scala.concurrent.{ ExecutionContext, Future }
+import javax.inject.{Inject, Singleton}
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class RoleRepositoryImpl @Inject() (dbConfigProvider: DatabaseConfigProvider)(implicit ec: ExecutionContext)
