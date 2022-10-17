@@ -1,6 +1,7 @@
 package auth.repository.impl
 
-import auth.domain.{ User, UserRepository }
+import auth.domain.User
+import auth.domain.repository.UserRepository
 import auth.repository.po.PermissionPo.PermissionTable
 import auth.repository.po.RolePo.{ RoleTable, UserRoleTable }
 import auth.repository.po.UserPo

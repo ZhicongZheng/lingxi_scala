@@ -1,6 +1,6 @@
-package auth.domain
+package auth.domain.repository
 
-import auth.domain.repository.BaseRepository
+import auth.domain.User
 import common.{ PageDto, PageQuery }
 
 import scala.concurrent.Future

@@ -14,8 +14,8 @@ final case class User(
   password: String,
   avatar: String,
   nickName: String,
-  roles: Option[Seq[Role]] = None,
-  permissions: Option[Seq[Permission]] = None,
+  role: Option[Role] = None,
+  permissions: Seq[Permission] = Nil,
   createBy: Long = 0L,
   updateBy: Long = 0L,
   createAt: LocalDateTime = LocalDateTime.now(),
@@ -34,9 +34,8 @@ final case class User(
 
 object User {
 
-  def create(username: String, password: String, avatar: String, nickName: String): User = {
+  def create(username: String, password: String, avatar: String, nickName: String): User =
     User(-1, username, entryPwd(password), avatar, nickName)
-  }
 
   def entryPwd(password: String): String = BCrypt.hashpw(password, BCrypt.gensalt())
 }

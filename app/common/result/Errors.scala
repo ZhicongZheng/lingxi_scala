@@ -21,6 +21,10 @@ case object TOKEN_CHECK_ERROR extends Errors {
   val code = 10004; val message = "登录状态校验失败，请重新登录！"; override val httpStatus: Results.Status = Unauthorized
 }
 
+case object PERMISSION_DENIED extends Errors {
+  val code = 10004; val message = "权限不足"; override val httpStatus: Results.Status = Unauthorized
+}
+
 case object USER_EXIST extends Errors { val code = 10005; val message = "用户名已存在"; override val httpStatus: mvc.Results.Status = Conflict }
 
 case object FILE_EMPTY extends Errors{ val code = 10006; val message = "上传文件为空" }

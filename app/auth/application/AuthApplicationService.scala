@@ -1,7 +1,8 @@
 package auth.application
 
 import auth.application.dto.{ ChangePasswordRequest, CreateUserRequest, LoginRequest, UserDto }
-import auth.domain.{ User, UserRepository }
+import auth.domain.User
+import auth.domain.repository.UserRepository
 import common.result.{ Errors, NO_USER, OLD_PWD_ERROR, USER_EXIST }
 import common.{ PageDto, PageQuery }
 import play.api.mvc.{ DefaultSessionCookieBaker, JWTCookieDataCodec }

@@ -21,7 +21,7 @@ final case class UserPo(
     with BasePo[User] {
 
   implicit override def toDo: User =
-    User(id, username, password, avatar, nickName, None, None, createBy, updateBy, createAt, updateAt)
+    User(id, username, password, avatar, nickName, None, Nil, createBy, updateBy, createAt, updateAt)
 
 }
 

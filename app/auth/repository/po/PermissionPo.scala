@@ -49,7 +49,7 @@ object PermissionPo {
     ) <> ((PermissionPo.apply _).tupled, PermissionPo.unapply)
   }
 
-  class RolePermissionTable(tag: Tag) extends Table[(Long, Long, Long)](tag, "user_roles") {
+  class RolePermissionTable(tag: Tag) extends Table[(Long, Long, Long)](tag, "role_permissions") {
 
     def id = column[Long]("id", O.PrimaryKey)
 
