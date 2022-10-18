@@ -1,10 +1,9 @@
 package auth.application
 
-import auth.application.dto.{ChangePasswordRequest, CreateUserRequest, LoginRequest, UserDto}
+import auth.application.dto.{ChangePasswordRequest, CreateUserRequest, LoginRequest}
 import auth.domain.User
 import auth.domain.repository.UserRepository
 import common.result.{Errors, NO_USER, OLD_PWD_ERROR, USER_EXIST}
-import common.{PageDto, PageQuery}
 import play.api.mvc.{DefaultSessionCookieBaker, JWTCookieDataCodec}
 
 import javax.inject.{Inject, Singleton}
@@ -24,8 +23,6 @@ class AuthApplicationService @Inject() (
       case Some(user) => user.login(loginRequest.password, jwt)
       case None       => Left(NO_USER)
     }
-
-  def listByPage(pageQuery: PageQuery): Future[PageDto[UserDto]] = userRepository.listByPage(pageQuery).map(_.map(UserDto.fromDo))
 
   def deleteUser(id: Int): Future[Int] = userRepository.delete(id)
 
