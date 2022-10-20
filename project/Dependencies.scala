@@ -45,6 +45,6 @@ object Dependencies {
   import Compiles._
 
   lazy val dependencies: Setting[Seq[ModuleID]] =
-    libraryDependencies ++= Seq(config, postgresql, guice, bcrypt, aliyunOss, scalaTest) ++ play ++ tapir
+    libraryDependencies ++= Seq(config, ws , postgresql, guice, bcrypt, aliyunOss, scalaTest) ++ play ++ tapir
 
 }

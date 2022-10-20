@@ -14,7 +14,7 @@ case class RoleDto(
   updateBy: Long = 0L,
   createAt: LocalDateTime = LocalDateTime.now(),
   updateAt: LocalDateTime = LocalDateTime.now()
-) {}
+)
 
 object RoleDto {
 

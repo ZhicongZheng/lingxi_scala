@@ -51,4 +51,4 @@ INSERT INTO user_roles(user_id, role_id) VALUES (1, 1);
 
 INSERT INTO role_permissions(role_id, permission_id) VALUES (1, 1)
 
-INSERT INTO permissions(type, value) VALUES('function', 'auth.controller.AuthReadController.listByPage')
+INSERT INTO permissions(type, value) VALUES('api', 'auth.controller.AuthReadController.listByPage')

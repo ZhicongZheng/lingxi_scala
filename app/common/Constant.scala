@@ -6,6 +6,6 @@ object Constant {
 
   val menuPermission = "menu"
 
-  val functionPermission = "function"
+  val functionPermission = "api"
 
 }
