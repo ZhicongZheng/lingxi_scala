@@ -12,20 +12,10 @@ class ApiDocumentation {
 
   private val openApiInfo = Info("Tapir By LingXi", "1.0.0")
 
-  private val openApiDocs = OpenAPIDocsInterpreter().toOpenAPI(
-    List(
-      UserEndpoints.loginEndpoint,
-      UserEndpoints.logoutEndpoint,
-      UserEndpoints.currentUserEndpoint,
-      UserEndpoints.listByPageEndpoint,
-      UserEndpoints.deleteUserEndpoint,
-      UserEndpoints.createUserEndpoint,
-      UserEndpoints.changePwdEndpoint,
-      RoleEndpoints.createRoleEndpoint,
-      FileEndpoints.uploadEndpoint
-    ),
-    openApiInfo
-  )
+  val endpoints =
+    UserEndpoints.endpoints ++ RoleEndpoints.endpoints ++ FileEndpoints.endpoints
+
+  private val openApiDocs = OpenAPIDocsInterpreter().toOpenAPI(endpoints, openApiInfo)
 
   val openApiYaml: String = openApiDocs.toYaml
 

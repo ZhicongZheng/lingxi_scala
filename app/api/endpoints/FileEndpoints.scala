@@ -8,6 +8,7 @@ import sttp.tapir.generic.auto._
 object FileEndpoints {
   private val baseEndpoint = securedWithBearerEndpoint.in("files").tag("File API")
 
+  def endpoints = Seq(uploadEndpoint)
   final case class MultipartInput(file: Part[TapirFile]) extends Serializable
 
   val uploadEndpoint = baseEndpoint.post

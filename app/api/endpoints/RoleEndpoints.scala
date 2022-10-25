@@ -10,6 +10,8 @@ object RoleEndpoints {
 
   private val baseSecuredUserEndpoint = securedWithBearerEndpoint.in("roles").tag("Roles API")
 
+  def endpoints = Seq(createRoleEndpoint)
+
   val createRoleEndpoint = baseSecuredUserEndpoint.post
     .name("createRole")
     .summary("创建角色")

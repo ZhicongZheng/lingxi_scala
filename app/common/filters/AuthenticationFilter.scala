@@ -24,8 +24,8 @@ class AuthenticationFilter @Inject() (cache: AsyncCacheApi, sessionCookieBaker: 
 ) extends Filter
     with Logging {
 
-  val jwt: JWTCookieDataCodec = sessionCookieBaker.jwtCodec
-  val expire: FiniteDuration  = jwt.jwtConfiguration.expiresAfter.getOrElse(30.minutes)
+  private[this] val jwt: JWTCookieDataCodec = sessionCookieBaker.jwtCodec
+  private[this] val expire: FiniteDuration  = jwt.jwtConfiguration.expiresAfter.getOrElse(30.minutes)
 
   override def apply(f: RequestHeader => Future[Result])(rh: RequestHeader): Future[Result] = {
     val path = rh.path
@@ -65,6 +65,6 @@ object AuthenticationFilter {
     Pattern.compile("/docs/*"),
     Pattern.compile("/*.ico")
   )
-  val bearerLen: Int                = "Bearer ".length
-  val failureResult: Future[Result] = Future.successful(common.Results.fail(TOKEN_CHECK_ERROR))
+  val bearerLen: Int                        = "Bearer ".length
+  private val failureResult: Future[Result] = Future.successful(common.Results.fail(TOKEN_CHECK_ERROR))
 }

@@ -13,6 +13,9 @@ object UserEndpoints {
 
   private val baseSecuredUserEndpoint = securedWithBearerEndpoint.in("users").tag("Users API")
 
+  def endpoints =
+    Seq(loginEndpoint, logoutEndpoint, currentUserEndpoint, listByPageEndpoint, deleteUserEndpoint, createUserEndpoint, changePwdEndpoint)
+
   val loginEndpoint = baseUserEndpoint.post
     .name("login")
     .summary("用户登陆")
