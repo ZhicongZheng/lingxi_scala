@@ -28,6 +28,8 @@ class AuthWriteController @Inject() (
       .recover(ex => Results.fail(ex))
   }
 
+//  def logout = authedAction async { request => }
+
   def deleteUser(id: Int) = authedAction async {
     authApplicationService.deleteUser(id).map(c => Results.success(c)).recover(ex => Results.fail(ex))
   }
