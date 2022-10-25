@@ -1,27 +1,31 @@
 package common.filters
 
 import akka.stream.Materializer
+import akka.Done
 import common.Constant
 import common.filters.AuthenticationFilter.{bearerLen, failureResult, noAuthRoute}
 import common.result.TOKEN_CHECK_ERROR
 import play.api.Logging
+import play.api.cache.AsyncCacheApi
 import play.api.http.HeaderNames
 import play.api.mvc._
 
 import java.util.regex.Pattern
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.duration.{DurationInt, FiniteDuration}
 import scala.util.{Success, Try}
 
 /** 认证过滤器，使用JWT bearer token
  */
-class AuthenticationFilter @Inject() (sessionCookieBaker: DefaultSessionCookieBaker)(implicit
+class AuthenticationFilter @Inject() (cache: AsyncCacheApi, sessionCookieBaker: DefaultSessionCookieBaker)(implicit
   val mat: Materializer,
   ec: ExecutionContext
 ) extends Filter
     with Logging {
 
   val jwt: JWTCookieDataCodec = sessionCookieBaker.jwtCodec
+  val expire: FiniteDuration  = jwt.jwtConfiguration.expiresAfter.getOrElse(30.minutes)
 
   override def apply(f: RequestHeader => Future[Result])(rh: RequestHeader): Future[Result] = {
     val path = rh.path
@@ -34,17 +38,25 @@ class AuthenticationFilter @Inject() (sessionCookieBaker: DefaultSessionCookieBa
       .get(HeaderNames.AUTHORIZATION)
       .map(token => token.substring(bearerLen))
       .fold(failureResult) { jwtToken =>
-        Try(jwt.decode(jwtToken)) match {
-          case Success(claim) if claim.nonEmpty =>
-            val requestHeader = claim
-              .get(Constant.userId)
-              .map(userId => rh.withHeaders(headers.add((Constant.userId, userId))))
-              .getOrElse(rh)
-            f.apply(requestHeader)
-          case _ => failureResult
+        // 已经退出登陆，需要重新获取token
+        cache.get[String](jwtToken).flatMap {
+          case Some(_) => failureResult
+          case None =>
+            Try(jwt.decode(jwtToken)) match {
+              case Success(claim) if claim.nonEmpty =>
+                val requestHeader = claim
+                  .get(Constant.userId)
+                  .map(userId => rh.withHeaders(headers.add((Constant.userId, userId))))
+                  .getOrElse(rh)
+                f.apply(requestHeader)
+              case _ => failureResult
+            }
         }
       }
   }
+
+  def logout(jwtToken: String): Future[Done] =
+    cache.set(jwtToken.substring(bearerLen), jwtToken, expire)
 }
 
 object AuthenticationFilter {

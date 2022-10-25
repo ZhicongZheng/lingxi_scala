@@ -16,7 +16,6 @@ object Dependencies {
     val bcrypt = "0.4"
     val tapir = "1.1.2"
     val aliyunOss = "3.15.2"
-    val caffeine = "3.1.1"
   }
 
   object Compiles {
@@ -41,7 +40,6 @@ object Dependencies {
 
     val aliyunOss = "com.aliyun.oss" % "aliyun-sdk-oss" % Versions.aliyunOss
 
-    val caffeine = "com.github.ben-manes.caffeine" % "caffeine" % Versions.caffeine
 
     lazy val scalaTest = "org.scalatestplus.play" %% "scalatestplus-play" % Versions.scalaTest % Test
 
@@ -50,6 +48,6 @@ object Dependencies {
   import Compiles._
 
   lazy val dependencies: Setting[Seq[ModuleID]] =
-    libraryDependencies ++= Seq(config, ws , postgresql, guice, bcrypt, aliyunOss, caffeine, scalaTest) ++ play ++ tapir
+    libraryDependencies ++= Seq(config, ws, caffeine, postgresql, guice, bcrypt, aliyunOss, scalaTest) ++ play ++ tapir
 
 }

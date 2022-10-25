@@ -4,17 +4,20 @@ import auth.application.AuthApplicationService
 import auth.application.dto.{ChangePasswordRequest, CreateUserRequest, LoginRequest}
 import common.Results
 import common.actions.UserAction
+import common.filters.AuthenticationFilter
 import play.api.http.HeaderNames
 import play.api.libs.json.Json
 import play.api.mvc._
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 
 @Singleton
 class AuthWriteController @Inject() (
   override val controllerComponents: ControllerComponents,
   authApplicationService: AuthApplicationService,
+  authenticationFilter: AuthenticationFilter,
   authedAction: UserAction
 ) extends InjectedController {
 
@@ -28,7 +31,12 @@ class AuthWriteController @Inject() (
       .recover(ex => Results.fail(ex))
   }
 
-//  def logout = authedAction async { request => }
+  def logout = authedAction async { request =>
+    request.request.headers.get(HeaderNames.AUTHORIZATION) match {
+      case Some(jwtToken) => authenticationFilter.logout(jwtToken).map(_ => Ok)
+      case None           => Future.successful(Ok)
+    }
+  }
 
   def deleteUser(id: Int) = authedAction async {
     authApplicationService.deleteUser(id).map(c => Results.success(c)).recover(ex => Results.fail(ex))

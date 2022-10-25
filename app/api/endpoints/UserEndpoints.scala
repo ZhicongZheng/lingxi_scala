@@ -22,6 +22,14 @@ object UserEndpoints {
     .out(statusCode(StatusCode.Ok))
     .out(header[String](HeaderNames.Authorization))
 
+  val logoutEndpoint = baseSecuredUserEndpoint.post
+    .name("logout")
+    .summary("退出登陆")
+    .description("用户退出登陆")
+    .in("logout")
+    .in(header[String](HeaderNames.Authorization))
+    .out(statusCode(StatusCode.Ok))
+
   val currentUserEndpoint = baseSecuredUserEndpoint.get
     .name("currentUser")
     .summary("当前用户信息")

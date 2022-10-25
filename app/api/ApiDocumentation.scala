@@ -15,6 +15,7 @@ class ApiDocumentation {
   private val openApiDocs = OpenAPIDocsInterpreter().toOpenAPI(
     List(
       UserEndpoints.loginEndpoint,
+      UserEndpoints.logoutEndpoint,
       UserEndpoints.currentUserEndpoint,
       UserEndpoints.listByPageEndpoint,
       UserEndpoints.deleteUserEndpoint,
