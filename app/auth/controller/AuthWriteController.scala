@@ -1,9 +1,9 @@
 package auth.controller
 
 import auth.application.AuthApplicationService
-import auth.application.dto.{ChangePasswordRequest, CreateUserRequest, LoginRequest}
+import auth.application.dto.{ChangePasswordRequest, CreateRoleRequest, CreateUserRequest, LoginRequest}
 import common.Results
-import common.actions.UserAction
+import common.actions.{AuthorizationAction, UserAction}
 import common.filters.AuthenticationFilter
 import play.api.http.HeaderNames
 import play.api.libs.json.Json
@@ -18,7 +18,8 @@ class AuthWriteController @Inject() (
   override val controllerComponents: ControllerComponents,
   authApplicationService: AuthApplicationService,
   authenticationFilter: AuthenticationFilter,
-  authedAction: UserAction
+  authedAction: UserAction,
+  authorizationAction: AuthorizationAction
 ) extends InjectedController {
 
   def login = Action(parse.json[LoginRequest]).async { request =>
@@ -38,7 +39,7 @@ class AuthWriteController @Inject() (
     }
   }
 
-  def deleteUser(id: Int) = authedAction async {
+  def deleteUser(id: Int) = authedAction andThen authorizationAction async {
     authApplicationService.deleteUser(id).map(c => Results.success(c)).recover(ex => Results.fail(ex))
   }
 
@@ -57,5 +58,12 @@ class AuthWriteController @Inject() (
       case Left(error) => Results.fail(error)
       case Right(_)    => Ok
     }
+  }
+
+  def createRole = authedAction(parse.json[CreateRoleRequest]) andThen authorizationAction async { request =>
+    authApplicationService
+      .createRole(request.body)
+      .map(roleId => Created(Json.toJson(roleId)))
+      .recover(ex => Results.fail(ex))
   }
 }

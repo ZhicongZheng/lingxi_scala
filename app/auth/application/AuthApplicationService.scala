@@ -1,8 +1,8 @@
 package auth.application
 
-import auth.application.dto.{ChangePasswordRequest, CreateUserRequest, LoginRequest}
+import auth.application.dto.{ChangePasswordRequest, CreateRoleRequest, CreateUserRequest, LoginRequest}
 import auth.domain.User
-import auth.domain.repository.UserRepository
+import auth.domain.repository.{RoleRepository, UserRepository}
 import common.result.{Errors, NO_USER, OLD_PWD_ERROR, USER_EXIST}
 import play.api.mvc.{DefaultSessionCookieBaker, JWTCookieDataCodec}
 
@@ -13,6 +13,7 @@ import scala.concurrent.Future
 @Singleton
 class AuthApplicationService @Inject() (
   val userRepository: UserRepository,
+  val roleRepository: RoleRepository,
   val defaultSessionCookieBaker: DefaultSessionCookieBaker
 ) {
 
@@ -40,5 +41,7 @@ class AuthApplicationService @Inject() (
           userRepository.update(user.copy(password = User.entryPwd(request.newPassword))).map(_ => Right(()))
         } else Future.successful(Left(OLD_PWD_ERROR))
     }
+
+  def createRole(request: CreateRoleRequest): Future[Long] = roleRepository.create(request)
 
 }

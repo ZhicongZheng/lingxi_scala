@@ -40,10 +40,8 @@ class UserRepositoryImpl @Inject() (dbConfigProvider: DatabaseConfigProvider)(im
   override def findByUsername(username: String): Future[Option[User]] =
     db.run(users.filter(_.username === username).result.headOption).map(userPoOpt => userPoOpt.map(po => po.toDo))
 
-  override def create(user: User): Future[Long] = {
-    val po = UserPo.fromDo(user)
-    db.run((users returning users.map(_.id)) += po)
-  }
+  override def create(user: User): Future[Long] =
+    db.run((users returning users.map(_.id)) += user)
 
   override def update(user: User): Future[Int] =
     db.run(users.filter(_.id === user.id).update(user.copy(updateAt = LocalDateTime.now())))

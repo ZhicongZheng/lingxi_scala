@@ -25,7 +25,7 @@ class AuthReadController @Inject() (
       .recover(ex => Results.fail(ex))
   }
 
-  def listByPage(page: Int, size: Int, sort: Option[String] = None) = userAction andThen authorizationAction async {
+  def listUserByPage(page: Int, size: Int, sort: Option[String] = None) = userAction andThen authorizationAction async {
     val pageQuery = PageQuery(page, size, sort)
     authQueryService.listByPage(pageQuery).map(pageDto => Results.success(pageDto)).recover(ex => Results.fail(ex))
   }

@@ -1,6 +1,6 @@
 package api
 
-import api.endpoints.{FileEndpoints, UserEndpoints}
+import api.endpoints.{FileEndpoints, RoleEndpoints, UserEndpoints}
 import sttp.apispec.openapi.Info
 import sttp.apispec.openapi.circe.yaml.RichOpenAPI
 import sttp.tapir.docs.openapi.OpenAPIDocsInterpreter
@@ -21,6 +21,7 @@ class ApiDocumentation {
       UserEndpoints.deleteUserEndpoint,
       UserEndpoints.createUserEndpoint,
       UserEndpoints.changePwdEndpoint,
+      RoleEndpoints.createRoleEndpoint,
       FileEndpoints.uploadEndpoint
     ),
     openApiInfo

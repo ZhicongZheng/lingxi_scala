@@ -5,6 +5,7 @@ import slick.jdbc.PostgresProfile.api._
 import slick.lifted.Tag
 
 import java.time.LocalDateTime
+import scala.language.implicitConversions
 
 final case class RolePo(
   id: Long,
@@ -21,6 +22,7 @@ final case class RolePo(
 }
 
 object RolePo {
+  implicit def fromDo(r: Role): RolePo = RolePo(r.id, r.code, r.name)
 
   class RoleTable(tag: Tag) extends Table[RolePo](tag, "roles") {
 

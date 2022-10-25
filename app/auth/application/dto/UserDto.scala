@@ -28,7 +28,7 @@ object UserDto {
     UserDto(
       user.id,
       user.username,
-      user.password,
+      "",
       user.avatar,
       user.nickName,
       user.role,
