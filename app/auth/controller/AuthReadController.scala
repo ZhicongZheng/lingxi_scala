@@ -2,10 +2,11 @@ package auth.controller
 
 import auth.application.AuthQueryService
 import auth.application.dto.UserDto
-import common.{PageQuery, Results}
+import common.{Constant, PageQuery, Results}
 import common.actions.{AuthorizationAction, UserAction}
-import play.api.mvc.{ControllerComponents, InjectedController}
+import play.api.mvc.{ControllerComponents, InjectedController, Session}
 
+import java.util.concurrent.ThreadLocalRandom
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext.Implicits.global
 
@@ -17,12 +18,19 @@ class AuthReadController @Inject() (
   authorizationAction: AuthorizationAction
 ) extends InjectedController {
 
+  val random = ThreadLocalRandom.current()
+
   def current = userAction async { implicit request =>
     val currentUser = request.user
     authQueryService
       .richUser(currentUser)
       .map(u => Results.success(UserDto.fromDo(u)))
       .recover(ex => Results.fail(ex))
+  }
+
+  def loginCode = Action { implicit request =>
+    val code = random.nextInt(100000, 1000000).toString
+    Ok(code).withSession(Session(Map(Constant.loginCode -> code)))
   }
 
   def listUserByPage(page: Int, size: Int, sort: Option[String] = None) = userAction andThen authorizationAction async {

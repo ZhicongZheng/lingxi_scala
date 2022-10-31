@@ -2,9 +2,10 @@ package auth.controller
 
 import auth.application.AuthApplicationService
 import auth.application.dto.{ChangePasswordRequest, CreateRoleRequest, CreateUserRequest, LoginRequest}
-import common.Results
+import common.{Constant, Results}
 import common.actions.{AuthorizationAction, UserAction}
 import common.filters.AuthenticationFilter
+import common.result.LOGIC_CODE_ERR
 import play.api.http.HeaderNames
 import play.api.libs.json.Json
 import play.api.mvc._
@@ -23,13 +24,19 @@ class AuthWriteController @Inject() (
 ) extends InjectedController {
 
   def login = Action(parse.json[LoginRequest]).async { request =>
-    authApplicationService
-      .login(request.body)
-      .map {
-        case Left(error)  => Results.fail(error)
-        case Right(token) => Ok.withHeaders((HeaderNames.AUTHORIZATION, token))
-      }
-      .recover(ex => Results.fail(ex))
+    val loginRequest = request.body
+    request.session.get(Constant.loginCode) match {
+      case Some(code) if code == loginRequest.code =>
+        authApplicationService
+          .login(loginRequest)
+          .map {
+            case Left(error)  => Results.fail(error)
+            case Right(token) => Ok.withHeaders((HeaderNames.AUTHORIZATION, token))
+          }
+          .recover(ex => Results.fail(ex))
+
+      case _ => Future.successful(Results.fail(LOGIC_CODE_ERR))
+    }
   }
 
   def logout = authedAction async { request =>

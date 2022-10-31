@@ -8,4 +8,6 @@ object Constant {
 
   val functionPermission = "api"
 
+  val loginCode = "loginCode"
+
 }

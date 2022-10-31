@@ -21,6 +21,8 @@ POST        /users                auth.controller.AuthWriteController.createUser
 
 PUT         /users/password       auth.controller.AuthWriteController.changePwd
 
+GET         /users/login-code     auth.controller.AuthReadController.loginCode
+
 # roles api
 POST        /roles               auth.controller.AuthWriteController.createRole
 

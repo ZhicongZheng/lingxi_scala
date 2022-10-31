@@ -8,7 +8,7 @@ import sttp.tapir.generic.auto.schemaForCaseClass
 
 object RoleEndpoints {
 
-  private val baseSecuredUserEndpoint = securedWithBearerEndpoint.in("roles").tag("Roles API")
+  private val baseSecuredUserEndpoint = securedWithBearerEndpoint.in("roles").tag("Roles")
 
   def endpoints = Seq(createRoleEndpoint)
 

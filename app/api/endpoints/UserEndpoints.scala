@@ -9,12 +9,21 @@ import sttp.tapir.json.play.jsonBody
 
 object UserEndpoints {
 
-  private val baseUserEndpoint = endpoint.in("users").tag("Users API")
+  private val baseUserEndpoint = endpoint.in("users").tag("Users")
 
-  private val baseSecuredUserEndpoint = securedWithBearerEndpoint.in("users").tag("Users API")
+  private val baseSecuredUserEndpoint = securedWithBearerEndpoint.in("users").tag("Users")
 
   def endpoints =
-    Seq(loginEndpoint, logoutEndpoint, currentUserEndpoint, listByPageEndpoint, deleteUserEndpoint, createUserEndpoint, changePwdEndpoint)
+    Seq(
+      loginEndpoint,
+      logoutEndpoint,
+      currentUserEndpoint,
+      listByPageEndpoint,
+      deleteUserEndpoint,
+      createUserEndpoint,
+      changePwdEndpoint,
+      loginCodeEndpoint
+    )
 
   val loginEndpoint = baseUserEndpoint.post
     .name("login")
@@ -70,5 +79,12 @@ object UserEndpoints {
     .in(jsonBody[ChangePasswordRequest])
     .out(statusCode(StatusCode.Ok))
     .errorOut(jsonBody[ErrorMessage])
+
+  val loginCodeEndpoint = baseUserEndpoint.get
+    .name("loginCode")
+    .summary("登陆验证码")
+    .description("登陆时获取验证码")
+    .in("login-code")
+    .out(jsonBody[String])
 
 }
