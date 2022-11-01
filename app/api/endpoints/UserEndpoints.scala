@@ -39,7 +39,6 @@ object UserEndpoints {
     .summary("退出登陆")
     .description("用户退出登陆")
     .in("logout")
-    .in(header[String](HeaderNames.Authorization))
     .out(statusCode(StatusCode.Ok))
 
   val currentUserEndpoint = baseSecuredUserEndpoint.get

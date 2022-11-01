@@ -29,7 +29,7 @@ class AuthReadController @Inject() (
   }
 
   def loginCode = Action { implicit request =>
-    val code = random.nextInt(100000, 1000000).toString
+    val code = random.nextInt(1000, 10000).toString
     Ok(code).withSession(Session(Map(Constant.loginCode -> code)))
   }
 
