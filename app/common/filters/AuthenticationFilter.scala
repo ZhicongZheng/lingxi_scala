@@ -3,7 +3,7 @@ package common.filters
 import akka.stream.Materializer
 import akka.Done
 import common.Constant
-import common.filters.AuthenticationFilter.{bearerLen, failureResult, noAuthRoute}
+import common.filters.AuthenticationFilter.{bearerLen, handleNullToken, handleTokenExpire, handleTokenValidateError, noAuthRoute}
 import common.result.TOKEN_CHECK_ERROR
 import play.api.Logging
 import play.api.cache.AsyncCacheApi
@@ -36,11 +36,12 @@ class AuthenticationFilter @Inject() (cache: AsyncCacheApi, sessionCookieBaker: 
     val headers = rh.headers
     headers
       .get(HeaderNames.AUTHORIZATION)
+      .filter(token => token.nonEmpty)
       .map(token => token.substring(bearerLen))
-      .fold(failureResult) { jwtToken =>
+      .fold(handleNullToken) { jwtToken =>
         // 已经退出登陆，需要重新获取token
         cache.get[String](jwtToken).flatMap {
-          case Some(_) => failureResult
+          case Some(_) => handleTokenExpire
           case None =>
             Try(jwt.decode(jwtToken)) match {
               case Success(claim) if claim.nonEmpty =>
@@ -49,7 +50,7 @@ class AuthenticationFilter @Inject() (cache: AsyncCacheApi, sessionCookieBaker: 
                   .map(userId => rh.withHeaders(headers.add((Constant.userId, userId))))
                   .getOrElse(rh)
                 f.apply(requestHeader)
-              case _ => failureResult
+              case _ => handleTokenValidateError
             }
         }
       }
@@ -59,12 +60,29 @@ class AuthenticationFilter @Inject() (cache: AsyncCacheApi, sessionCookieBaker: 
     cache.set(jwtToken.substring(bearerLen), jwtToken, expire)
 }
 
-object AuthenticationFilter {
+object AuthenticationFilter extends Logging {
   val noAuthRoute: Seq[Pattern] = Seq(
     Pattern.compile("/users/login"),
     Pattern.compile("/docs/*"),
     Pattern.compile("/*.ico")
   )
-  val bearerLen: Int                        = "Bearer ".length
+  val bearerLen: Int = "Bearer ".length
+
+  private def handleNullToken = {
+    logger.info("jwt token not found")
+    failureResult
+  }
+
+  private def handleTokenExpire = {
+    logger.info("jwt token is expire")
+    failureResult
+  }
+
+  private def handleTokenValidateError = {
+    logger.info("jwt token validated error")
+    failureResult
+  }
+
   private val failureResult: Future[Result] = Future.successful(common.Results.fail(TOKEN_CHECK_ERROR))
+
 }
