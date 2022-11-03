@@ -3,6 +3,7 @@ CREATE TABLE IF NOT EXISTS users(
  username       VARCHAR (50)    UNIQUE NOT NULL,
  password       VARCHAR (50)    NOT NULL,
  avatar         VARCHAR         NOT NULL DEFAULT '',
+ phone          VARCHAR (50)    NOT NULL DEFAULT '',
  email          VARCHAR (355)   NOT NULL DEFAULT '',
  nick_name      VARCHAR (355)   NOT NULL DEFAULT '',
  create_by      BIGINT          NOT NULL DEFAULT 0,

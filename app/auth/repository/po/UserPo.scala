@@ -13,6 +13,8 @@ final case class UserPo(
   password: String,
   avatar: String,
   nickName: String,
+  phone: String,
+  email: String,
   createBy: Long = 0L,
   updateBy: Long = 0L,
   createAt: LocalDateTime = LocalDateTime.now(),
@@ -21,14 +23,14 @@ final case class UserPo(
     with BasePo[User] {
 
   implicit override def toDo: User =
-    User(id, username, password, avatar, nickName, None, Nil, createBy, updateBy, createAt, updateAt)
+    User(id, username, password, avatar, nickName, phone, email, None, Nil, createBy, updateBy, createAt, updateAt)
 
 }
 
 object UserPo {
 
   implicit def fromDo(t: User): UserPo =
-    UserPo(t.id, t.username, t.password, t.avatar, t.nickName, t.createBy, t.updateBy, t.createAt, t.updateAt)
+    UserPo(t.id, t.username, t.password, t.avatar, t.nickName, t.phone, t.email, t.createBy, t.updateBy, t.createAt, t.updateAt)
 
   class UserTable(tag: Tag) extends Table[UserPo](tag, "users") {
 
@@ -41,6 +43,10 @@ object UserPo {
     def avatar = column[String]("avatar")
 
     def nickName = column[String]("nick_name")
+
+    def phone = column[String]("phone")
+
+    def email = column[String]("email")
 
     def createBy = column[Long]("create_by")
 
@@ -56,6 +62,8 @@ object UserPo {
       password,
       avatar,
       nickName,
+      phone,
+      email,
       createBy,
       updateBy,
       createAt,

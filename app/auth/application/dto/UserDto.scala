@@ -1,7 +1,7 @@
 package auth.application.dto
 
 import auth.domain.{BaseInfo, User}
-import play.api.libs.json.Json
+import play.api.libs.json.{Json, OFormat}
 
 import java.time.LocalDateTime
 import scala.language.implicitConversions
@@ -12,6 +12,8 @@ case class UserDto(
   password: String,
   avatar: String,
   nickName: String,
+  phone: String,
+  email: String,
   role: Option[RoleDto] = None,
   permissions: Seq[PermissionDto] = Nil,
   createBy: Long = 0L,
@@ -22,7 +24,7 @@ case class UserDto(
 
 object UserDto {
 
-  implicit val format = Json.format[UserDto]
+  implicit val format: OFormat[UserDto] = Json.format[UserDto]
 
   implicit def fromDo(user: User): UserDto =
     UserDto(
@@ -31,6 +33,8 @@ object UserDto {
       "",
       user.avatar,
       user.nickName,
+      user.phone,
+      user.email,
       user.role,
       user.permissions,
       user.createBy,

@@ -36,7 +36,7 @@ class AuthenticationFilter @Inject() (cache: AsyncCacheApi, sessionCookieBaker: 
     val headers = rh.headers
     headers
       .get(HeaderNames.AUTHORIZATION)
-      .filter(token => token.nonEmpty)
+      .filter(token => token.length >= bearerLen)
       .map(token => token.substring(bearerLen))
       .fold(handleNullToken) { jwtToken =>
         // 已经退出登陆，需要重新获取token
