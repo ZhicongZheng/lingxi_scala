@@ -3,6 +3,7 @@ package auth.repository.impl
 import auth.domain.Permission
 import auth.domain.repository.PermissionRepository
 import auth.repository.po.PermissionPo.{PermissionTable, RolePermissionTable}
+import common.{PageDto, PageQuery}
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfig}
 import slick.jdbc.PostgresProfile
 import slick.jdbc.PostgresProfile.api._
@@ -38,4 +39,6 @@ class PermissionRepositoryImpl @Inject() (dbConfigProvider: DatabaseConfigProvid
   override def update(d: Permission): Future[Int] = ???
 
   override def delete(id: Long): Future[Int] = ???
+
+  override def listByPage(pageQuery: PageQuery): Future[PageDto[Permission]] = ???
 }

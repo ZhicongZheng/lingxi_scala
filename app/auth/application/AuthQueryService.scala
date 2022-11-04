@@ -1,6 +1,6 @@
 package auth.application
 
-import auth.application.dto.UserDto
+import auth.application.dto.{RoleDto, UserDto}
 import auth.domain.repository.{PermissionRepository, RoleRepository, UserRepository}
 import auth.domain.User
 import common.{PageDto, PageQuery}
@@ -17,7 +17,9 @@ class AuthQueryService @Inject() (
   permissionRepository: PermissionRepository
 ) extends Logging {
 
-  def listByPage(pageQuery: PageQuery): Future[PageDto[UserDto]] = userRepository.listByPage(pageQuery).map(_.map(UserDto.fromDo))
+  def listUserByPage(pageQuery: PageQuery): Future[PageDto[UserDto]] = userRepository.listByPage(pageQuery).map(_.map(UserDto.fromDo))
+
+  def listRolesByPage(pageQuery: PageQuery): Future[PageDto[RoleDto]] = roleRepository.listByPage(pageQuery).map(_.map(RoleDto.formDo))
 
   def richUser(user: User): Future[User] =
     for {

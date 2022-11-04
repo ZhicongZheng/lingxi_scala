@@ -26,4 +26,8 @@ GET         /users/login-code     auth.controller.AuthReadController.loginCode
 # roles api
 POST        /roles               auth.controller.AuthWriteController.createRole
 
+DELETE      /roles/$id<[0-9]+>   auth.controller.AuthWriteController.deleteRole(id: Int)
+
+GET         /roles               auth.controller.AuthReadController.listRoleByPage(page: Int ?= 1,size: Int ?= 10, sort: Option[String])
+
 

@@ -73,4 +73,14 @@ class AuthWriteController @Inject() (
       .map(roleId => Created(Json.toJson(roleId)))
       .recover(ex => Results.fail(ex))
   }
+
+  def deleteRole(id: Int) = authedAction andThen authorizationAction async {
+    authApplicationService
+      .deleteRole(id)
+      .map {
+        case Left(error)  => Results.fail(error)
+        case Right(value) => Results.success(value)
+      }
+      .recover(ex => Results.fail(ex))
+  }
 }

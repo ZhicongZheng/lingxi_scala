@@ -1,6 +1,6 @@
 package common
 
-import auth.application.dto.UserDto
+import auth.application.dto.{RoleDto, UserDto}
 import play.api.libs.json.{Json, OFormat}
 
 case class PageDto[T](
@@ -17,7 +17,9 @@ case class PageDto[T](
 
 object PageDto {
 
-  implicit val format: OFormat[PageDto[UserDto]] = Json.format[PageDto[UserDto]]
+  implicit val userFormat = Json.format[PageDto[UserDto]]
+
+  implicit val roleFormat = Json.format[PageDto[RoleDto]]
 
   def apply[T](page: Int, size: Int, totalCount: Int, data: Seq[T]): PageDto[T] = {
     val totalPages = (totalCount / size) + 1

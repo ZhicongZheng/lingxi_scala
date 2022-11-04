@@ -1,6 +1,7 @@
 package auth.domain.repository
 
 import auth.domain.BaseInfo
+import common.{PageDto, PageQuery}
 
 import scala.concurrent.Future
 
@@ -17,5 +18,7 @@ trait BaseRepository[T <: BaseInfo] {
   def update(d: T): Future[Int]
 
   def delete(id: Long): Future[Int]
+
+  def listByPage(pageQuery: PageQuery): Future[PageDto[T]]
 
 }

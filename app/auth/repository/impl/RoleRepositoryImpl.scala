@@ -2,7 +2,9 @@ package auth.repository.impl
 
 import auth.domain.repository.RoleRepository
 import auth.domain.Role
+import auth.repository.po.PermissionPo.RolePermissionTable
 import auth.repository.po.RolePo.{RoleTable, UserRoleTable}
+import common.{PageDto, PageQuery}
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfig}
 import slick.jdbc.PostgresProfile
 import slick.jdbc.PostgresProfile.api._
@@ -22,6 +24,8 @@ class RoleRepositoryImpl @Inject() (dbConfigProvider: DatabaseConfigProvider)(im
 
   private val userRoles = TableQuery[UserRoleTable]
 
+  private val rolePermissions = TableQuery[RolePermissionTable]
+
   override def findByUserId(userId: Long): Future[Option[Role]] = {
     val joinQuery = roles join userRoles on (_.id === _.roleId)
     db.run(joinQuery.filter(_._2.userId === userId).map(_._1).result.headOption).map(roleOpt => roleOpt.map(po => po.toDo))
@@ -38,5 +42,19 @@ class RoleRepositoryImpl @Inject() (dbConfigProvider: DatabaseConfigProvider)(im
 
   override def update(role: Role): Future[Int] = ???
 
-  override def delete(id: Long): Future[Int] = ???
+  override def delete(id: Long): Future[Int] =
+    db.run {
+      for {
+        delCount <- roles.filter(_.id === id).delete
+        _        <- rolePermissions.filter(_.roleId === id).delete
+      } yield delCount
+    }
+
+  override def listByPage(pageQuery: PageQuery): Future[PageDto[Role]] =
+    db.run {
+      for {
+        rolePos <- roles.drop(pageQuery.offset).take(pageQuery.limit).result
+        count   <- roles.length.result
+      } yield PageDto(pageQuery.page, pageQuery.size, count, rolePos.map(_.toDo))
+    }
 }

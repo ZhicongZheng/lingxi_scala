@@ -1,7 +1,7 @@
 package auth.application.dto
 
 import auth.domain.Role
-import play.api.libs.json.Json
+import play.api.libs.json.{Json, OFormat}
 
 import java.time.LocalDateTime
 import scala.language.implicitConversions
@@ -18,7 +18,7 @@ case class RoleDto(
 
 object RoleDto {
 
-  implicit val format = Json.format[RoleDto]
+  implicit val format: OFormat[RoleDto] = Json.format[RoleDto]
 
   implicit def formDo(role: Role): RoleDto =
     RoleDto(role.id, role.code, role.name, role.createBy, role.updateBy, role.createAt, role.updateAt)

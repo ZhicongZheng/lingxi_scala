@@ -3,7 +3,8 @@ package auth.application
 import auth.application.dto.{ChangePasswordRequest, CreateRoleRequest, CreateUserRequest, LoginRequest}
 import auth.domain.User
 import auth.domain.repository.{RoleRepository, UserRepository}
-import common.result.{Errors, NO_USER, OLD_PWD_ERROR, USER_EXIST}
+import common.result._
+import common.Constant.superAdmin
 import play.api.mvc.{DefaultSessionCookieBaker, JWTCookieDataCodec}
 
 import javax.inject.{Inject, Singleton}
@@ -43,5 +44,12 @@ class AuthApplicationService @Inject() (
     }
 
   def createRole(request: CreateRoleRequest): Future[Long] = roleRepository.create(request)
+
+  def deleteRole(id: Int): Future[Either[Errors, Int]] =
+    roleRepository.findById(id).flatMap {
+      case None                                  => Future.successful(Right(0))
+      case Some(role) if role.code == superAdmin => Future.successful(Left(CAN_NOT_DEL_SUPER_ADMIN))
+      case _                                     => roleRepository.delete(id).map(delCount => Right(delCount))
+    }
 
 }

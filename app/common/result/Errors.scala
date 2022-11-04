@@ -32,3 +32,5 @@ case object FILE_EMPTY extends Errors { val code = 10006; val message = "上传�
 case object OLD_PWD_ERROR extends Errors { val code = 10007; val message = "旧密码错误" }
 
 case object LOGIC_CODE_ERR extends Errors { val code = 10008; val message = "登陆验证码错误" }
+
+case object CAN_NOT_DEL_SUPER_ADMIN extends Errors { val code = 10009; val message = "不能删除超级管理员" }

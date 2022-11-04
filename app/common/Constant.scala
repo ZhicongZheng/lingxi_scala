@@ -10,4 +10,6 @@ object Constant {
 
   val loginCode = "loginCode"
 
+  val superAdmin = "SUPER_ADMIN"
+
 }

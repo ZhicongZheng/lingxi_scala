@@ -9,6 +9,4 @@ trait UserRepository extends BaseRepository[User] {
 
   def findByUsername(username: String): Future[Option[User]]
 
-  def listByPage(pageQuery: PageQuery): Future[PageDto[User]]
-
 }
