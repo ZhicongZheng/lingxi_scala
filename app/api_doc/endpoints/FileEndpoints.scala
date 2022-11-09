@@ -1,4 +1,4 @@
-package api.endpoints
+package api_doc.endpoints
 
 import sttp.model.{Part, StatusCode}
 import sttp.tapir._

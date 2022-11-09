@@ -1,6 +1,6 @@
 # common api
 
-->          /                     api.ApiRouter
+->          /                     api_doc.ApiRouter
 
 GET         /                     controllers.Default.redirect(to = "./docs/")
 

@@ -6,7 +6,7 @@ object Constant {
 
   val menuPermission = "menu"
 
-  val functionPermission = "api"
+  val functionPermission = "api_doc"
 
   val loginCode = "loginCode"
 

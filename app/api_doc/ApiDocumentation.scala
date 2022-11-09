@@ -1,6 +1,6 @@
-package api
+package api_doc
 
-import api.endpoints.{FileEndpoints, RoleEndpoints, UserEndpoints}
+import api_doc.endpoints.{FileEndpoints, RoleEndpoints, UserEndpoints}
 import sttp.apispec.openapi.Info
 import sttp.apispec.openapi.circe.yaml.RichOpenAPI
 import sttp.tapir.docs.openapi.OpenAPIDocsInterpreter

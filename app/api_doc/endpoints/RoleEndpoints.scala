@@ -1,4 +1,4 @@
-package api.endpoints
+package api_doc.endpoints
 
 import sttp.tapir._
 import _root_.auth.application.dto.{CreateRoleRequest, RoleDto}

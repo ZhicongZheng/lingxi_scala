@@ -1,4 +1,4 @@
-package api
+package api_doc
 
 import play.api.libs.json.Json
 import sttp.model.StatusCode

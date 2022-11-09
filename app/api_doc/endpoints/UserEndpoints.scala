@@ -1,4 +1,4 @@
-package api.endpoints
+package api_doc.endpoints
 
 import _root_.auth.application.dto.{ChangePasswordRequest, CreateUserRequest, LoginRequest, UserDto}
 import common.PageDto

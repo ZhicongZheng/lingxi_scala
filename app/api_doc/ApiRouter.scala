@@ -1,4 +1,4 @@
-package api
+package api_doc
 
 import akka.stream.Materializer
 import play.api.routing.Router.Routes

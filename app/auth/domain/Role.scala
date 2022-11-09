@@ -6,7 +6,6 @@ final case class Role(
   id: Long,
   code: String,
   name: String,
-  users: Option[Seq[User]] = None,
   Permissions: Option[Seq[Permission]] = None,
   createBy: Long = 0L,
   updateBy: Long = 0L,

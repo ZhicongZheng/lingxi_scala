@@ -19,8 +19,7 @@ final case class UserPo(
   updateBy: Long = 0L,
   createAt: LocalDateTime = LocalDateTime.now(),
   updateAt: LocalDateTime = LocalDateTime.now()
-) extends BaseInfo
-    with BasePo[User] {
+) extends BasePo[User] {
 
   implicit override def toDo: User =
     User(id, username, password, avatar, nickName, phone, email, None, Nil, createBy, updateBy, createAt, updateAt)

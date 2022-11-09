@@ -1,6 +1,6 @@
 package auth.repository.po
 
-import auth.domain.{BaseInfo, Role}
+import auth.domain.Role
 import slick.jdbc.PostgresProfile.api._
 import slick.lifted.Tag
 
@@ -15,10 +15,9 @@ final case class RolePo(
   updateBy: Long = 0L,
   createAt: LocalDateTime = LocalDateTime.now(),
   updateAt: LocalDateTime = LocalDateTime.now()
-) extends BaseInfo
-    with BasePo[Role] {
+) extends BasePo[Role] {
 
-  implicit override def toDo: Role = Role(id, code, name, None, None, createBy, updateBy, createAt, updateAt)
+  implicit override def toDo: Role = Role(id, code, name, None, createBy, updateBy, createAt, updateAt)
 }
 
 object RolePo {

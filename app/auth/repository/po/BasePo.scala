@@ -1,6 +1,8 @@
 package auth.repository.po
 
-trait BasePo[T] {
+import auth.domain.BaseInfo
+
+trait BasePo[T] extends BaseInfo {
 
   implicit def toDo: T
 
