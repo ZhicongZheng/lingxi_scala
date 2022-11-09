@@ -4,7 +4,6 @@ import auth.domain.User
 import auth.domain.repository.UserRepository
 import auth.repository.po.PermissionPo.PermissionTable
 import auth.repository.po.RolePo.{RoleTable, UserRoleTable}
-import auth.repository.po.UserPo
 import auth.repository.po.UserPo.UserTable
 import common.{PageDto, PageQuery}
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfig}
@@ -63,4 +62,14 @@ class UserRepositoryImpl @Inject() (dbConfigProvider: DatabaseConfigProvider)(im
         count   <- users.length.result
       } yield PageDto(pageQuery.page, pageQuery.size, count, userPos.map(_.toDo))
     }
+
+  override def changeRole(user: User): Future[Unit] = {
+    val userRole = (user.id, user.role.get.id)
+    db.run {
+      for {
+        delete <- userRoles.filter(t => t.userId === user.id).delete
+        insert <- userRoles.map(t => (t.userId, t.roleId)) += userRole
+      } yield ()
+    }
+  }
 }

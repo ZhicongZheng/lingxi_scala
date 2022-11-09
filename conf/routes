@@ -23,6 +23,8 @@ PUT         /users/password       auth.controller.AuthWriteController.changePwd
 
 GET         /users/login-code     auth.controller.AuthReadController.loginCode
 
+POST        /users/$useId<[0-9]+>/roles/$roleId<[0-9]+>  auth.controller.AuthWriteController.changeUserRole(useId: Long, roleId: Long)
+
 # roles api
 POST        /roles               auth.controller.AuthWriteController.createRole
 

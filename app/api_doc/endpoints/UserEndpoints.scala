@@ -22,7 +22,8 @@ object UserEndpoints {
       deleteUserEndpoint,
       createUserEndpoint,
       changePwdEndpoint,
-      loginCodeEndpoint
+      loginCodeEndpoint,
+      changeRoleEndpoint
     )
 
   val loginEndpoint = baseUserEndpoint.post
@@ -85,5 +86,13 @@ object UserEndpoints {
     .description("登陆时获取验证码")
     .in("login-code")
     .out(jsonBody[String])
+    .errorOut(jsonBody[ErrorMessage])
+
+  val changeRoleEndpoint = baseSecuredUserEndpoint.post
+    .name("changeUserRole")
+    .summary("修改用户的角色")
+    .description("给用户分配角色")
+    .in(path[Long]("userId") / "roles" / path[Long]("roleId"))
+    .out(statusCode(StatusCode.Ok))
 
 }

@@ -64,7 +64,14 @@ class AuthWriteController @Inject() (
     authApplicationService.changePwd(request.user.id, request.body) map {
       case Left(error) => Results.fail(error)
       case Right(_)    => Ok
-    }
+    } recover (ex => Results.fail(ex))
+  }
+
+  def changeUserRole(userId: Long, roleId: Long) = authedAction andThen authorizationAction async {
+    authApplicationService.changeUserRole(userId, roleId) map {
+      case Left(error) => Results.fail(error)
+      case Right(_)    => Ok
+    } recover (ex => Results.fail(ex))
   }
 
   def createRole = authedAction(parse.json[CreateRoleRequest]) andThen authorizationAction async { request =>

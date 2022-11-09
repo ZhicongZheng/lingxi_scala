@@ -1,7 +1,7 @@
 package auth.application
 
 import auth.application.dto.{ChangePasswordRequest, CreateRoleRequest, CreateUserRequest, LoginRequest, UpdateRoleRequest}
-import auth.domain.{Role, User}
+import auth.domain.User
 import auth.domain.repository.{RoleRepository, UserRepository}
 import common.result._
 import common.Constant.superAdmin
@@ -42,6 +42,20 @@ class AuthApplicationService @Inject() (
           userRepository.update(user.copy(password = User.entryPwd(request.newPassword))).map(_ => Right(()))
         } else Future.successful(Left(OLD_PWD_ERROR))
     }
+
+  def changeUserRole(userId: Long, roleId: Long): Future[Either[Errors, Unit]] = {
+    val userRoleOpt = for {
+      userOpt <- userRepository.findById(userId)
+      roleOpt <- roleRepository.findById(roleId)
+    } yield (userOpt, roleOpt)
+    userRoleOpt.flatMap {
+      case (Some(user), Some(r)) =>
+        userRepository.changeRole(user.copy(role = Some(r))).map(_ => Right(()))
+      case (None, _) => Future.successful(Left(NO_USER))
+      case (_, None) => Future.successful(Left(NO_ROLE))
+      case _         => Future.successful(Left(NO_USER))
+    }
+  }
 
   def createRole(request: CreateRoleRequest): Future[Long] = roleRepository.create(request)
 
