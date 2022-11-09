@@ -40,7 +40,16 @@ class RoleRepositoryImpl @Inject() (dbConfigProvider: DatabaseConfigProvider)(im
 
   override def create(role: Role): Future[Long] = db.run(roles returning roles.map(_.id) += role)
 
-  override def update(role: Role): Future[Int] = ???
+  override def update(role: Role): Future[Int] = {
+    val updatePermissions = role.permissions.map(p => (role.id, p.id))
+    db.run {
+      for {
+        update <- roles.filter(_.id === role.id).update(role)
+        del    <- rolePermissions.filter(t => t.roleId === role.id).delete
+        insert <- rolePermissions.map(t => (t.roleId, t.permissionId)) ++= updatePermissions
+      } yield update
+    }
+  }
 
   override def delete(id: Long): Future[Int] =
     db.run {

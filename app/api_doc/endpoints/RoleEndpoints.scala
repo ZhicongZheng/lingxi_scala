@@ -1,17 +1,17 @@
 package api_doc.endpoints
 
-import sttp.tapir._
-import _root_.auth.application.dto.{CreateRoleRequest, RoleDto}
+import _root_.auth.application.dto.{CreateRoleRequest, RoleDto, UpdateRoleRequest}
 import common.PageDto
 import sttp.model.StatusCode
-import sttp.tapir.json.play.jsonBody
+import sttp.tapir._
 import sttp.tapir.generic.auto.schemaForCaseClass
+import sttp.tapir.json.play.jsonBody
 
 object RoleEndpoints {
 
   private val baseSecuredUserEndpoint = securedWithBearerEndpoint.in("roles").tag("Roles")
 
-  def endpoints = Seq(createRoleEndpoint, deleteRoleEndpoint, listByPageEndpoint)
+  def endpoints = Seq(createRoleEndpoint, deleteRoleEndpoint, listByPageEndpoint, updateRoleEndpoint)
 
   val createRoleEndpoint = baseSecuredUserEndpoint.post
     .name("createRole")
@@ -36,4 +36,10 @@ object RoleEndpoints {
     .in(query[Int]("page").default(1) / query[Int]("size").default(10) / query[Option[String]]("sort"))
     .out(jsonBody[PageDto[RoleDto]])
 
+  val updateRoleEndpoint = baseSecuredUserEndpoint.put
+    .name("updateRole")
+    .summary("更新角色")
+    .description("更新角色信息，可以同时保存角色所分配的权限")
+    .in(jsonBody[UpdateRoleRequest])
+    .out(statusCode(StatusCode.Ok))
 }

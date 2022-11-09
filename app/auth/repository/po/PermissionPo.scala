@@ -16,7 +16,7 @@ final case class PermissionPo(
   updateAt: LocalDateTime = LocalDateTime.now()
 ) extends BasePo[Permission] {
 
-  implicit override def toDo: Permission = Permission(id, `type`, value, None, createBy, updateBy, createAt, updateAt)
+  implicit override def toDo: Permission = Permission(id, `type`, value, createBy, updateBy, createAt, updateAt)
 }
 
 object PermissionPo {

@@ -34,3 +34,5 @@ case object OLD_PWD_ERROR extends Errors { val code = 10007; val message = "旧�
 case object LOGIC_CODE_ERR extends Errors { val code = 10008; val message = "登陆验证码错误" }
 
 case object CAN_NOT_DEL_SUPER_ADMIN extends Errors { val code = 10009; val message = "不能删除超级管理员" }
+
+case object NO_ROLE extends Errors { val code = 10010; val message = "角色不存在" }

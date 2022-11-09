@@ -17,7 +17,7 @@ final case class RolePo(
   updateAt: LocalDateTime = LocalDateTime.now()
 ) extends BasePo[Role] {
 
-  implicit override def toDo: Role = Role(id, code, name, None, createBy, updateBy, createAt, updateAt)
+  implicit override def toDo: Role = Role(id, code, name, Nil, createBy, updateBy, createAt, updateAt)
 }
 
 object RolePo {

@@ -30,4 +30,6 @@ DELETE      /roles/$id<[0-9]+>   auth.controller.AuthWriteController.deleteRole(
 
 GET         /roles               auth.controller.AuthReadController.listRoleByPage(page: Int ?= 1,size: Int ?= 10, sort: Option[String])
 
+PUT         /roles               auth.controller.AuthWriteController.updateRole
+
 

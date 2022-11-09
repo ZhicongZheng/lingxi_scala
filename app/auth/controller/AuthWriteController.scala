@@ -1,7 +1,7 @@
 package auth.controller
 
 import auth.application.AuthApplicationService
-import auth.application.dto.{ChangePasswordRequest, CreateRoleRequest, CreateUserRequest, LoginRequest}
+import auth.application.dto.{ChangePasswordRequest, CreateRoleRequest, CreateUserRequest, LoginRequest, UpdateRoleRequest}
 import common.{Constant, Results}
 import common.actions.{AuthorizationAction, UserAction}
 import common.filters.AuthenticationFilter
@@ -71,6 +71,18 @@ class AuthWriteController @Inject() (
     authApplicationService
       .createRole(request.body)
       .map(roleId => Created(Json.toJson(roleId)))
+      .recover(ex => Results.fail(ex))
+  }
+
+  def updateRole = authedAction(parse.json[UpdateRoleRequest]) andThen authorizationAction async { request =>
+    val updater           = request.request.user.id
+    val updateRoleRequest = request.body.copy(updateBy = Some(updater))
+    authApplicationService
+      .updateRole(updateRoleRequest)
+      .map {
+        case Left(error) => Results.fail(error)
+        case Right(_)    => Ok
+      }
       .recover(ex => Results.fail(ex))
   }
 

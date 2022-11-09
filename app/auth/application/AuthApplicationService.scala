@@ -1,7 +1,7 @@
 package auth.application
 
-import auth.application.dto.{ChangePasswordRequest, CreateRoleRequest, CreateUserRequest, LoginRequest}
-import auth.domain.User
+import auth.application.dto.{ChangePasswordRequest, CreateRoleRequest, CreateUserRequest, LoginRequest, UpdateRoleRequest}
+import auth.domain.{Role, User}
 import auth.domain.repository.{RoleRepository, UserRepository}
 import common.result._
 import common.Constant.superAdmin
@@ -44,6 +44,15 @@ class AuthApplicationService @Inject() (
     }
 
   def createRole(request: CreateRoleRequest): Future[Long] = roleRepository.create(request)
+
+  def updateRole(request: UpdateRoleRequest): Future[Either[Errors, Int]] = {
+    roleRepository.findById(request.id) flatMap {
+      case None => Future.successful(Left(NO_ROLE))
+      case Some(role) =>
+        roleRepository.update(role.update(request)).map(c => Right(c))
+    }
+    Future.successful(Right(1))
+  }
 
   def deleteRole(id: Int): Future[Either[Errors, Int]] =
     roleRepository.findById(id).flatMap {
