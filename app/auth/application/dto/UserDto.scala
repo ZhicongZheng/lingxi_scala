@@ -1,8 +1,6 @@
 package auth.application.dto
 
 import auth.domain.{BaseInfo, User}
-import play.api.data.format.Formats.localDateTimeFormat
-import play.api.data.format.Formatter
 import play.api.libs.json.{Json, OFormat}
 
 import java.time.LocalDateTime
@@ -25,8 +23,6 @@ case class UserDto(
 ) extends BaseInfo
 
 object UserDto {
-
-  implicit val dataFormat: Formatter[LocalDateTime] = localDateTimeFormat("yyyy-mm-dd HH:mm:ss")
 
   implicit val format: OFormat[UserDto] = Json.format[UserDto]
 
