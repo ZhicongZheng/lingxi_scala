@@ -36,3 +36,7 @@ case object LOGIC_CODE_ERR extends Errors { val code = 10008; val message = "登
 case object CAN_NOT_DEL_SUPER_ADMIN extends Errors { val code = 10009; val message = "不能删除超级管理员" }
 
 case object NO_ROLE extends Errors { val code = 10010; val message = "角色不存在" }
+
+case object ROLE_CODE_EXIST extends Errors {
+  val code = 10011; val message = "角色 code 已经存在"; override val httpStatus: Results.Status = Conflict
+}

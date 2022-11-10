@@ -12,9 +12,9 @@ import scala.concurrent.Future
 
 @Singleton
 class AuthQueryService @Inject() (
-  userRepository: UserRepository,
-  roleRepository: RoleRepository,
-  permissionRepository: PermissionRepository
+  private val userRepository: UserRepository,
+  private val roleRepository: RoleRepository,
+  private val permissionRepository: PermissionRepository
 ) extends Logging {
 
   def listUserByPage(pageQuery: PageQuery): Future[PageDto[UserDto]] = userRepository.listByPage(pageQuery).map(_.map(UserDto.fromDo))

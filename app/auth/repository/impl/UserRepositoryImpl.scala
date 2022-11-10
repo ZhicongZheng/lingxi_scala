@@ -16,7 +16,7 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class UserRepositoryImpl @Inject() (dbConfigProvider: DatabaseConfigProvider)(implicit ec: ExecutionContext)
+class UserRepositoryImpl @Inject() (private val dbConfigProvider: DatabaseConfigProvider)(implicit ec: ExecutionContext)
     extends UserRepository
     with HasDatabaseConfig[PostgresProfile] {
 
@@ -24,11 +24,7 @@ class UserRepositoryImpl @Inject() (dbConfigProvider: DatabaseConfigProvider)(im
 
   private val users = TableQuery[UserTable]
 
-  private val roles = TableQuery[RoleTable]
-
   private val userRoles = TableQuery[UserRoleTable]
-
-  private val permissions = TableQuery[PermissionTable]
 
   override def findById(id: Long): Future[Option[User]] =
     db.run(users.filter(_.id === id).result.headOption).map(userPoOpt => userPoOpt.map(po => po.toDo))

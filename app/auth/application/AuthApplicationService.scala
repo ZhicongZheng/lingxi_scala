@@ -13,12 +13,12 @@ import scala.concurrent.Future
 
 @Singleton
 class AuthApplicationService @Inject() (
-  val userRepository: UserRepository,
-  val roleRepository: RoleRepository,
-  val defaultSessionCookieBaker: DefaultSessionCookieBaker
+  private val userRepository: UserRepository,
+  private val roleRepository: RoleRepository,
+  private val defaultSessionCookieBaker: DefaultSessionCookieBaker
 ) {
 
-  val jwt: JWTCookieDataCodec = defaultSessionCookieBaker.jwtCodec
+  private val jwt: JWTCookieDataCodec = defaultSessionCookieBaker.jwtCodec
 
   def login(loginRequest: LoginRequest): Future[Either[Errors, String]] =
     userRepository.findByUsername(loginRequest.username) map {
@@ -57,7 +57,11 @@ class AuthApplicationService @Inject() (
     }
   }
 
-  def createRole(request: CreateRoleRequest): Future[Long] = roleRepository.create(request)
+  def createRole(request: CreateRoleRequest): Future[Either[Errors, Long]] =
+    roleRepository.findByCode(request.code) flatMap {
+      case Some(_) => Future.successful(Left(ROLE_CODE_EXIST))
+      case None    => roleRepository.create(request).map(id => Right(id))
+    }
 
   def updateRole(request: UpdateRoleRequest): Future[Either[Errors, Int]] = {
     roleRepository.findById(request.id) flatMap {

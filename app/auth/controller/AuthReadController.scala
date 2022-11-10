@@ -18,7 +18,7 @@ class AuthReadController @Inject() (
   authorizationAction: AuthorizationAction
 ) extends InjectedController {
 
-  val random = ThreadLocalRandom.current()
+  val random: ThreadLocalRandom = ThreadLocalRandom.current()
 
   def current = userAction async { implicit request =>
     val currentUser = request.user

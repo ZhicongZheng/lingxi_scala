@@ -23,7 +23,7 @@ class AuthWriteController @Inject() (
   authorizationAction: AuthorizationAction
 ) extends InjectedController {
 
-  def login = Action(parse.json[LoginRequest]).async { request =>
+  def login: Action[LoginRequest] = Action(parse.json[LoginRequest]).async { request =>
     val loginRequest = request.body
     request.session.get(Constant.loginCode) match {
       case Some(code) if code == loginRequest.code =>
@@ -39,18 +39,18 @@ class AuthWriteController @Inject() (
     }
   }
 
-  def logout = authedAction async { request =>
+  def logout: Action[AnyContent] = authedAction async { request =>
     request.request.headers.get(HeaderNames.AUTHORIZATION) match {
       case Some(jwtToken) => authenticationFilter.logout(jwtToken).map(_ => Ok)
       case None           => Future.successful(Ok)
     }
   }
 
-  def deleteUser(id: Int) = authedAction andThen authorizationAction async {
+  def deleteUser(id: Int): Action[AnyContent] = authedAction andThen authorizationAction async {
     authApplicationService.deleteUser(id).map(c => Results.success(c)).recover(ex => Results.fail(ex))
   }
 
-  def createUser = authedAction(parse.json[CreateUserRequest]) async { request =>
+  def createUser: Action[CreateUserRequest] = authedAction(parse.json[CreateUserRequest]) async { request =>
     authApplicationService
       .createUser(request.body)
       .map {
@@ -60,28 +60,31 @@ class AuthWriteController @Inject() (
       .recover(ex => Results.fail(ex))
   }
 
-  def changePwd = authedAction(parse.json[ChangePasswordRequest]) async { request =>
+  def changePwd: Action[ChangePasswordRequest] = authedAction(parse.json[ChangePasswordRequest]) async { request =>
     authApplicationService.changePwd(request.user.id, request.body) map {
       case Left(error) => Results.fail(error)
       case Right(_)    => Ok
     } recover (ex => Results.fail(ex))
   }
 
-  def changeUserRole(userId: Long, roleId: Long) = authedAction andThen authorizationAction async {
+  def changeUserRole(userId: Long, roleId: Long): Action[AnyContent] = authedAction andThen authorizationAction async {
     authApplicationService.changeUserRole(userId, roleId) map {
       case Left(error) => Results.fail(error)
       case Right(_)    => Ok
     } recover (ex => Results.fail(ex))
   }
 
-  def createRole = authedAction(parse.json[CreateRoleRequest]) andThen authorizationAction async { request =>
+  def createRole: Action[CreateRoleRequest] = authedAction(parse.json[CreateRoleRequest]) andThen authorizationAction async { request =>
     authApplicationService
       .createRole(request.body)
-      .map(roleId => Created(Json.toJson(roleId)))
+      .map {
+        case Left(error) => Results.fail(error)
+        case Right(id)   => Created(Json.toJson(id))
+      }
       .recover(ex => Results.fail(ex))
   }
 
-  def updateRole = authedAction(parse.json[UpdateRoleRequest]) andThen authorizationAction async { request =>
+  def updateRole(): Action[UpdateRoleRequest] = authedAction(parse.json[UpdateRoleRequest]) andThen authorizationAction async { request =>
     val updater           = request.request.user.id
     val updateRoleRequest = request.body.copy(updateBy = Some(updater))
     authApplicationService
@@ -93,7 +96,7 @@ class AuthWriteController @Inject() (
       .recover(ex => Results.fail(ex))
   }
 
-  def deleteRole(id: Int) = authedAction andThen authorizationAction async {
+  def deleteRole(id: Int): Action[AnyContent] = authedAction andThen authorizationAction async {
     authApplicationService
       .deleteRole(id)
       .map {

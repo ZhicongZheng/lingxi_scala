@@ -66,4 +66,7 @@ class RoleRepositoryImpl @Inject() (dbConfigProvider: DatabaseConfigProvider)(im
         count   <- roles.length.result
       } yield PageDto(pageQuery.page, pageQuery.size, count, rolePos.map(_.toDo))
     }
+
+  override def findByCode(code: String): Future[Option[Role]] =
+    db.run(roles.filter(_.code === code).result.headOption).map(roleOpt => roleOpt.map(r => r.toDo))
 }
