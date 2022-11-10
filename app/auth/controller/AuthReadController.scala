@@ -2,6 +2,7 @@ package auth.controller
 
 import auth.application.AuthQueryService
 import auth.application.dto.UserDto
+import auth.domain.User
 import common.{Constant, PageQuery, Results}
 import common.actions.{AuthorizationAction, UserAction}
 import play.api.mvc.{ControllerComponents, InjectedController, Session}
@@ -29,7 +30,7 @@ class AuthReadController @Inject() (
   }
 
   def loginCode = Action { implicit request =>
-    val code = random.nextInt(1000, 10000).toString
+    val code = User.loginCode
     Ok(code).withSession(Session(Map(Constant.loginCode -> code)))
   }
 
