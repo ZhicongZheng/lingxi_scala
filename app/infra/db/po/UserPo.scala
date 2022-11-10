@@ -1,0 +1,73 @@
+package infra.db.po
+
+import domain.user.entity.User
+import slick.jdbc.PostgresProfile.api._
+import slick.lifted.Tag
+
+import java.time.LocalDateTime
+import scala.language.implicitConversions
+
+final case class UserPo(
+  id: Long,
+  username: String,
+  password: String,
+  avatar: String,
+  nickName: String,
+  phone: String,
+  email: String,
+  createBy: Long = 0L,
+  updateBy: Long = 0L,
+  createAt: LocalDateTime = LocalDateTime.now(),
+  updateAt: LocalDateTime = LocalDateTime.now()
+) extends BasePo[User] {
+
+  implicit override def toDo: User =
+    User(id, username, password, avatar, nickName, phone, email, None, Nil, createBy, updateBy, createAt, updateAt)
+
+}
+
+object UserPo {
+
+  implicit def fromDo(t: User): UserPo =
+    UserPo(t.id, t.username, t.password, t.avatar, t.nickName, t.phone, t.email, t.createBy, t.updateBy, t.createAt, t.updateAt)
+
+  class UserTable(tag: Tag) extends Table[UserPo](tag, "users") {
+
+    def id = column[Long]("id", O.PrimaryKey, O.AutoInc)
+
+    def username = column[String]("username")
+
+    def password = column[String]("password")
+
+    def avatar = column[String]("avatar")
+
+    def nickName = column[String]("nick_name")
+
+    def phone = column[String]("phone")
+
+    def email = column[String]("email")
+
+    def createBy = column[Long]("create_by")
+
+    def updateBy = column[Long]("update_by")
+
+    def createAt = column[LocalDateTime]("create_at")
+
+    def updateAt = column[LocalDateTime]("update_at")
+
+    override def * = (
+      id,
+      username,
+      password,
+      avatar,
+      nickName,
+      phone,
+      email,
+      createBy,
+      updateBy,
+      createAt,
+      updateAt
+    ) <> ((UserPo.apply _).tupled, UserPo.unapply)
+  }
+
+}
