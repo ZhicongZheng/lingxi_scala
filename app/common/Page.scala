@@ -17,9 +17,7 @@ case class Page[T](
 
 object Page {
 
-  implicit val userFormat: OFormat[Page[UserDto]] = Json.format[Page[UserDto]]
 
-  implicit val roleFormat: OFormat[Page[RoleDto]] = Json.format[Page[RoleDto]]
 
   def apply[T](page: Int, size: Int, totalCount: Int, data: Seq[T]): Page[T] = {
     val totalPages = (totalCount / size) + 1

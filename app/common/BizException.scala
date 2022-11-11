@@ -1,6 +1,4 @@
-package common.exceptions
-
-import common.Errors
+package common
 
 case class BizException(code: Int, message: String, err: Option[Errors] = None) extends RuntimeException(message) {}
 

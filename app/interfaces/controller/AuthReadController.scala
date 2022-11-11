@@ -1,10 +1,11 @@
 package interfaces.controller
 
 import application.query.{AuthQueryService, UserQueryService}
-import common.{Constant, PageQuery, Results}
+import common.{Constant, Page, PageQuery, Results}
 import domain.user.entity.User
 import infra.actions.{AuthorizationAction, UserAction}
-import interfaces.dto.UserDto
+import interfaces.dto.{RoleDto, UserDto}
+import play.api.libs.json.{Json, OFormat}
 import play.api.mvc.{ControllerComponents, InjectedController, Session}
 
 import java.util.concurrent.ThreadLocalRandom
@@ -20,8 +21,6 @@ class AuthReadController @Inject() (
   userQueryService: UserQueryService
 ) extends InjectedController {
 
-  val random: ThreadLocalRandom = ThreadLocalRandom.current()
-
   def current = userAction async { implicit request =>
     val currentUser = request.user
     authQueryService
@@ -36,12 +35,14 @@ class AuthReadController @Inject() (
   }
 
   def listUserByPage(page: Int, size: Int, sort: Option[String] = None) = userAction andThen authorizationAction async {
-    val pageQuery = PageQuery(page, size, sort)
+    implicit val userFormat: OFormat[Page[UserDto]] = Json.format[Page[UserDto]]
+    val pageQuery                                   = PageQuery(page, size, sort)
     userQueryService.listUserByPage(pageQuery).map(pageDto => Results.success(pageDto)).recover(ex => Results.fail(ex))
   }
 
   def listRoleByPage(page: Int, size: Int, sort: Option[String] = None) = userAction andThen authorizationAction async {
-    val pageQuery = PageQuery(page, size, sort)
+    implicit val roleFormat: OFormat[Page[RoleDto]] = Json.format[Page[RoleDto]]
+    val pageQuery                                   = PageQuery(page, size, sort)
     authQueryService.listRolesByPage(pageQuery).map(pageDto => Results.success(pageDto)).recover(ex => Results.fail(ex))
   }
 
