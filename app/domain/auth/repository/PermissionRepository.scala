@@ -1,7 +1,7 @@
 package domain.auth.repository
 
-import domain.auth.entity.Permission
 import domain.BaseRepository
+import domain.auth.value_obj.Permission
 
 import scala.concurrent.Future
 

@@ -1,10 +1,11 @@
 package infra.db.repository
 
+import common.{Page, PageQuery}
+import domain.user.repository.UserRepository
+import domain.user.value_obj.User
+import infra.db.assembler.UserAssembler._
 import infra.db.po.RolePo.UserRoleTable
 import infra.db.po.UserPo.UserTable
-import common.{Page, PageQuery}
-import domain.user.entity.User
-import domain.user.repository.UserRepository
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfig}
 import slick.jdbc.PostgresProfile
 import slick.jdbc.PostgresProfile.api._
@@ -26,13 +27,13 @@ class UserRepositoryImpl @Inject() (private val dbConfigProvider: DatabaseConfig
   private val userRoles = TableQuery[UserRoleTable]
 
   override def findById(id: Long): Future[Option[User]] =
-    db.run(users.filter(_.id === id).result.headOption).map(userPoOpt => userPoOpt.map(po => po.toDo))
+    db.run(users.filter(_.id === id).result.headOption).map(toDoOpt)
 
   override def list(): Future[Seq[User]] =
-    db.run(users.result).map(users => users.map(u => u.toDo))
+    db.run(users.result).map(toDoSeq)
 
   override def findByUsername(username: String): Future[Option[User]] =
-    db.run(users.filter(_.username === username).result.headOption).map(userPoOpt => userPoOpt.map(po => po.toDo))
+    db.run(users.filter(_.username === username).result.headOption).map(toDoOpt)
 
   override def create(user: User): Future[Long] =
     db.run((users returning users.map(_.id)) += user)
@@ -55,7 +56,7 @@ class UserRepositoryImpl @Inject() (private val dbConfigProvider: DatabaseConfig
       for {
         userPos <- users.drop(pageQuery.offset).take(pageQuery.limit).result
         count   <- users.length.result
-      } yield Page(pageQuery.page, pageQuery.size, count, userPos.map(_.toDo))
+      } yield Page(pageQuery.page, pageQuery.size, count, userPos.map(toDo))
     }
 
   override def changeRole(user: User): Future[Unit] = {

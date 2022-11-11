@@ -1,7 +1,7 @@
 package interfaces.dto
 
-import domain.user.entity.User.entryPwd
-import domain.user.entity.User
+import domain.user.value_obj.User.entryPwd
+import domain.user.value_obj.User
 import play.api.libs.json.{Json, OFormat}
 
 import scala.language.implicitConversions

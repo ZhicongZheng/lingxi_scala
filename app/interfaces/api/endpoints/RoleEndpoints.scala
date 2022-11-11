@@ -2,6 +2,7 @@ package interfaces.api.endpoints
 
 import common.Page
 import interfaces.dto.{CreateRoleRequest, RoleDto, UpdateRoleRequest}
+import play.api.libs.json.{Json, OFormat}
 import sttp.model.StatusCode
 import sttp.tapir._
 import sttp.tapir.generic.auto.schemaForCaseClass
@@ -10,6 +11,8 @@ import sttp.tapir.json.play.jsonBody
 object RoleEndpoints {
 
   private val baseSecuredUserEndpoint = securedWithBearerEndpoint.in("roles").tag("Roles")
+
+  implicit val roleFormat: OFormat[Page[RoleDto]] = Json.format[Page[RoleDto]]
 
   def endpoints = Seq(createRoleEndpoint, deleteRoleEndpoint, listByPageEndpoint, updateRoleEndpoint)
 

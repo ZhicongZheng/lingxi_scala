@@ -1,7 +1,7 @@
 package interfaces.dto
 
 import domain.BaseEntity
-import domain.user.entity.User
+import domain.user.value_obj.User
 import play.api.libs.json.{Json, OFormat}
 
 import java.time.LocalDateTime

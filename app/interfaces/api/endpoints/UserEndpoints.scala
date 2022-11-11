@@ -1,7 +1,8 @@
 package interfaces.api.endpoints
 
 import common.Page
-import interfaces.dto.{ChangePasswordRequest, CreateUserRequest, LoginRequest, UserDto}
+import interfaces.dto.{ChangePasswordRequest, CreateUserRequest, LoginRequest, RoleDto, UserDto}
+import play.api.libs.json.{Json, OFormat}
 import sttp.model.{HeaderNames, StatusCode}
 import sttp.tapir._
 import sttp.tapir.generic.auto.schemaForCaseClass
@@ -12,6 +13,9 @@ object UserEndpoints {
   private val baseUserEndpoint = endpoint.in("users").tag("Users")
 
   private val baseSecuredUserEndpoint = securedWithBearerEndpoint.in("users").tag("Users")
+
+  implicit val userFormat: OFormat[Page[UserDto]] = Json.format[Page[UserDto]]
+  implicit val roleFormat: OFormat[Page[RoleDto]] = Json.format[Page[RoleDto]]
 
   def endpoints =
     Seq(

@@ -1,6 +1,5 @@
 package infra.db.po
 
-import domain.auth.entity.Permission
 import slick.jdbc.PostgresProfile.api._
 import slick.lifted.Tag
 
@@ -14,10 +13,7 @@ final case class PermissionPo(
   updateBy: Long = 0L,
   createAt: LocalDateTime = LocalDateTime.now(),
   updateAt: LocalDateTime = LocalDateTime.now()
-) extends BasePo[Permission] {
-
-  implicit override def toDo: Permission = Permission(id, `type`, value, createBy, updateBy, createAt, updateAt)
-}
+) extends Po
 
 object PermissionPo {
 

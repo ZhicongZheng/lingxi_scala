@@ -2,12 +2,13 @@ package infra.db.repository
 
 import infra.db.po.PermissionPo.{PermissionTable, RolePermissionTable}
 import common.{Page, PageQuery}
-import domain.auth.entity.Permission
 import domain.auth.repository.PermissionRepository
+import domain.auth.value_obj.Permission
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfig}
 import slick.jdbc.PostgresProfile
 import slick.jdbc.PostgresProfile.api._
 import slick.lifted.TableQuery
+import infra.db.assembler.AuthorityAssembler._
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -25,7 +26,7 @@ class PermissionRepositoryImpl @Inject() (dbConfigProvider: DatabaseConfigProvid
 
   override def findByRoleId(roleId: Long): Future[Seq[Permission]] = {
     val joinQuery = permissions join rolePermission on (_.id === _.permissionId) filter (_._2.roleId === roleId)
-    db.run(joinQuery.map(_._1).result).map(permissions => permissions.map(po => po.toDo))
+    db.run(joinQuery.map(_._1).result).map(toPermissionDoSeq)
   }
 
   override def findById(id: Long): Future[Option[Permission]] = ???

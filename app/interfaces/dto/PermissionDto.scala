@@ -1,6 +1,6 @@
 package interfaces.dto
 
-import domain.auth.entity.Permission
+import domain.auth.value_obj.Permission
 import play.api.libs.json.Json
 
 import java.time.LocalDateTime

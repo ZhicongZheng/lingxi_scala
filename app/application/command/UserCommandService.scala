@@ -1,8 +1,8 @@
 package application.command
 
 import common.{Errors, NO_USER, OLD_PWD_ERROR, USER_EXIST}
-import domain.user.entity.User
 import domain.user.repository.UserRepository
+import domain.user.value_obj.User
 import interfaces.dto.{ChangePasswordRequest, CreateUserRequest, LoginRequest}
 import play.api.mvc.{DefaultSessionCookieBaker, JWTCookieDataCodec}
 

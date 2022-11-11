@@ -1,6 +1,5 @@
 package infra.db.po
 
-import domain.user.entity.User
 import slick.jdbc.PostgresProfile.api._
 import slick.lifted.Tag
 
@@ -19,17 +18,9 @@ final case class UserPo(
   updateBy: Long = 0L,
   createAt: LocalDateTime = LocalDateTime.now(),
   updateAt: LocalDateTime = LocalDateTime.now()
-) extends BasePo[User] {
-
-  implicit override def toDo: User =
-    User(id, username, password, avatar, nickName, phone, email, None, Nil, createBy, updateBy, createAt, updateAt)
-
-}
+) extends Po
 
 object UserPo {
-
-  implicit def fromDo(t: User): UserPo =
-    UserPo(t.id, t.username, t.password, t.avatar, t.nickName, t.phone, t.email, t.createBy, t.updateBy, t.createAt, t.updateAt)
 
   class UserTable(tag: Tag) extends Table[UserPo](tag, "users") {
 

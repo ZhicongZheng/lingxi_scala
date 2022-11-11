@@ -1,8 +1,8 @@
-package domain.user.entity
+package domain.user.value_obj
 
 import common.{Constant, Errors, LOGIN_FAILED}
 import domain.BaseEntity
-import domain.auth.entity.{Permission, Role}
+import domain.auth.value_obj.{Permission, Role}
 import org.mindrot.jbcrypt.BCrypt
 import play.api.mvc.JWTCookieDataCodec
 

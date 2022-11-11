@@ -2,7 +2,7 @@ package interfaces.controller
 
 import application.query.{AuthQueryService, UserQueryService}
 import common.{Constant, Page, PageQuery, Results}
-import domain.user.entity.User
+import domain.user.value_obj.User
 import infra.actions.{AuthorizationAction, UserAction}
 import interfaces.dto.{RoleDto, UserDto}
 import play.api.libs.json.{Json, OFormat}

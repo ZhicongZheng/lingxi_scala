@@ -1,6 +1,6 @@
 package interfaces.dto
 
-import domain.auth.entity.Role
+import domain.auth.value_obj.Role
 import play.api.libs.json.{Json, OFormat}
 
 import java.time.LocalDateTime

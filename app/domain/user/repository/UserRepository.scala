@@ -1,7 +1,7 @@
 package domain.user.repository
 
-import domain.user.entity.User
 import domain.BaseRepository
+import domain.user.value_obj.User
 
 import scala.concurrent.Future
 

@@ -1,7 +1,6 @@
 package infra.db.po
 
-import domain.auth.entity
-import domain.auth.entity.Role
+import infra.db.{BaseTable, IdTable}
 import slick.jdbc.PostgresProfile.api._
 import slick.lifted.Tag
 
@@ -16,15 +15,11 @@ final case class RolePo(
   updateBy: Long = 0L,
   createAt: LocalDateTime = LocalDateTime.now(),
   updateAt: LocalDateTime = LocalDateTime.now()
-) extends BasePo[Role] {
-
-  implicit override def toDo: Role = entity.Role(id, code, name, Nil, createBy, updateBy, createAt, updateAt)
-}
+) extends Po
 
 object RolePo {
-  implicit def fromDo(r: Role): RolePo = RolePo(r.id, r.code, r.name)
 
-  class RoleTable(tag: Tag) extends Table[RolePo](tag, "roles") {
+  class RoleTable(tag: Tag) extends Table[RolePo](tag, "roles") with BaseTable {
 
     def id = column[Long]("id", O.PrimaryKey, O.AutoInc)
 
@@ -44,7 +39,7 @@ object RolePo {
       (id, code, name, createBy, updateBy, createAt, updateAt) <> ((RolePo.apply _).tupled, RolePo.unapply)
   }
 
-  class UserRoleTable(tag: Tag) extends Table[(Long, Long, Long)](tag, "user_roles") {
+  class UserRoleTable(tag: Tag) extends Table[(Long, Long, Long)](tag, "user_roles") with IdTable {
 
     def id = column[Long]("id", O.PrimaryKey, O.AutoInc)
 

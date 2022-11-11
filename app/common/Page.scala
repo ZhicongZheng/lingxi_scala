@@ -17,8 +17,6 @@ case class Page[T](
 
 object Page {
 
-
-
   def apply[T](page: Int, size: Int, totalCount: Int, data: Seq[T]): Page[T] = {
     val totalPages = (totalCount / size) + 1
     Page(

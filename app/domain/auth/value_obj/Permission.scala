@@ -1,4 +1,4 @@
-package domain.auth.entity
+package domain.auth.value_obj
 
 import domain.BaseEntity
 

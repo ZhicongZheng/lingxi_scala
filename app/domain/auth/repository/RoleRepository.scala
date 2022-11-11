@@ -1,7 +1,7 @@
 package domain.auth.repository
 
-import domain.auth.entity.Role
 import domain.BaseRepository
+import domain.auth.value_obj.Role
 
 import scala.concurrent.Future
 

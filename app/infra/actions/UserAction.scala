@@ -1,8 +1,8 @@
 package infra.actions
 
 import common.{Constant, NO_USER, Results, TOKEN_CHECK_ERROR}
-import domain.user.entity.User
 import domain.user.repository.UserRepository
+import domain.user.value_obj.User
 import play.api.mvc._
 
 import javax.inject.{Inject, Singleton}

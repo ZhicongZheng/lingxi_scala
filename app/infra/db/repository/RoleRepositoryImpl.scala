@@ -3,12 +3,13 @@ package infra.db.repository
 import infra.db.po.PermissionPo.RolePermissionTable
 import infra.db.po.RolePo.{RoleTable, UserRoleTable}
 import common.{Page, PageQuery}
-import domain.auth.entity.Role
 import domain.auth.repository.RoleRepository
+import domain.auth.value_obj.Role
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfig}
 import slick.jdbc.PostgresProfile
 import slick.jdbc.PostgresProfile.api._
 import slick.lifted.TableQuery
+import infra.db.assembler.AuthorityAssembler._
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -28,13 +29,13 @@ class RoleRepositoryImpl @Inject() (dbConfigProvider: DatabaseConfigProvider)(im
 
   override def findByUserId(userId: Long): Future[Option[Role]] = {
     val joinQuery = roles join userRoles on (_.id === _.roleId)
-    db.run(joinQuery.filter(_._2.userId === userId).map(_._1).result.headOption).map(roleOpt => roleOpt.map(po => po.toDo))
+    db.run(joinQuery.filter(_._2.userId === userId).map(_._1).result.headOption).map(toRoleDoOpt)
   }
 
   override def findById(id: Long): Future[Option[Role]] =
-    db.run(roles.filter(_.id === id).result.headOption).map(roleOpt => roleOpt.map(r => r.toDo))
+    db.run(roles.filter(_.id === id).result.headOption).map(toRoleDoOpt)
 
-  override def list(): Future[Seq[Role]] = db.run(roles.result).map(roles => roles.map(r => r.toDo))
+  override def list(): Future[Seq[Role]] = db.run(roles.result).map(toRoleDoSeq)
 
   override def count(): Future[Int] = db.run(roles.size.result)
 
@@ -64,9 +65,9 @@ class RoleRepositoryImpl @Inject() (dbConfigProvider: DatabaseConfigProvider)(im
       for {
         rolePos <- roles.drop(pageQuery.offset).take(pageQuery.limit).result
         count   <- roles.length.result
-      } yield Page(pageQuery.page, pageQuery.size, count, rolePos.map(_.toDo))
+      } yield Page(pageQuery.page, pageQuery.size, count, rolePos.map(toDo))
     }
 
   override def findByCode(code: String): Future[Option[Role]] =
-    db.run(roles.filter(_.code === code).result.headOption).map(roleOpt => roleOpt.map(r => r.toDo))
+    db.run(roles.filter(_.code === code).result.headOption).map(roleOpt => roleOpt.map(toDo))
 }

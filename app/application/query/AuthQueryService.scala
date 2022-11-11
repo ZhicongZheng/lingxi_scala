@@ -2,7 +2,7 @@ package application.query
 
 import common.{Page, PageQuery}
 import domain.auth.repository.{PermissionRepository, RoleRepository}
-import domain.user.entity.User
+import domain.user.value_obj.User
 import interfaces.dto.RoleDto
 import play.api.Logging
 
