@@ -1,8 +1,5 @@
 package common
 
-import interfaces.dto.{RoleDto, UserDto}
-import play.api.libs.json.{Json, OFormat}
-
 case class Page[T](
   page: Int = 1,
   size: Int = 10,

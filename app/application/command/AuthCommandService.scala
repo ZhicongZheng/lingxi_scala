@@ -21,7 +21,6 @@ class AuthCommandService @Inject() (private val userRepository: UserRepository, 
     userRoleOpt.flatMap {
       case (Some(user), Some(r)) =>
         userRepository.changeRole(user.copy(role = Some(r))).map(_ => Right(()))
-      case (None, _) => Future.successful(Left(NO_USER))
       case (_, None) => Future.successful(Left(NO_ROLE))
       case _         => Future.successful(Left(NO_USER))
     }
@@ -39,7 +38,6 @@ class AuthCommandService @Inject() (private val userRepository: UserRepository, 
       case Some(role) =>
         roleRepository.update(role.update(request)).map(c => Right(c))
     }
-    Future.successful(Right(1))
   }
 
   def deleteRole(id: Int): Future[Either[Errors, Int]] =
