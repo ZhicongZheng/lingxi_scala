@@ -4,7 +4,7 @@ import application.command.{AuthCommandService, UserCommandService}
 import common.{Constant, LOGIC_CODE_ERR, Results}
 import infra.actions.{AuthorizationAction, UserAction}
 import infra.filters.AuthenticationFilter
-import interfaces.dto.{ChangePasswordRequest, CreateRoleRequest, CreateUserRequest, LoginRequest, UpdateRoleRequest}
+import interfaces.dto.{ChangePasswordCommand, CreateRoleCommand, CreateUserRequest, LoginCommand, UpdateRoleCommand}
 import play.api.http.HeaderNames
 import play.api.libs.json.Json
 import play.api.mvc._
@@ -23,7 +23,7 @@ class AuthWriteController @Inject() (
   userCommandService: UserCommandService
 ) extends InjectedController {
 
-  def login: Action[LoginRequest] = Action(parse.json[LoginRequest]).async { request =>
+  def login: Action[LoginCommand] = Action(parse.json[LoginCommand]).async { request =>
     val loginRequest = request.body
     request.session.get(Constant.loginCode) match {
       case Some(code) if code == loginRequest.code =>
@@ -60,7 +60,7 @@ class AuthWriteController @Inject() (
       .recover(ex => Results.fail(ex))
   }
 
-  def changePwd: Action[ChangePasswordRequest] = authedAction(parse.json[ChangePasswordRequest]) async { request =>
+  def changePwd: Action[ChangePasswordCommand] = authedAction(parse.json[ChangePasswordCommand]) async { request =>
     userCommandService.changePwd(request.user.id, request.body) map {
       case Left(error) => Results.fail(error)
       case Right(_)    => Ok
@@ -74,7 +74,7 @@ class AuthWriteController @Inject() (
     } recover (ex => Results.fail(ex))
   }
 
-  def createRole: Action[CreateRoleRequest] = authedAction(parse.json[CreateRoleRequest]) andThen authorizationAction async { request =>
+  def createRole: Action[CreateRoleCommand] = authedAction(parse.json[CreateRoleCommand]) andThen authorizationAction async { request =>
     authApplicationService
       .createRole(request.body)
       .map {
@@ -84,7 +84,7 @@ class AuthWriteController @Inject() (
       .recover(ex => Results.fail(ex))
   }
 
-  def updateRole: Action[UpdateRoleRequest] = authedAction(parse.json[UpdateRoleRequest]) andThen authorizationAction async { request =>
+  def updateRole: Action[UpdateRoleCommand] = authedAction(parse.json[UpdateRoleCommand]) andThen authorizationAction async { request =>
     val updater           = request.request.user.id
     val updateRoleRequest = request.body.copy(updateBy = Some(updater))
     authApplicationService

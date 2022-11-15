@@ -1,7 +1,7 @@
 package interfaces.dto
 
 import domain.auth.value_obj.Permission
-import play.api.libs.json.Json
+import play.api.libs.json.{Json, OFormat}
 
 import java.time.LocalDateTime
 import scala.language.implicitConversions
@@ -17,7 +17,7 @@ case class PermissionDto(
 )
 
 object PermissionDto {
-  implicit val format = Json.format[PermissionDto]
+  implicit val format: OFormat[PermissionDto] = Json.format[PermissionDto]
 
   implicit def fromDo(p: Permission): PermissionDto =
     PermissionDto(p.id, p.`type`, p.value, p.createBy, p.updateBy, p.createAt, p.updateAt)

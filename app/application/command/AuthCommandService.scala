@@ -1,10 +1,9 @@
 package application.command
 
 import common._
-import common.Constant.superAdmin
 import domain.auth.repository.RoleRepository
 import domain.user.repository.UserRepository
-import interfaces.dto.{CreateRoleRequest, UpdateRoleRequest}
+import interfaces.dto.{CreateRoleCommand, UpdateRoleCommand}
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -26,24 +25,24 @@ class AuthCommandService @Inject() (private val userRepository: UserRepository, 
     }
   }
 
-  def createRole(request: CreateRoleRequest): Future[Either[Errors, Long]] =
+  def createRole(request: CreateRoleCommand): Future[Either[Errors, Long]] =
     roleRepository.findByCode(request.code) flatMap {
       case Some(_) => Future.successful(Left(ROLE_CODE_EXIST))
       case None    => roleRepository.create(request).map(id => Right(id))
     }
 
-  def updateRole(request: UpdateRoleRequest): Future[Either[Errors, Int]] = {
+  def updateRole(request: UpdateRoleCommand): Future[Either[Errors, Int]] = {
     roleRepository.findById(request.id) flatMap {
       case None => Future.successful(Left(NO_ROLE))
       case Some(role) =>
-        roleRepository.update(role.update(request)).map(c => Right(c))
+        roleRepository.update(role.update(request.name, request.permissions)).map(c => Right(c))
     }
   }
 
   def deleteRole(id: Int): Future[Either[Errors, Int]] =
     roleRepository.findById(id).flatMap {
       case None                                  => Future.successful(Right(0))
-      case Some(role) if role.code == superAdmin => Future.successful(Left(CAN_NOT_DEL_SUPER_ADMIN))
+      case Some(role) if role.beSuperAdmin => Future.successful(Left(CAN_NOT_DEL_SUPER_ADMIN))
       case _                                     => roleRepository.delete(id).map(delCount => Right(delCount))
     }
 

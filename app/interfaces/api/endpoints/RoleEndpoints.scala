@@ -1,7 +1,7 @@
 package interfaces.api.endpoints
 
 import common.Page
-import interfaces.dto.{CreateRoleRequest, RoleDto, UpdateRoleRequest}
+import interfaces.dto.{CreateRoleCommand, RoleDto, UpdateRoleCommand}
 import play.api.libs.json.{Json, OFormat}
 import sttp.model.StatusCode
 import sttp.tapir._
@@ -20,7 +20,7 @@ object RoleEndpoints {
     .name("createRole")
     .summary("创建角色")
     .description("创建自定义角色")
-    .in(jsonBody[CreateRoleRequest])
+    .in(jsonBody[CreateRoleCommand])
     .out(statusCode(StatusCode.Created))
     .out(jsonBody[Long])
 
@@ -43,6 +43,6 @@ object RoleEndpoints {
     .name("updateRole")
     .summary("更新角色")
     .description("更新角色信息，可以同时保存角色所分配的权限")
-    .in(jsonBody[UpdateRoleRequest])
+    .in(jsonBody[UpdateRoleCommand])
     .out(statusCode(StatusCode.Ok))
 }

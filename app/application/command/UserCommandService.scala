@@ -3,7 +3,7 @@ package application.command
 import common.{Errors, NO_USER, OLD_PWD_ERROR, USER_EXIST}
 import domain.user.repository.UserRepository
 import domain.user.value_obj.User
-import interfaces.dto.{ChangePasswordRequest, CreateUserRequest, LoginRequest}
+import interfaces.dto.{ChangePasswordCommand, CreateUserRequest, LoginCommand}
 import play.api.mvc.{DefaultSessionCookieBaker, JWTCookieDataCodec}
 
 import javax.inject.{Inject, Singleton}
@@ -17,7 +17,7 @@ class UserCommandService @Inject() (
 ) {
   private val jwt: JWTCookieDataCodec = defaultSessionCookieBaker.jwtCodec
 
-  def login(loginRequest: LoginRequest): Future[Either[Errors, String]] =
+  def login(loginRequest: LoginCommand): Future[Either[Errors, String]] =
     userRepository.findByUsername(loginRequest.username) map {
       case Some(user) => user.login(loginRequest.password, jwt)
       case None       => Left(NO_USER)
@@ -31,7 +31,7 @@ class UserCommandService @Inject() (
       case None    => userRepository.create(request).map(id => Right(id))
     }
 
-  def changePwd(userId: Long, request: ChangePasswordRequest): Future[Either[Errors, Unit]] =
+  def changePwd(userId: Long, request: ChangePasswordCommand): Future[Either[Errors, Unit]] =
     userRepository.findById(userId) flatMap {
       case None => Future.successful(Left(NO_USER))
       case Some(user) =>

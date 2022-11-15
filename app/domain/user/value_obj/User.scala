@@ -38,7 +38,7 @@ final case class User(
 
 object User {
 
-  val random: ThreadLocalRandom = ThreadLocalRandom.current()
+  private val random: ThreadLocalRandom = ThreadLocalRandom.current()
 
   def loginCode: String = random.nextInt(1000, 10000).toString
 

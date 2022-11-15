@@ -1,7 +1,7 @@
 package interfaces.api.endpoints
 
 import common.Page
-import interfaces.dto.{ChangePasswordRequest, CreateUserRequest, LoginRequest, RoleDto, UserDto}
+import interfaces.dto.{ChangePasswordCommand, CreateUserRequest, LoginCommand, RoleDto, UserDto}
 import play.api.libs.json.{Json, OFormat}
 import sttp.model.{HeaderNames, StatusCode}
 import sttp.tapir._
@@ -35,7 +35,7 @@ object UserEndpoints {
     .summary("用户登陆")
     .description("输入用户名和密码，登陆管理后台")
     .in("login")
-    .in(jsonBody[LoginRequest])
+    .in(jsonBody[LoginCommand])
     .out(statusCode(StatusCode.Ok))
     .out(header[String](HeaderNames.Authorization))
 
@@ -80,7 +80,7 @@ object UserEndpoints {
     .summary("修改密码")
     .description("当前登陆用户修改密码")
     .in("password")
-    .in(jsonBody[ChangePasswordRequest])
+    .in(jsonBody[ChangePasswordCommand])
     .out(statusCode(StatusCode.Ok))
     .errorOut(jsonBody[ErrorMessage])
 
