@@ -1,4 +1,4 @@
-package interfaces.dto
+package application.command
 
 import play.api.libs.json.{Json, OFormat}
 

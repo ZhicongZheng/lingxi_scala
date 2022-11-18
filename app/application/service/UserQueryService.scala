@@ -1,12 +1,12 @@
-package application.query
+package application.service
 
 import common.{Page, PageQuery}
 import domain.user.repository.UserRepository
 import interfaces.dto.UserDto
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 
 @Singleton
 class UserQueryService @Inject() (

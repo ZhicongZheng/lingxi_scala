@@ -1,6 +1,6 @@
 package infra.db.assembler
 
-import domain.user.value_obj.User
+import domain.user.entity.User
 import infra.db.po.UserPo
 
 import scala.concurrent.Future
@@ -10,7 +10,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 object UserAssembler {
 
   implicit def toDo(p: UserPo): User =
-    User(p.id, p.username, p.password, p.avatar, p.nickName, p.phone, p.email, None, Nil, p.createBy, p.updateBy, p.createAt, p.updateAt)
+    User(p.id, p.username, p.password, p.avatar, p.nickName, p.phone, p.email, None, p.createBy, p.updateBy, p.createAt, p.updateAt)
 
   implicit def toDoSeq(seq: Seq[UserPo]): Seq[User] = seq.map(toDo)
 

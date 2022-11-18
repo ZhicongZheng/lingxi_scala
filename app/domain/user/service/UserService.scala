@@ -1,3 +1,3 @@
 package domain.user.service
 
-class AccountService {}
+class UserService {}

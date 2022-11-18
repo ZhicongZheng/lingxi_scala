@@ -1,14 +1,14 @@
-package application.command
+package application.service
 
+import application.command.{ChangePasswordCommand, CreateUserRequest, LoginCommand}
 import common.{Errors, NO_USER, OLD_PWD_ERROR, USER_EXIST}
+import domain.user.entity.User
 import domain.user.repository.UserRepository
-import domain.user.value_obj.User
-import interfaces.dto.{ChangePasswordCommand, CreateUserRequest, LoginCommand}
 import play.api.mvc.{DefaultSessionCookieBaker, JWTCookieDataCodec}
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 
 @Singleton
 class UserCommandService @Inject() (

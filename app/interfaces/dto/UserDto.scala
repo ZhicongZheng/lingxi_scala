@@ -1,7 +1,7 @@
 package interfaces.dto
 
 import domain.BaseEntity
-import domain.user.value_obj.User
+import domain.user.entity.User
 import play.api.libs.json.{Json, OFormat}
 
 import java.time.LocalDateTime
@@ -16,7 +16,6 @@ case class UserDto(
   phone: String,
   email: String,
   role: Option[RoleDto] = None,
-  permissions: Seq[PermissionDto] = Nil,
   createBy: Long = 0L,
   updateBy: Long = 0L,
   createAt: LocalDateTime = LocalDateTime.now(),
@@ -37,7 +36,6 @@ object UserDto {
       user.phone,
       user.email,
       user.role,
-      user.permissions,
       user.createBy,
       user.updateBy,
       user.createAt,

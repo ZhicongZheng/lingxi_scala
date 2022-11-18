@@ -1,10 +1,10 @@
 package interfaces.controller
 
-import application.command.{AuthCommandService, UserCommandService}
+import application.command.{ChangePasswordCommand, CreateRoleCommand, CreateUserRequest, LoginCommand, UpdateRoleCommand}
+import application.service.{AuthCommandService, UserCommandService}
 import common.{Constant, LOGIC_CODE_ERR, Results}
 import infra.actions.{AuthorizationAction, UserAction}
 import infra.filters.AuthenticationFilter
-import interfaces.dto.{ChangePasswordCommand, CreateRoleCommand, CreateUserRequest, LoginCommand, UpdateRoleCommand}
 import play.api.http.HeaderNames
 import play.api.libs.json.Json
 import play.api.mvc._

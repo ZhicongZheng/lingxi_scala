@@ -1,4 +1,4 @@
-package interfaces.dto
+package application.command
 
 import domain.auth.value_obj.Role
 import play.api.libs.json.{Json, OFormat}

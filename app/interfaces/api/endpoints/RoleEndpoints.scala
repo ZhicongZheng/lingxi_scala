@@ -1,7 +1,8 @@
 package interfaces.api.endpoints
 
+import application.command.{CreateRoleCommand, UpdateRoleCommand}
 import common.Page
-import interfaces.dto.{CreateRoleCommand, RoleDto, UpdateRoleCommand}
+import interfaces.dto.RoleDto
 import play.api.libs.json.{Json, OFormat}
 import sttp.model.StatusCode
 import sttp.tapir._

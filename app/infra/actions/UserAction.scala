@@ -1,28 +1,41 @@
 package infra.actions
 
 import common.{Constant, NO_USER, Results, TOKEN_CHECK_ERROR}
-import domain.user.repository.UserRepository
-import domain.user.value_obj.User
+import domain.user.entity.User
+import domain.user.repository.UserAggregateRepository
+import play.api.cache.AsyncCacheApi
 import play.api.mvc._
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.duration.DurationInt
 
 case class UserRequest[A](user: User, request: Request[A]) extends WrappedRequest(request)
 
 @Singleton
-class UserAction @Inject() (parser: BodyParsers.Default, userRepository: UserRepository)(implicit ec: ExecutionContext)
-    extends ActionBuilder[UserRequest, AnyContent] {
+class UserAction @Inject() (parser: BodyParsers.Default, userRepository: UserAggregateRepository, cacheApi: AsyncCacheApi)(implicit
+  ec: ExecutionContext
+) extends ActionBuilder[UserRequest, AnyContent] {
 
-  def invokeBlock[A](request: Request[A], block: UserRequest[A] => Future[Result]): Future[Result] =
-    request.headers.get(Constant.userId).map(_.toLong) match {
-      case Some(userId) =>
-        userRepository.findById(userId).flatMap {
-          case Some(user) => block.apply(UserRequest(user, request))
-          case None       => Future.successful(Results.fail(NO_USER))
+  def invokeBlock[A](request: Request[A], block: UserRequest[A] => Future[Result]): Future[Result] = {
+    def success(user: User) = block.apply(UserRequest(user, request))
+
+    request.headers
+      .get(Constant.userId)
+      .map(_.toLong)
+      .fold(Future.successful(Results.fail(TOKEN_CHECK_ERROR))) { userId =>
+        cacheApi.get[User](userId.toString).flatMap {
+          case Some(user) => success(user)
+          case None =>
+            userRepository
+              .get(userId)
+              .flatMap {
+                case None       => Future.successful(Results.fail(NO_USER))
+                case Some(user) => cacheApi.set(userId.toString, user, 10.minutes).flatMap(_ => success(user))
+              }
         }
-      case None => Future.successful(Results.fail(TOKEN_CHECK_ERROR))
-    }
+      }
+  }
 
   override def parser: BodyParser[AnyContent] = parser
 

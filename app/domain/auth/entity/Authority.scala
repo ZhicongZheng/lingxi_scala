@@ -8,4 +8,4 @@ import domain.auth.value_obj.{Permission, Role}
  *  @param permissions
  *    权限资源集合
  */
-case class Authority(role: Role, permissions: Seq[Permission] = Nil) {}
+case class Authority(id: Long, role: Role, permissions: Seq[Permission] = Nil)

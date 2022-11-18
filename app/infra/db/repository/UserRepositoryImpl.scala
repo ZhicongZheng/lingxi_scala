@@ -1,8 +1,8 @@
 package infra.db.repository
 
 import common.{Page, PageQuery}
+import domain.user.entity.User
 import domain.user.repository.UserRepository
-import domain.user.value_obj.User
 import infra.db.assembler.UserAssembler._
 import infra.db.po.RolePo.UserRoleTable
 import infra.db.po.UserPo.UserTable

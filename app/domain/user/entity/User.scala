@@ -1,7 +1,8 @@
-package domain.user.value_obj
+package domain.user.entity
 
 import common.{Constant, Errors, LOGIN_FAILED}
 import domain.BaseEntity
+import domain.auth.entity.Authority
 import domain.auth.value_obj.{Permission, Role}
 import org.mindrot.jbcrypt.BCrypt
 import play.api.mvc.JWTCookieDataCodec
@@ -19,7 +20,6 @@ final case class User(
   phone: String,
   email: String,
   role: Option[Role] = None,
-  permissions: Seq[Permission] = Nil,
   createBy: Long = 0L,
   updateBy: Long = 0L,
   createAt: LocalDateTime = LocalDateTime.now(),
@@ -33,6 +33,8 @@ final case class User(
     }
 
   def checkPwd(oldPassword: String): Boolean = Try(BCrypt.checkpw(oldPassword, password)).getOrElse(false)
+
+  def changeRole(role: Role): User = copy(role = Some(role))
 
 }
 

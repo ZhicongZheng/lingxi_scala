@@ -1,14 +1,13 @@
 package interfaces.controller
 
-import application.query.{AuthQueryService, UserQueryService}
+import application.service.{AuthQueryService, UserQueryService}
 import common.{Constant, Page, PageQuery, Results}
-import domain.user.value_obj.User
+import domain.user.entity.User
 import infra.actions.{AuthorizationAction, UserAction}
 import interfaces.dto.{RoleDto, UserDto}
 import play.api.libs.json.{Json, OFormat}
 import play.api.mvc.{ControllerComponents, InjectedController, Session}
 
-import java.util.concurrent.ThreadLocalRandom
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext.Implicits.global
 
@@ -21,12 +20,8 @@ class AuthReadController @Inject() (
   userQueryService: UserQueryService
 ) extends InjectedController {
 
-  def current = userAction async { implicit request =>
-    val currentUser = request.user
-    authQueryService
-      .richUser(currentUser)
-      .map(u => Results.success(UserDto.fromDo(u)))
-      .recover(ex => Results.fail(ex))
+  def current = userAction { implicit request =>
+    Results.success(UserDto.fromDo(request.user))
   }
 
   def loginCode = Action { implicit request =>

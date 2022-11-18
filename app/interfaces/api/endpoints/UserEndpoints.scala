@@ -1,7 +1,8 @@
 package interfaces.api.endpoints
 
+import application.command.{ChangePasswordCommand, CreateUserRequest, LoginCommand}
 import common.Page
-import interfaces.dto.{ChangePasswordCommand, CreateUserRequest, LoginCommand, RoleDto, UserDto}
+import interfaces.dto.{RoleDto, UserDto}
 import play.api.libs.json.{Json, OFormat}
 import sttp.model.{HeaderNames, StatusCode}
 import sttp.tapir._

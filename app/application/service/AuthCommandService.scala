@@ -1,9 +1,9 @@
-package application.command
+package application.service
 
+import application.command.{CreateRoleCommand, UpdateRoleCommand}
 import common._
 import domain.auth.repository.RoleRepository
 import domain.user.repository.UserRepository
-import interfaces.dto.{CreateRoleCommand, UpdateRoleCommand}
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -19,7 +19,7 @@ class AuthCommandService @Inject() (private val userRepository: UserRepository, 
     } yield (userOpt, roleOpt)
     userRoleOpt.flatMap {
       case (Some(user), Some(r)) =>
-        userRepository.changeRole(user.copy(role = Some(r))).map(_ => Right(()))
+        userRepository.changeRole(user.changeRole(r)).map(_ => Right(()))
       case (_, None) => Future.successful(Left(NO_ROLE))
       case _         => Future.successful(Left(NO_USER))
     }
@@ -31,19 +31,18 @@ class AuthCommandService @Inject() (private val userRepository: UserRepository, 
       case None    => roleRepository.create(request).map(id => Right(id))
     }
 
-  def updateRole(request: UpdateRoleCommand): Future[Either[Errors, Int]] = {
+  def updateRole(request: UpdateRoleCommand): Future[Either[Errors, Int]] =
     roleRepository.findById(request.id) flatMap {
       case None => Future.successful(Left(NO_ROLE))
       case Some(role) =>
         roleRepository.update(role.update(request.name, request.permissions)).map(c => Right(c))
     }
-  }
 
   def deleteRole(id: Int): Future[Either[Errors, Int]] =
     roleRepository.findById(id).flatMap {
-      case None                                  => Future.successful(Right(0))
+      case None                            => Future.successful(Right(0))
       case Some(role) if role.beSuperAdmin => Future.successful(Left(CAN_NOT_DEL_SUPER_ADMIN))
-      case _                                     => roleRepository.delete(id).map(delCount => Right(delCount))
+      case _                               => roleRepository.delete(id).map(delCount => Right(delCount))
     }
 
 }
