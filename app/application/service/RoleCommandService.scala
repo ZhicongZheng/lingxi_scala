@@ -11,7 +11,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 @Singleton
-class AuthCommandService @Inject() (
+class RoleCommandService @Inject() (
   roleQueryRepository: RoleQueryRepository,
   userAggregateRepository: UserRepository,
   roleAggregateRepository: RoleRepository

@@ -37,7 +37,8 @@ CREATE TABLE IF NOT EXISTS role_permissions(
 CREATE TABLE IF NOT EXISTS permissions(
  id             SERIAL PRIMARY KEY,
  type           VARCHAR (50)    NOT NULL,
- value          VARCHAR (50)    NOT NULL,
+ value          VARCHAR (512)   NOT NULL,
+ name           VARCHAR (50)    NOT NULL
  create_by      BIGINT          NOT NULL DEFAULT 0,
  update_by      BIGINT          NOT NULL DEFAULT 0,
  create_at      TIMESTAMP       NOT NULL DEFAULT current_timestamp,
@@ -52,4 +53,4 @@ INSERT INTO user_roles(user_id, role_id) VALUES (1, 1);
 
 INSERT INTO role_permissions(role_id, permission_id) VALUES (1, 1)
 
-INSERT INTO permissions(type, value) VALUES('api', 'interfaces.controller.AuthReadController.listByPage')
+INSERT INTO permissions(type, value, name) VALUES('api', 'interfaces.controller.UserController.listByPage', '获取用户列表')

@@ -14,7 +14,7 @@ object AuthorityAssembler {
   implicit def fromDo(r: Role): RolePo = RolePo(r.id, r.code, r.name)
 
   implicit def toDo(p: PermissionPo): Permission =
-    Permission(p.id, p.`type`, p.value, p.createBy, p.updateBy, p.createAt, p.updateAt)
+    Permission(p.id, p.`type`, p.value, p.name, p.createBy, p.updateBy, p.createAt, p.updateAt)
 
   implicit def toRoleDoSeq(seq: Seq[RolePo]): Seq[Role] = seq.map(toDo)
 

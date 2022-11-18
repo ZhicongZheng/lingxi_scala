@@ -9,6 +9,7 @@ final case class PermissionPo(
   id: Long,
   `type`: String,
   value: String,
+  name: String,
   createBy: Long = 0L,
   updateBy: Long = 0L,
   createAt: LocalDateTime = LocalDateTime.now(),
@@ -25,6 +26,8 @@ object PermissionPo {
 
     def value = column[String]("value")
 
+    def name = column[String]("name")
+
     def createBy = column[Long]("create_by")
 
     def updateBy = column[Long]("update_by")
@@ -37,6 +40,7 @@ object PermissionPo {
       id,
       `type`,
       value,
+      name,
       createBy,
       updateBy,
       createAt,
