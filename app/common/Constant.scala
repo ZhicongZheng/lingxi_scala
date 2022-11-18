@@ -6,10 +6,12 @@ object Constant {
 
   val menuPermission = "menu"
 
-  val functionPermission = "api_doc"
+  val functionPermission = "api"
 
   val loginCode = "loginCode"
 
   val superAdmin = "SUPER_ADMIN"
+
+  val domainCreateId = -1L
 
 }

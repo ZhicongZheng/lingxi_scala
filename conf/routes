@@ -1,37 +1,37 @@
 # common api
 
-->          /                     api_doc.ApiRouter
+->          /                     interfaces.api.ApiRouter
 
 GET         /                     controllers.Default.redirect(to = "./docs/")
 
-POST        /files/upload         controller.FileController.upload
+POST        /files/upload         interfaces.controller.FileController.upload
 # users api
 
-POST        /users/login          auth.controller.AuthWriteController.login
+POST        /users/login          interfaces.controller.AuthWriteController.login
 
-POST        /users/logout         auth.controller.AuthWriteController.logout
+POST        /users/logout         interfaces.controller.AuthWriteController.logout
 
-GET         /users/current        auth.controller.AuthReadController.current
+GET         /users/current        interfaces.controller.AuthReadController.current
 
-GET         /users                auth.controller.AuthReadController.listUserByPage(page: Int ?= 1,size: Int ?= 10, sort: Option[String])
+GET         /users                interfaces.controller.AuthReadController.listUserByPage(page: Int ?= 1,size: Int ?= 10, sort: Option[String])
 
-DELETE      /users/$id<[0-9]+>    auth.controller.AuthWriteController.deleteUser(id: Int)
+DELETE      /users/$id<[0-9]+>    interfaces.controller.AuthWriteController.deleteUser(id: Int)
 
-POST        /users                auth.controller.AuthWriteController.createUser
+POST        /users                interfaces.controller.AuthWriteController.createUser
 
-PUT         /users/password       auth.controller.AuthWriteController.changePwd
+PUT         /users/password       interfaces.controller.AuthWriteController.changePwd
 
-GET         /users/login-code     auth.controller.AuthReadController.loginCode
+GET         /users/login-code     interfaces.controller.AuthReadController.loginCode
 
-POST        /users/$useId<[0-9]+>/roles/$roleId<[0-9]+>  auth.controller.AuthWriteController.changeUserRole(useId: Long, roleId: Long)
+POST        /users/$useId<[0-9]+>/roles/$roleId<[0-9]+>  interfaces.controller.AuthWriteController.changeUserRole(useId: Long, roleId: Long)
 
 # roles api
-POST        /roles               auth.controller.AuthWriteController.createRole
+POST        /roles               interfaces.controller.AuthWriteController.createRole
 
-DELETE      /roles/$id<[0-9]+>   auth.controller.AuthWriteController.deleteRole(id: Int)
+DELETE      /roles/$id<[0-9]+>   interfaces.controller.AuthWriteController.deleteRole(id: Int)
 
-GET         /roles               auth.controller.AuthReadController.listRoleByPage(page: Int ?= 1,size: Int ?= 10, sort: Option[String])
+GET         /roles               interfaces.controller.AuthReadController.listRoleByPage(page: Int ?= 1,size: Int ?= 10, sort: Option[String])
 
-PUT         /roles               auth.controller.AuthWriteController.updateRole
+PUT         /roles               interfaces.controller.AuthWriteController.updateRole
 
 

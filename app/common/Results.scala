@@ -1,6 +1,5 @@
 package common
 
-import common.result.Errors
 import play.api.Logging
 import play.api.libs.json.{Json, Writes}
 import play.api.mvc.Results._
