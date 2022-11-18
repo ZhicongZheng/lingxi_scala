@@ -31,7 +31,6 @@ object RoleEndpoints {
     .description("删除角色，超级管理员角色不允许删除")
     .in(path[Int]("id"))
     .out(statusCode(StatusCode.Ok))
-    .out(jsonBody[Long])
 
   val listByPageEndpoint = baseSecuredUserEndpoint.get
     .name("listRoleByPage")

@@ -4,45 +4,50 @@ import application.command.{CreateRoleCommand, UpdateRoleCommand}
 import common._
 import domain.auth.repository.RoleRepository
 import domain.user.repository.UserRepository
+import infra.db.repository.RoleQueryRepository
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 @Singleton
-class AuthCommandService @Inject() (private val userRepository: UserRepository, private val roleRepository: RoleRepository) {
+class AuthCommandService @Inject() (
+  roleQueryRepository: RoleQueryRepository,
+  userAggregateRepository: UserRepository,
+  roleAggregateRepository: RoleRepository
+) {
 
   def changeUserRole(userId: Long, roleId: Long): Future[Either[Errors, Unit]] = {
     val userRoleOpt = for {
-      userOpt <- userRepository.findById(userId)
-      roleOpt <- roleRepository.findById(roleId)
+      userOpt <- userAggregateRepository.get(userId)
+      roleOpt <- roleAggregateRepository.get(roleId)
     } yield (userOpt, roleOpt)
     userRoleOpt.flatMap {
       case (Some(user), Some(r)) =>
-        userRepository.changeRole(user.changeRole(r)).map(_ => Right(()))
+        userAggregateRepository.save(user.changeRole(r)).map(_ => Right(()))
       case (_, None) => Future.successful(Left(NO_ROLE))
       case _         => Future.successful(Left(NO_USER))
     }
   }
 
   def createRole(request: CreateRoleCommand): Future[Either[Errors, Long]] =
-    roleRepository.findByCode(request.code) flatMap {
+    roleQueryRepository.findByCode(request.code) flatMap {
       case Some(_) => Future.successful(Left(ROLE_CODE_EXIST))
-      case None    => roleRepository.create(request).map(id => Right(id))
+      case None    => roleAggregateRepository.save(request).map(id => Right(id))
     }
 
-  def updateRole(request: UpdateRoleCommand): Future[Either[Errors, Int]] =
-    roleRepository.findById(request.id) flatMap {
+  def updateRole(request: UpdateRoleCommand): Future[Either[Errors, Unit]] =
+    roleAggregateRepository.get(request.id) flatMap {
       case None => Future.successful(Left(NO_ROLE))
       case Some(role) =>
-        roleRepository.update(role.update(request.name, request.permissions)).map(c => Right(c))
+        roleAggregateRepository.save(role.update(request.name, request.permissions)).map(_ => Right(()))
     }
 
-  def deleteRole(id: Int): Future[Either[Errors, Int]] =
-    roleRepository.findById(id).flatMap {
-      case None                            => Future.successful(Right(0))
+  def deleteRole(id: Int): Future[Either[Errors, Unit]] =
+    roleAggregateRepository.get(id).flatMap {
+      case None                            => Future.successful(Right(()))
       case Some(role) if role.beSuperAdmin => Future.successful(Left(CAN_NOT_DEL_SUPER_ADMIN))
-      case _                               => roleRepository.delete(id).map(delCount => Right(delCount))
+      case _                               => roleAggregateRepository.remove(id).map(_ => Right(()))
     }
 
 }

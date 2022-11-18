@@ -1,21 +1,23 @@
-package infra.db.repository
+package infra.db.repository.impl
 
-import domain.auth.repository.RoleAggregateRepository
-import domain.auth.value_obj.{Permission, Role}
+import common.Constant
+import domain.auth.entity.Role
+import domain.auth.repository.RoleRepository
+import domain.auth.value_obj.Permission
+import infra.db.assembler.AuthorityAssembler._
 import infra.db.po.PermissionPo.{PermissionTable, RolePermissionTable}
 import infra.db.po.RolePo.{RoleTable, UserRoleTable}
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfig}
 import slick.jdbc.PostgresProfile
 import slick.jdbc.PostgresProfile.api._
 import slick.lifted.TableQuery
-import infra.db.assembler.AuthorityAssembler._
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class RoleAggregateRepositoryImpl @Inject() (private val dbConfigProvider: DatabaseConfigProvider)(implicit ec: ExecutionContext)
-    extends RoleAggregateRepository
+class RoleRepositoryImpl @Inject() (private val dbConfigProvider: DatabaseConfigProvider)(implicit ec: ExecutionContext)
+    extends RoleRepository
     with HasDatabaseConfig[PostgresProfile] {
 
   override protected val dbConfig = dbConfigProvider.get[PostgresProfile]
@@ -36,8 +38,8 @@ class RoleAggregateRepositoryImpl @Inject() (private val dbConfigProvider: Datab
 
   override def save(domain: Role): Future[Long] =
     domain.id match {
-      case 0 => doInsert(domain)
-      case _ => doUpdate(domain)
+      case Constant.domainCreateId => doInsert(domain)
+      case _                       => doUpdate(domain)
     }
 
   override def get(id: Long): Future[Option[Role]] =

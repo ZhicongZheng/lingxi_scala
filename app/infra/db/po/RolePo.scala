@@ -1,6 +1,5 @@
 package infra.db.po
 
-import infra.db.{BaseTable, IdTable}
 import slick.jdbc.PostgresProfile.api._
 import slick.lifted.Tag
 

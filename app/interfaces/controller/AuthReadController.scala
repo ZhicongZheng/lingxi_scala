@@ -15,9 +15,9 @@ import scala.concurrent.ExecutionContext.Implicits.global
 class AuthReadController @Inject() (
   override val controllerComponents: ControllerComponents,
   authQueryService: AuthQueryService,
+  userQueryService: UserQueryService,
   userAction: UserAction,
-  authorizationAction: AuthorizationAction,
-  userQueryService: UserQueryService
+  authorizationAction: AuthorizationAction
 ) extends InjectedController {
 
   def current = userAction { implicit request =>

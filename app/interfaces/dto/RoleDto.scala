@@ -1,6 +1,7 @@
 package interfaces.dto
 
-import domain.auth.value_obj.Role
+import domain.auth.entity.Role
+import infra.db.po.RolePo
 import play.api.libs.json.{Json, OFormat}
 
 import java.time.LocalDateTime
@@ -21,6 +22,9 @@ object RoleDto {
   implicit val format: OFormat[RoleDto] = Json.format[RoleDto]
 
   implicit def formDo(role: Role): RoleDto =
+    RoleDto(role.id, role.code, role.name, role.createBy, role.updateBy, role.createAt, role.updateAt)
+
+  implicit def fromPo(role: RolePo): RoleDto =
     RoleDto(role.id, role.code, role.name, role.createBy, role.updateBy, role.createAt, role.updateAt)
 
   implicit def fromDoOpt(roleOpt: Option[Role]): Option[RoleDto] =

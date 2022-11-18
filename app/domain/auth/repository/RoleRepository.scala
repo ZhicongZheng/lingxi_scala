@@ -1,12 +1,13 @@
 package domain.auth.repository
 
-import domain.BaseRepository
-import domain.auth.value_obj.Role
+import domain.AggregateRepository
+import domain.auth.entity.Role
 
 import scala.concurrent.Future
 
-trait RoleRepository extends BaseRepository[Role] {
+/** 权限仓储
+ */
+trait RoleRepository extends AggregateRepository[Role] {
 
-  def findByCode(code: String): Future[Option[Role]]
-
+  def getByUser(userId: Long): Future[Option[Role]]
 }

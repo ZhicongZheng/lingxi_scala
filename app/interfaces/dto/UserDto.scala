@@ -1,7 +1,7 @@
 package interfaces.dto
 
-import domain.BaseEntity
 import domain.user.entity.User
+import infra.db.po.UserPo
 import play.api.libs.json.{Json, OFormat}
 
 import java.time.LocalDateTime
@@ -20,7 +20,7 @@ case class UserDto(
   updateBy: Long = 0L,
   createAt: LocalDateTime = LocalDateTime.now(),
   updateAt: LocalDateTime = LocalDateTime.now()
-) extends BaseEntity
+)
 
 object UserDto {
 
@@ -36,6 +36,22 @@ object UserDto {
       user.phone,
       user.email,
       user.role,
+      user.createBy,
+      user.updateBy,
+      user.createAt,
+      user.updateAt
+    )
+
+  implicit def fromPo(user: UserPo): UserDto =
+    UserDto(
+      user.id,
+      user.username,
+      "",
+      user.avatar,
+      user.nickName,
+      user.phone,
+      user.email,
+      None,
       user.createBy,
       user.updateBy,
       user.createAt,

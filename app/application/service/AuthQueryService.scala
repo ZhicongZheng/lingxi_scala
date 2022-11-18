@@ -1,8 +1,7 @@
 package application.service
 
 import common.{Page, PageQuery}
-import domain.auth.repository.{PermissionRepository, RoleRepository}
-import domain.user.entity.User
+import infra.db.repository.RoleQueryRepository
 import interfaces.dto.RoleDto
 import play.api.Logging
 
@@ -11,8 +10,8 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 @Singleton
-class AuthQueryService @Inject() (private val roleRepository: RoleRepository) extends Logging {
+class AuthQueryService @Inject() (roleQueryRepository: RoleQueryRepository) extends Logging {
 
-  def listRolesByPage(pageQuery: PageQuery): Future[Page[RoleDto]] = roleRepository.listByPage(pageQuery).map(_.map(RoleDto.formDo))
+  def listRolesByPage(pageQuery: PageQuery): Future[Page[RoleDto]] = roleQueryRepository.listByPage(pageQuery).map(_.map(RoleDto.fromPo))
 
 }

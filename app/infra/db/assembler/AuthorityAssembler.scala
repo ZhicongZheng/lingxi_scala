@@ -1,14 +1,15 @@
 package infra.db.assembler
 
+import domain.auth.entity.Role
 import domain.auth.value_obj
-import domain.auth.value_obj.{Permission, Role}
+import domain.auth.value_obj.Permission
 import infra.db.po.{PermissionPo, RolePo}
 
 import scala.language.implicitConversions
 
 object AuthorityAssembler {
 
-  implicit def toDo(p: RolePo): Role = value_obj.Role(p.id, p.code, p.name, Nil, p.createBy, p.updateBy, p.createAt, p.updateAt)
+  implicit def toDo(p: RolePo): Role = Role(p.id, p.code, p.name, Nil, p.createBy, p.updateBy, p.createAt, p.updateAt)
 
   implicit def fromDo(r: Role): RolePo = RolePo(r.id, r.code, r.name)
 

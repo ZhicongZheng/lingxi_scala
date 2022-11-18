@@ -17,10 +17,10 @@ import scala.concurrent.Future
 class AuthWriteController @Inject() (
   override val controllerComponents: ControllerComponents,
   authApplicationService: AuthCommandService,
+  userCommandService: UserCommandService,
   authenticationFilter: AuthenticationFilter,
   authedAction: UserAction,
-  authorizationAction: AuthorizationAction,
-  userCommandService: UserCommandService
+  authorizationAction: AuthorizationAction
 ) extends InjectedController {
 
   def login: Action[LoginCommand] = Action(parse.json[LoginCommand]).async { request =>
@@ -47,7 +47,7 @@ class AuthWriteController @Inject() (
   }
 
   def deleteUser(id: Int): Action[AnyContent] = authedAction andThen authorizationAction async {
-    userCommandService.deleteUser(id).map(c => Results.success(c)).recover(ex => Results.fail(ex))
+    userCommandService.deleteUser(id).map(_ => Ok).recover(ex => Results.fail(ex))
   }
 
   def createUser: Action[CreateUserRequest] = authedAction(parse.json[CreateUserRequest]) async { request =>
@@ -100,8 +100,8 @@ class AuthWriteController @Inject() (
     authApplicationService
       .deleteRole(id)
       .map {
-        case Left(error)  => Results.fail(error)
-        case Right(value) => Results.success(value)
+        case Left(error) => Results.fail(error)
+        case Right(_)    => Ok
       }
       .recover(ex => Results.fail(ex))
   }

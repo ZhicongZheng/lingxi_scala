@@ -66,7 +66,7 @@ object UserEndpoints {
     .summary("删除用户")
     .description("根据id 删除用户")
     .in(path[Int]("id"))
-    .out(jsonBody[Long])
+    .out(statusCode(StatusCode.Ok))
 
   val createUserEndpoint = baseSecuredUserEndpoint.post
     .name("createUser")

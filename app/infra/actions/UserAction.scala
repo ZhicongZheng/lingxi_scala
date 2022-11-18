@@ -2,7 +2,7 @@ package infra.actions
 
 import common.{Constant, NO_USER, Results, TOKEN_CHECK_ERROR}
 import domain.user.entity.User
-import domain.user.repository.UserAggregateRepository
+import domain.user.repository.UserRepository
 import play.api.cache.AsyncCacheApi
 import play.api.mvc._
 
@@ -13,7 +13,7 @@ import scala.concurrent.duration.DurationInt
 case class UserRequest[A](user: User, request: Request[A]) extends WrappedRequest(request)
 
 @Singleton
-class UserAction @Inject() (parser: BodyParsers.Default, userRepository: UserAggregateRepository, cacheApi: AsyncCacheApi)(implicit
+class UserAction @Inject() (parser: BodyParsers.Default, userRepository: UserRepository, cacheApi: AsyncCacheApi)(implicit
   ec: ExecutionContext
 ) extends ActionBuilder[UserRequest, AnyContent] {
 

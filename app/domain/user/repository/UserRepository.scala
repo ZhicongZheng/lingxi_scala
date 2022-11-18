@@ -1,14 +1,11 @@
 package domain.user.repository
 
-import domain.BaseRepository
+import domain.AggregateRepository
 import domain.user.entity.User
 
 import scala.concurrent.Future
 
-trait UserRepository extends BaseRepository[User] {
+trait UserRepository extends AggregateRepository[User] {
 
-  def findByUsername(username: String): Future[Option[User]]
-
-  def changeRole(user: User): Future[Unit]
-
+  def getByName(username: String): Future[Option[User]]
 }

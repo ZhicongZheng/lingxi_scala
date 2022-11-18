@@ -1,6 +1,7 @@
-package domain.auth.value_obj
+package domain.auth.entity
 
 import common.Constant.superAdmin
+import domain.auth.value_obj.Permission
 import domain.BaseEntity
 
 import java.time.LocalDateTime
@@ -18,11 +19,7 @@ final case class Role(
 
   def update(name: String, permissionIds: Seq[Long]): Role = {
     val role = this.copy(name = name, updateAt = LocalDateTime.now())
-    val permissions = permissionIds match {
-      case Nil => Nil
-      case ps  => ps.map(id => Permission(id, "", ""))
-    }
-    role.copy(permissions = permissions)
+    role.copy(permissions = permissionIds.map(id => Permission(id, "", "")))
   }
 
   def beSuperAdmin: Boolean = name == superAdmin

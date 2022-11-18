@@ -1,4 +1,4 @@
-package infra.db
+package infra.db.po
 
 import slick.lifted.Rep
 

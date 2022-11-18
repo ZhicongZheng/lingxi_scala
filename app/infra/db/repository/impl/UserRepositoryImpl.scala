@@ -1,8 +1,9 @@
-package infra.db.repository
+package infra.db.repository.impl
 
-import domain.auth.repository.RoleAggregateRepository
+import common.Constant
+import domain.auth.repository.RoleRepository
 import domain.user.entity.User
-import domain.user.repository.UserAggregateRepository
+import domain.user.repository.UserRepository
 import infra.db.assembler.UserAssembler._
 import infra.db.po.RolePo.UserRoleTable
 import infra.db.po.UserPo.UserTable
@@ -16,11 +17,11 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class UserAggregateRepositoryImpl @Inject() (
+class UserRepositoryImpl @Inject() (
   private val dbConfigProvider: DatabaseConfigProvider,
-  private val roleAggregateRepository: RoleAggregateRepository
+  private val roleAggregateRepository: RoleRepository
 )(implicit ec: ExecutionContext)
-    extends UserAggregateRepository
+    extends UserRepository
     with HasDatabaseConfig[PostgresProfile] {
 
   override protected val dbConfig = dbConfigProvider.get[PostgresProfile]
@@ -31,8 +32,8 @@ class UserAggregateRepositoryImpl @Inject() (
 
   override def save(domain: User): Future[Long] =
     domain.id match {
-      case 0 => doInsert(domain)
-      case _ => doUpdate(domain)
+      case Constant.domainCreateId => doInsert(domain)
+      case _                       => doUpdate(domain)
     }
 
   override def get(id: Long): Future[Option[User]] =
@@ -41,6 +42,11 @@ class UserAggregateRepositoryImpl @Inject() (
       role <- roleAggregateRepository.getByUser(id)
     } yield user.map(user => user.copy(role = role))
 
+  override def getByName(username: String): Future[Option[User]] =
+    db.run(users.filter(_.username === username).result.headOption).flatMap {
+      case None         => Future.successful(None)
+      case Some(userPo) => get(userPo.id)
+    }
   override def remove(id: Long): Future[Unit] = db.run {
     for {
       del <- users.filter(_.id === id).delete

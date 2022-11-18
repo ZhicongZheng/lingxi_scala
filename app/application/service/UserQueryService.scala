@@ -1,7 +1,7 @@
 package application.service
 
 import common.{Page, PageQuery}
-import domain.user.repository.UserRepository
+import infra.db.repository.UserQueryRepository
 import interfaces.dto.UserDto
 
 import javax.inject.{Inject, Singleton}
@@ -10,9 +10,9 @@ import scala.concurrent.Future
 
 @Singleton
 class UserQueryService @Inject() (
-  private val userRepository: UserRepository
+  private val userQueryRepository: UserQueryRepository
 ) {
 
-  def listUserByPage(pageQuery: PageQuery): Future[Page[UserDto]] = userRepository.listByPage(pageQuery).map(_.map(UserDto.fromDo))
+  def listUserByPage(pageQuery: PageQuery): Future[Page[UserDto]] = userQueryRepository.listByPage(pageQuery).map(_.map(UserDto.fromPo))
 
 }
