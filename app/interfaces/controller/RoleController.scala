@@ -44,7 +44,7 @@ class RoleController @Inject() (
   }
 
   def updateRole = userAction(parse.json[UpdateRoleCommand]) andThen authorizationAction async { request =>
-    val updater           = request.request.user.id
+    val updater           = request.user.id
     val updateRoleRequest = request.body.copy(updateBy = Some(updater))
     roleCommandService
       .updateRole(updateRoleRequest)

@@ -1,6 +1,6 @@
 package interfaces.controller
 
-import application.command.{ChangePasswordCommand, CreateUserRequest, LoginCommand}
+import application.command.{ChangePasswordCommand, CreateUserCommand, LoginCommand, UpdateUserCommand}
 import application.service.{UserCommandService, UserQueryService}
 import common.{Constant, LOGIC_CODE_ERR, Page, PageQuery, Results}
 import domain.user.entity.User
@@ -67,12 +67,22 @@ class UserController @Inject() (
     userCommandService.deleteUser(id).map(_ => Ok).recover(ex => Results.fail(ex))
   }
 
-  def createUser: Action[CreateUserRequest] = userAction(parse.json[CreateUserRequest]) async { request =>
+  def createUser: Action[CreateUserCommand] = userAction(parse.json[CreateUserCommand]) andThen authorizationAction async { request =>
     userCommandService
       .createUser(request.body)
       .map {
         case Left(error)   => Results.fail(error)
         case Right(userId) => Created(Json.toJson(userId))
+      }
+      .recover(ex => Results.fail(ex))
+  }
+
+  def updateUser: Action[UpdateUserCommand] = userAction(parse.json[UpdateUserCommand]) andThen authorizationAction async { request =>
+    userCommandService
+      .updateUser(request.body.copy(updateBy = request.user.id))
+      .map {
+        case Left(error) => Results.fail(error)
+        case Right(_)    => Ok
       }
       .recover(ex => Results.fail(ex))
   }

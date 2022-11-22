@@ -39,6 +39,11 @@ final case class User(
 
   def changePwd(password: String): User = copy(password = entryPwd(password))
 
+  def update(param: (String, String, String, String, Long, Long)): User = {
+    copy(avatar = param._1, nickName = param._2, phone = param._3, email = param._4, updateBy = param._5, updateAt = LocalDateTime.now())
+    changeRole(Role.just(param._6))
+  }
+
 }
 
 object User {

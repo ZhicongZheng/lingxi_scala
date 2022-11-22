@@ -25,3 +25,8 @@ final case class Role(
   def beSuperAdmin: Boolean = name == superAdmin
 
 }
+
+object Role {
+
+  def just(id: Long): Role = Role(id, "", "")
+}
