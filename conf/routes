@@ -19,6 +19,8 @@ DELETE      /users/$id<[0-9]+>    interfaces.controller.UserController.deleteUse
 
 POST        /users                interfaces.controller.UserController.createUser
 
+PUT         /users                interfaces.controller.UserController.updateUser
+
 PUT         /users/password       interfaces.controller.UserController.changePwd
 
 GET         /users/login-code     interfaces.controller.UserController.loginCode
