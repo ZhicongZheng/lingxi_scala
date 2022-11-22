@@ -6,7 +6,6 @@ GET         /                     controllers.Default.redirect(to = "./docs/")
 
 POST        /files/upload         interfaces.controller.FileController.upload
 # users api
-
 POST        /users/login          interfaces.controller.UserController.login
 
 POST        /users/logout         interfaces.controller.UserController.logout
