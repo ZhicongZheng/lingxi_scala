@@ -45,10 +45,11 @@ class RoleQueryRepositoryImpl @Inject() (private val dbConfigProvider: DatabaseC
 
   override def findUserRoleMap(userId: Seq[Long]): Future[Map[Long, RolePo]] =
     db.run(userRoles.filter(_.userId inSet userId).result).flatMap { userRoles =>
-      val roleUserMap = userRoles.map(ur => (ur._3 -> ur._2)).toMap
+      val roleIds = userRoles.map(_._3)
 
-      db.run(roles.filter(_.id inSet roleUserMap.keys).result).map { roles =>
-        roles.map(role => (roleUserMap(role.id) -> role)).toMap
+      db.run(roles.filter(_.id inSet roleIds).result).map { roles =>
+        val roleMap = roles.map(role => role.id -> role).toMap
+        userRoles.map(ur => ur._2 -> roleMap(ur._3)).toMap
       }
     }
 
