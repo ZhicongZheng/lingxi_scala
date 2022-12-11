@@ -1,4 +1,4 @@
-package common
+package infra.filters
 
 import akka.stream.Materializer
 import play.api.Logging

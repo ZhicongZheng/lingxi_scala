@@ -23,7 +23,7 @@ object Dependencies {
 
     lazy val bcrypt = "org.mindrot" % "jbcrypt" % Versions.bcrypt
 
-    lazy val play: Seq[ModuleID] = Seq(
+    lazy val slick: Seq[ModuleID] = Seq(
       "com.typesafe.play" %% "play-slick" % Versions.slick
     )
 
@@ -48,6 +48,6 @@ object Dependencies {
   import Compiles._
 
   lazy val dependencies: Setting[Seq[ModuleID]] =
-    libraryDependencies ++= Seq(config, ws, caffeine, postgresql, guice, bcrypt, aliyunOss, scalaTest) ++ play ++ tapir
+    libraryDependencies ++= Seq(config, ws, guice, caffeine, postgresql, bcrypt, aliyunOss, scalaTest) ++ slick ++ tapir
 
 }

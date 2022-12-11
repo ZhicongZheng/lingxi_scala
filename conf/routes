@@ -36,7 +36,7 @@ PUT         /roles               interfaces.controller.RoleController.updateRole
 
 POST        /users/$useId<[0-9]+>/roles/$roleId<[0-9]+>  interfaces.controller.RoleController.changeUserRole(useId: Long, roleId: Long)
 
-GET         /roles/permissions(0  interfaces.controller.RoleController.listPermission()
+GET         /roles/permissions  interfaces.controller.RoleController.listPermission()
 
 
 

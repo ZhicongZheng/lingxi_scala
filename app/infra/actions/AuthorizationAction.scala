@@ -3,15 +3,14 @@ package infra.actions
 import common.{Constant, PERMISSION_DENIED}
 import common.Constant.superAdmin
 import infra.actions.AuthorizationAction.{failureResult, parsePermission}
-import play.api.mvc.{ActionRefiner, BodyParsers, Result, WrappedRequest}
+import play.api.mvc.{ActionRefiner, Result}
 import play.api.routing.{HandlerDef, Router}
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class AuthorizationAction @Inject() (parser: BodyParsers.Default)(implicit ec: ExecutionContext)
-    extends ActionRefiner[UserRequest, UserRequest] {
+class AuthorizationAction @Inject() (implicit ec: ExecutionContext) extends ActionRefiner[UserRequest, UserRequest] {
 
   override protected def executionContext: ExecutionContext = ec
 
