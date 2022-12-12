@@ -52,7 +52,7 @@ class UserController @Inject() (
     Results.success(UserDto.fromDo(request.user))
   }
 
-  def loginCode = Action { implicit request =>
+  def loginCode = Action {
     val code = User.loginCode
     Ok(code).withSession(Session(Map(Constant.loginCode -> code)))
   }
