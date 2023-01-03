@@ -40,7 +40,10 @@ object Dependencies {
 
     val aliyunOss = "com.aliyun.oss" % "aliyun-sdk-oss" % Versions.aliyunOss
 
-
+    val guice_5_1_0 = Seq(
+      "com.google.inject" % "guice" % "5.1.0",
+      "com.google.inject.extensions" % "guice-assistedinject" % "5.1.0"
+    )
     lazy val scalaTest = "org.scalatestplus.play" %% "scalatestplus-play" % Versions.scalaTest % Test
 
   }
@@ -48,6 +51,6 @@ object Dependencies {
   import Compiles._
 
   lazy val dependencies: Setting[Seq[ModuleID]] =
-    libraryDependencies ++= Seq(config, ws, guice, caffeine, postgresql, bcrypt, aliyunOss, scalaTest) ++ slick ++ tapir
+    libraryDependencies ++= Seq(config, ws, guice ,caffeine, postgresql, bcrypt, aliyunOss, scalaTest) ++ slick ++ tapir ++ guice_5_1_0
 
 }
