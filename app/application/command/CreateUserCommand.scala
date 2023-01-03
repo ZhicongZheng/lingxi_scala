@@ -3,30 +3,33 @@ package application.command
 import domain.user.entity.User
 import User.entryPwd
 import common.Constant
+import domain.auth.entity.Role
 import play.api.libs.json.{Json, OFormat}
 
 import scala.language.implicitConversions
 
-case class CreateUserRequest(
+case class CreateUserCommand(
   username: String,
   password: String,
   avatar: String,
   nickName: String,
   phone: Option[String] = None,
-  email: String
+  email: String,
+  role: Long
 )
-object CreateUserRequest {
+object CreateUserCommand {
 
-  implicit val format: OFormat[CreateUserRequest] = Json.format[CreateUserRequest]
+  implicit val format: OFormat[CreateUserCommand] = Json.format[CreateUserCommand]
 
-  implicit def requestToDo(request: CreateUserRequest): User =
+  implicit def requestToDo(command: CreateUserCommand): User =
     User(
       Constant.domainCreateId,
-      request.username,
-      entryPwd(request.password),
-      request.avatar,
-      request.nickName,
-      request.phone.getOrElse(""),
-      request.email
+      command.username,
+      entryPwd(command.password),
+      command.avatar,
+      command.nickName,
+      command.phone.getOrElse(""),
+      command.email,
+      Some(Role.just(command.role))
     )
 }

@@ -1,8 +1,9 @@
 package infra.db.repository.impl
 
 import common.{Page, PageQuery}
-import infra.db.po.RolePo
-import infra.db.po.RolePo.RoleTable
+import infra.db.po.{PermissionPo, RolePo}
+import infra.db.po.PermissionPo.PermissionTable
+import infra.db.po.RolePo.{RoleTable, UserRoleTable}
 import infra.db.repository.RoleQueryRepository
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfig}
 import slick.jdbc.PostgresProfile
@@ -21,6 +22,10 @@ class RoleQueryRepositoryImpl @Inject() (private val dbConfigProvider: DatabaseC
 
   private val roles = TableQuery[RoleTable]
 
+  private val permissions = TableQuery[PermissionTable]
+
+  private val userRoles = TableQuery[UserRoleTable]
+
   override def get(id: Long): Future[Option[RolePo]] = db.run(roles.filter(_.id === id).result.headOption)
 
   override def list(): Future[Seq[RolePo]] = db.run(roles.result)
@@ -35,4 +40,17 @@ class RoleQueryRepositoryImpl @Inject() (private val dbConfigProvider: DatabaseC
   }
 
   override def findByCode(code: String): Future[Option[RolePo]] = db.run(roles.filter(_.code === code).result.headOption)
+
+  override def listPermissions(): Future[Seq[PermissionPo]] = db.run(permissions.result)
+
+  override def findUserRoleMap(userId: Seq[Long]): Future[Map[Long, RolePo]] =
+    db.run(userRoles.filter(_.userId inSet userId).result).flatMap { userRoles =>
+      val roleIds = userRoles.map(_._3)
+
+      db.run(roles.filter(_.id inSet roleIds).result).map { roles =>
+        val roleMap = roles.map(role => role.id -> role).toMap
+        userRoles.map(ur => ur._2 -> roleMap(ur._3)).toMap
+      }
+    }
+
 }

@@ -3,9 +3,7 @@ package infra.db.assembler
 import domain.user.entity.User
 import infra.db.po.UserPo
 
-import scala.concurrent.Future
 import scala.language.implicitConversions
-import scala.concurrent.ExecutionContext.Implicits.global
 
 object UserAssembler {
 

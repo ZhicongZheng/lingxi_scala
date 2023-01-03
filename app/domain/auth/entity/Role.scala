@@ -19,9 +19,14 @@ final case class Role(
 
   def update(name: String, permissionIds: Seq[Long]): Role = {
     val role = this.copy(name = name, updateAt = LocalDateTime.now())
-    role.copy(permissions = permissionIds.map(id => Permission(id, "", "")))
+    role.copy(permissions = permissionIds.map(id => Permission.just(id)))
   }
 
   def beSuperAdmin: Boolean = name == superAdmin
 
+}
+
+object Role {
+
+  def just(id: Long): Role = Role(id, "", "")
 }

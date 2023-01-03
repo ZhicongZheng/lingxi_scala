@@ -1,6 +1,5 @@
 package infra.filters
 
-import common.LoggingFilter
 import play.api.http.{DefaultHttpFilters, EnabledFilters}
 
 import javax.inject.Inject

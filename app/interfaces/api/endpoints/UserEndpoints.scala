@@ -1,6 +1,6 @@
 package interfaces.api.endpoints
 
-import application.command.{ChangePasswordCommand, CreateUserRequest, LoginCommand}
+import application.command.{ChangePasswordCommand, CreateUserCommand, LoginCommand, UpdateUserCommand}
 import common.Page
 import interfaces.dto.{RoleDto, UserDto}
 import play.api.libs.json.{Json, OFormat}
@@ -28,7 +28,8 @@ object UserEndpoints {
       createUserEndpoint,
       changePwdEndpoint,
       loginCodeEndpoint,
-      changeRoleEndpoint
+      changeRoleEndpoint,
+      UpdateUserEndpoint
     )
 
   val loginEndpoint = baseUserEndpoint.post
@@ -72,7 +73,7 @@ object UserEndpoints {
     .name("createUser")
     .summary("创建用户")
     .description("创建用户")
-    .in(jsonBody[CreateUserRequest])
+    .in(jsonBody[CreateUserCommand])
     .out(statusCode(StatusCode.Created))
     .out(jsonBody[Long])
 
@@ -98,6 +99,13 @@ object UserEndpoints {
     .summary("修改用户的角色")
     .description("给用户分配角色")
     .in(path[Long]("userId") / "roles" / path[Long]("roleId"))
+    .out(statusCode(StatusCode.Ok))
+
+  val UpdateUserEndpoint = baseSecuredUserEndpoint.put
+    .name("updateUser")
+    .summary("更新用户信息")
+    .description("更新用户基本信息")
+    .in(jsonBody[UpdateUserCommand])
     .out(statusCode(StatusCode.Ok))
 
 }

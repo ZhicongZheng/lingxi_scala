@@ -27,7 +27,7 @@ class AuthenticationFilter @Inject() (cache: AsyncCacheApi, sessionCookieBaker: 
   private[this] val expire: FiniteDuration  = jwt.jwtConfiguration.expiresAfter.getOrElse(30.minutes)
 
   override def apply(f: RequestHeader => Future[Result])(rh: RequestHeader): Future[Result] = {
-    val path = rh.path
+    implicit val path: String = rh.path
     if ("/" == path || noAuthRoute.exists(p => p.matcher(path).find())) {
       return f.apply(rh)
     }
@@ -67,18 +67,18 @@ object AuthenticationFilter extends Logging {
   )
   val bearerLen: Int = "Bearer ".length
 
-  private def handleNullToken = {
-    logger.info("jwt token not found")
+  private def handleNullToken(implicit path: String) = {
+    logger.info(s"request path : $path, jwt token not found")
     failureResult
   }
 
-  private def handleTokenExpire = {
-    logger.info("jwt token is expire")
+  private def handleTokenExpire(implicit path: String) = {
+    logger.info(s"request path: $path, jwt token is expire")
     failureResult
   }
 
-  private def handleTokenValidateError = {
-    logger.info("jwt token validated error")
+  private def handleTokenValidateError(implicit path: String) = {
+    logger.info(s"request path: $path, jwt token validated error")
     failureResult
   }
 

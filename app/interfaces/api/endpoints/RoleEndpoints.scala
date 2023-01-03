@@ -2,7 +2,7 @@ package interfaces.api.endpoints
 
 import application.command.{CreateRoleCommand, UpdateRoleCommand}
 import common.Page
-import interfaces.dto.RoleDto
+import interfaces.dto.{PermissionDto, RoleDto}
 import play.api.libs.json.{Json, OFormat}
 import sttp.model.StatusCode
 import sttp.tapir._
@@ -15,7 +15,7 @@ object RoleEndpoints {
 
   implicit val roleFormat: OFormat[Page[RoleDto]] = Json.format[Page[RoleDto]]
 
-  def endpoints = Seq(createRoleEndpoint, deleteRoleEndpoint, listByPageEndpoint, updateRoleEndpoint)
+  def endpoints = Seq(createRoleEndpoint, deleteRoleEndpoint, listByPageEndpoint, updateRoleEndpoint, listPermissionEndpoint)
 
   val createRoleEndpoint = baseSecuredUserEndpoint.post
     .name("createRole")
@@ -45,4 +45,12 @@ object RoleEndpoints {
     .description("更新角色信息，可以同时保存角色所分配的权限")
     .in(jsonBody[UpdateRoleCommand])
     .out(statusCode(StatusCode.Ok))
+
+  val listPermissionEndpoint = baseSecuredUserEndpoint.get
+    .name("listPermission")
+    .summary("获取权限列表")
+    .description("获取权限列表")
+    .in("permissions")
+    .out(statusCode(StatusCode.Ok))
+    .out(jsonBody[Seq[PermissionDto]])
 }
