@@ -1,7 +1,7 @@
 package interfaces.controller
 
 import common.{FILE_EMPTY, Results}
-import infra.actions.UserAction
+import infra.actions.AuthenticationAction
 import infra.oss.OssRepository
 import play.api.mvc.{ControllerComponents, InjectedController}
 
@@ -12,9 +12,9 @@ import scala.concurrent.Future
 
 @Singleton
 class FileController @Inject() (
-  override val controllerComponents: ControllerComponents,
-  authedAction: UserAction,
-  ossRepository: OssRepository
+                                 override val controllerComponents: ControllerComponents,
+                                 authedAction: AuthenticationAction,
+                                 ossRepository: OssRepository
 ) extends InjectedController {
 
   def upload = authedAction(parse.multipartFormData) async { request =>

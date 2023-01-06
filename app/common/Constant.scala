@@ -12,6 +12,8 @@ object Constant {
 
   val superAdmin = "SUPER_ADMIN"
 
-  val domainCreateId = -1L
+  val domainCreateId: Long = -1L
+
+  val SESSION_USER = "session-user"
 
 }

@@ -2,26 +2,21 @@ package application.service
 
 import application.command.{ChangePasswordCommand, CreateUserCommand, LoginCommand, UpdateUserCommand}
 import common.{Errors, NO_USER, OLD_PWD_ERROR, USER_EXIST}
+import domain.user.entity.User
 import domain.user.repository.UserRepository
-import infra.db.repository.UserQueryRepository
-import play.api.mvc.{DefaultSessionCookieBaker, JWTCookieDataCodec}
 import infra.db.assembler.UserAssembler._
+import infra.db.repository.UserQueryRepository
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 @Singleton
-class UserCommandService @Inject() (
-  userQueryRepository: UserQueryRepository,
-  userAggregateRepository: UserRepository,
-  private val defaultSessionCookieBaker: DefaultSessionCookieBaker
-) {
-  private val jwt: JWTCookieDataCodec = defaultSessionCookieBaker.jwtCodec
+class UserCommandService @Inject() (userQueryRepository: UserQueryRepository, userAggregateRepository: UserRepository) {
 
-  def login(loginRequest: LoginCommand): Future[Either[Errors, String]] =
+  def login(loginRequest: LoginCommand): Future[Either[Errors, User]] =
     userQueryRepository.findByUsername(loginRequest.username).map(toDoOpt) map {
-      case Some(user) => user.login(loginRequest.password, jwt)
+      case Some(user) => user.login(loginRequest.password)
       case None       => Left(NO_USER)
     }
 

@@ -4,10 +4,8 @@ import application.command.{ChangePasswordCommand, CreateUserCommand, LoginComma
 import application.service.{UserCommandService, UserQueryService}
 import common.{Constant, LOGIC_CODE_ERR, Page, PageQuery, Results}
 import domain.user.entity.User
-import infra.actions.{AuthorizationAction, UserAction}
-import infra.filters.AuthenticationFilter
+import infra.actions.{AuthenticationAction, AuthorizationAction}
 import interfaces.dto.UserDto
-import play.api.http.HeaderNames
 import play.api.libs.json.{Json, OFormat}
 import play.api.mvc.{Action, AnyContent, ControllerComponents, InjectedController, Session}
 
@@ -20,9 +18,8 @@ class UserController @Inject() (
   override val controllerComponents: ControllerComponents,
   userCommandService: UserCommandService,
   userQueryService: UserQueryService,
-  userAction: UserAction,
-  authorizationAction: AuthorizationAction,
-  authenticationFilter: AuthenticationFilter
+  authenticationAction: AuthenticationAction,
+  authorizationAction: AuthorizationAction
 ) extends InjectedController {
 
   def login = Action(parse.json[LoginCommand]).async { request =>
@@ -32,8 +29,8 @@ class UserController @Inject() (
         userCommandService
           .login(loginRequest)
           .map {
-            case Left(error)  => Results.fail(error)
-            case Right(token) => Ok.withHeaders((HeaderNames.AUTHORIZATION, token))
+            case Left(error) => Results.fail(error)
+            case Right(user) => Ok.withSession(Session(Map(Constant.SESSION_USER -> Json.toJson(user).toString())))
           }
           .recover(ex => Results.fail(ex))
 
@@ -41,14 +38,11 @@ class UserController @Inject() (
     }
   }
 
-  def logout = userAction async { request =>
-    request.request.headers.get(HeaderNames.AUTHORIZATION) match {
-      case Some(jwtToken) => authenticationFilter.logout(jwtToken).map(_ => Ok)
-      case None           => Future.successful(Ok)
-    }
+  def logout = authenticationAction async { request =>
+    Future.successful(Ok.withSession(request.session - Constant.SESSION_USER))
   }
 
-  def current = userAction { implicit request =>
+  def current = authenticationAction { implicit request =>
     Results.success(UserDto.fromDo(request.user))
   }
 
@@ -57,40 +51,44 @@ class UserController @Inject() (
     Ok(code).withSession(Session(Map(Constant.loginCode -> code)))
   }
 
-  def listUserByPage(page: Int, size: Int, sort: Option[String] = None) = userAction andThen authorizationAction async {
-    implicit val userFormat: OFormat[Page[UserDto]] = Json.format[Page[UserDto]]
-    val pageQuery                                   = PageQuery(page, size, sort)
-    userQueryService.listUserByPage(pageQuery).map(pageDto => Results.success(pageDto)).recover(ex => Results.fail(ex))
-  }
+  def listUserByPage(page: Int, size: Int, sort: Option[String] = None) =
+    authenticationAction andThen authorizationAction async {
+      implicit val userFormat: OFormat[Page[UserDto]] = Json.format[Page[UserDto]]
+      val pageQuery                                   = PageQuery(page, size, sort)
+      userQueryService.listUserByPage(pageQuery).map(pageDto => Results.success(pageDto)).recover(ex => Results.fail(ex))
+    }
 
-  def deleteUser(id: Int): Action[AnyContent] = userAction andThen authorizationAction async {
+  def deleteUser(id: Int): Action[AnyContent] = authenticationAction andThen authorizationAction async {
     userCommandService.deleteUser(id).map(_ => Ok).recover(ex => Results.fail(ex))
   }
 
-  def createUser: Action[CreateUserCommand] = userAction(parse.json[CreateUserCommand]) andThen authorizationAction async { request =>
-    userCommandService
-      .createUser(request.body)
-      .map {
-        case Left(error)   => Results.fail(error)
-        case Right(userId) => Created(Json.toJson(userId))
-      }
-      .recover(ex => Results.fail(ex))
-  }
+  def createUser: Action[CreateUserCommand] =
+    authenticationAction(parse.json[CreateUserCommand]) andThen authorizationAction async { request =>
+      userCommandService
+        .createUser(request.body)
+        .map {
+          case Left(error)   => Results.fail(error)
+          case Right(userId) => Created(Json.toJson(userId))
+        }
+        .recover(ex => Results.fail(ex))
+    }
 
-  def updateUser: Action[UpdateUserCommand] = userAction(parse.json[UpdateUserCommand]) andThen authorizationAction async { request =>
-    userCommandService
-      .updateUser(request.body.copy(updateBy = request.user.id))
-      .map {
+  def updateUser: Action[UpdateUserCommand] =
+    authenticationAction(parse.json[UpdateUserCommand]) andThen authorizationAction async { request =>
+      userCommandService
+        .updateUser(request.body.copy(updateBy = request.user.id))
+        .map {
+          case Left(error) => Results.fail(error)
+          case Right(_)    => Ok
+        }
+        .recover(ex => Results.fail(ex))
+    }
+
+  def changePwd: Action[ChangePasswordCommand] =
+    authenticationAction(parse.json[ChangePasswordCommand]) async { request =>
+      userCommandService.changePwd(request.user.id, request.body) map {
         case Left(error) => Results.fail(error)
         case Right(_)    => Ok
-      }
-      .recover(ex => Results.fail(ex))
-  }
-
-  def changePwd: Action[ChangePasswordCommand] = userAction(parse.json[ChangePasswordCommand]) async { request =>
-    userCommandService.changePwd(request.user.id, request.body) map {
-      case Left(error) => Results.fail(error)
-      case Right(_)    => Ok
-    } recover (ex => Results.fail(ex))
-  }
+      } recover (ex => Results.fail(ex))
+    }
 }

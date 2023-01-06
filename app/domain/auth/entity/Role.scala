@@ -3,6 +3,7 @@ package domain.auth.entity
 import common.Constant.superAdmin
 import domain.auth.value_obj.Permission
 import domain.BaseEntity
+import play.api.libs.json.{Json, OFormat}
 
 import java.time.LocalDateTime
 
@@ -28,5 +29,6 @@ final case class Role(
 
 object Role {
 
-  def just(id: Long): Role = Role(id, "", "")
+  implicit val format: OFormat[Role] = Json.format[Role]
+  def just(id: Long): Role           = Role(id, "", "")
 }

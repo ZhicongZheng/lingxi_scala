@@ -1,6 +1,7 @@
 package domain.auth.value_obj
 
 import domain.BaseEntity
+import play.api.libs.json.{Json, OFormat}
 
 import java.time.LocalDateTime
 
@@ -16,6 +17,8 @@ final case class Permission(
 ) extends BaseEntity {}
 
 object Permission {
+
+  implicit val format: OFormat[Permission] = Json.format[Permission]
 
   def just(id: Long): Permission = Permission(id, "", "", "")
 }

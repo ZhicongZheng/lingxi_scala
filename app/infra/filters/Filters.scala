@@ -9,5 +9,5 @@ import javax.inject.Inject
  *  @param defaultFilters
  *    系统默认的 Filter
  */
-class Filters @Inject() (defaultFilters: EnabledFilters, loggingFilter: LoggingFilter, jwtFilter: AuthenticationFilter)
-    extends DefaultHttpFilters(defaultFilters.filters :+ jwtFilter :+ loggingFilter: _*) {}
+class Filters @Inject() (defaultFilters: EnabledFilters, loggingFilter: LoggingFilter)
+    extends DefaultHttpFilters(defaultFilters.filters :+ loggingFilter: _*) {}

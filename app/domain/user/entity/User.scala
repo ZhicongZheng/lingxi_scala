@@ -1,12 +1,11 @@
 package domain.user.entity
 
-import common.{Constant, Errors, LOGIN_FAILED}
+import common.{Errors, LOGIN_FAILED}
 import domain.BaseEntity
 import domain.auth.entity.Role
-import domain.auth.value_obj.Permission
 import domain.user.entity.User.entryPwd
 import org.mindrot.jbcrypt.BCrypt
-import play.api.mvc.JWTCookieDataCodec
+import play.api.libs.json.{Json, OFormat}
 
 import java.time.LocalDateTime
 import java.util.concurrent.ThreadLocalRandom
@@ -27,9 +26,9 @@ final case class User(
   updateAt: LocalDateTime = LocalDateTime.now()
 ) extends BaseEntity {
 
-  def login(pwd: String, jwt: JWTCookieDataCodec): Either[Errors, String] =
+  def login(pwd: String): Either[Errors, User] =
     Try(BCrypt.checkpw(pwd, password)) match {
-      case Success(res) if res => Right(jwt.encode(Map(Constant.userId -> id.toString)))
+      case Success(res) if res => Right(this)
       case _                   => Left(LOGIN_FAILED)
     }
 
@@ -50,6 +49,8 @@ final case class User(
 object User {
 
   private val random: ThreadLocalRandom = ThreadLocalRandom.current()
+
+  implicit val format: OFormat[User] = Json.format[User]
 
   def loginCode: String = random.nextInt(1000, 10000).toString
 
