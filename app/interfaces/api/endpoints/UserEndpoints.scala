@@ -91,7 +91,7 @@ object UserEndpoints {
     .summary("登陆验证码")
     .description("登陆时获取验证码")
     .in("login-code")
-    .out(jsonBody[String])
+    .out(stringBody)
     .errorOut(jsonBody[ErrorMessage])
 
   val changeRoleEndpoint = baseSecuredUserEndpoint.post

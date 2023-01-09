@@ -1,14 +1,18 @@
 package interfaces.controller
 
+import akka.util.ByteString
 import application.command.{ChangePasswordCommand, CreateUserCommand, LoginCommand, UpdateUserCommand}
 import application.service.{UserCommandService, UserQueryService}
-import common.{Constant, LOGIC_CODE_ERR, Page, PageQuery, Results}
-import domain.user.entity.User
+import common.{Constant, Kaptcha, LOGIC_CODE_ERR, Page, PageQuery, Results}
 import infra.actions.{AuthenticationAction, AuthorizationAction}
 import interfaces.dto.UserDto
+import play.api.http.HttpEntity
 import play.api.libs.json.{Json, OFormat}
-import play.api.mvc.{Action, AnyContent, ControllerComponents, InjectedController, Session}
+import play.api.mvc.{Action, AnyContent, ControllerComponents, InjectedController, ResponseHeader, Result, Session}
 
+import java.io.ByteArrayOutputStream
+import java.util.Base64
+import javax.imageio.ImageIO
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -26,6 +30,7 @@ class UserController @Inject() (
     val loginRequest = request.body
     request.session.get(Constant.loginCode) match {
       case Some(code) if code == loginRequest.code =>
+        request.session - Constant.loginCode
         userCommandService
           .login(loginRequest)
           .map {
@@ -47,8 +52,12 @@ class UserController @Inject() (
   }
 
   def loginCode = Action {
-    val code = User.loginCode
-    Ok(code).withSession(Session(Map(Constant.loginCode -> code)))
+    val code  = Kaptcha.createText
+    val image = Kaptcha.createImage(code)
+    val os    = new ByteArrayOutputStream()
+    ImageIO.write(image, "png", os)
+    val base64 = Base64.getEncoder.encode(os.toByteArray)
+    Ok(base64).withSession(Session(Map(Constant.loginCode -> code)))
   }
 
   def listUserByPage(page: Int, size: Int, sort: Option[String] = None) =
