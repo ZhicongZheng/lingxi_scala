@@ -14,8 +14,8 @@ import scala.concurrent.{ExecutionContext, Future}
 case class UserRequest[A](user: User, request: Request[A]) extends WrappedRequest(request)
 
 @Singleton
-class AuthenticationAction @Inject()(parser: BodyParsers.Default)(implicit
-                                                                  ec: ExecutionContext
+class AuthenticationAction @Inject() (parser: BodyParsers.Default)(implicit
+  ec: ExecutionContext
 ) extends ActionBuilder[UserRequest, AnyContent]
     with Logging {
 

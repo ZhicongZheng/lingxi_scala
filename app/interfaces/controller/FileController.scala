@@ -12,9 +12,9 @@ import scala.concurrent.Future
 
 @Singleton
 class FileController @Inject() (
-                                 override val controllerComponents: ControllerComponents,
-                                 authedAction: AuthenticationAction,
-                                 ossRepository: OssRepository
+  override val controllerComponents: ControllerComponents,
+  authedAction: AuthenticationAction,
+  ossRepository: OssRepository
 ) extends InjectedController {
 
   def upload = authedAction(parse.multipartFormData) async { request =>
