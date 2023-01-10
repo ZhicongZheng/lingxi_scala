@@ -11,4 +11,6 @@ trait RoleQueryRepository extends QueryRepository[RolePo] {
   def listPermissions(): Future[Seq[PermissionPo]]
 
   def findUserRoleMap(userId: Seq[Long]): Future[Map[Long, RolePo]]
+
+  def findRolePermissionMap(roleIds: Seq[Long]): Future[Map[Long, Seq[PermissionPo]]]
 }

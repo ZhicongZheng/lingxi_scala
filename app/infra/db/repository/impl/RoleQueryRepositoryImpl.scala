@@ -2,7 +2,7 @@ package infra.db.repository.impl
 
 import common.{Page, PageQuery}
 import infra.db.po.{PermissionPo, RolePo}
-import infra.db.po.PermissionPo.PermissionTable
+import infra.db.po.PermissionPo.{PermissionTable, RolePermissionTable}
 import infra.db.po.RolePo.{RoleTable, UserRoleTable}
 import infra.db.repository.RoleQueryRepository
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfig}
@@ -26,6 +26,8 @@ class RoleQueryRepositoryImpl @Inject() (private val dbConfigProvider: DatabaseC
 
   private val userRoles = TableQuery[UserRoleTable]
 
+  private val rolePermissions = TableQuery[RolePermissionTable]
+
   override def get(id: Long): Future[Option[RolePo]] = db.run(roles.filter(_.id === id).result.headOption)
 
   override def list(): Future[Seq[RolePo]] = db.run(roles.result)
@@ -43,8 +45,8 @@ class RoleQueryRepositoryImpl @Inject() (private val dbConfigProvider: DatabaseC
 
   override def listPermissions(): Future[Seq[PermissionPo]] = db.run(permissions.result)
 
-  override def findUserRoleMap(userId: Seq[Long]): Future[Map[Long, RolePo]] =
-    db.run(userRoles.filter(_.userId inSet userId).result).flatMap { userRoles =>
+  override def findUserRoleMap(userIds: Seq[Long]): Future[Map[Long, RolePo]] =
+    db.run(userRoles.filter(_.userId inSet userIds).result).flatMap { userRoles =>
       val roleIds = userRoles.map(_._3)
 
       db.run(roles.filter(_.id inSet roleIds).result).map { roles =>
@@ -53,4 +55,17 @@ class RoleQueryRepositoryImpl @Inject() (private val dbConfigProvider: DatabaseC
       }
     }
 
+  override def findRolePermissionMap(roleIds: Seq[Long]): Future[Map[Long, Seq[PermissionPo]]] =
+    for {
+      rolePermissions <- db.run(rolePermissions.filter(_.roleId inSet roleIds).result)
+      permissions     <- db.run(permissions.filter(_.id inSet rolePermissions.map(_._3)).result)
+    } yield (rolePermissions, permissions) match {
+      case (rolePermissions, permissions) =>
+        val permissionMap       = permissions.map(p => p.id -> p).toMap
+        val rolePermissionIdMap = rolePermissions.groupMap(_._3)(_._3)
+        rolePermissionIdMap.toSeq.map { tuple =>
+          val permissions = tuple._2.map(pid => permissionMap.get(pid)).map(_.get)
+          tuple._1 -> permissions
+        }.toMap
+    }
 }
