@@ -18,7 +18,10 @@ class RoleQueryService @Inject() (roleQueryRepository: RoleQueryRepository) exte
       val roleMap = rolePage.data.map(role => role.id -> role).toMap
       val roleIds = roleMap.keys.toSeq
       roleQueryRepository.findRolePermissionMap(roleIds).map { map =>
-        val roleDtos = roleMap.map(tuple => RoleDto.fromPo(tuple._2).copy(permissions = map(tuple._1).map(PermissionDto.fromPo)))
+        val roleDtos = roleMap.map { tuple =>
+          val permissions = map.get(tuple._1).map(ps => ps.map(PermissionDto.fromPo)).getOrElse(Nil)
+          RoleDto.fromPo(tuple._2).copy(permissions = permissions)
+        }
         rolePage.copy(data = roleDtos.toSeq)
       }
     }

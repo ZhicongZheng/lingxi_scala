@@ -62,7 +62,7 @@ class RoleQueryRepositoryImpl @Inject() (private val dbConfigProvider: DatabaseC
     } yield (rolePermissions, permissions) match {
       case (rolePermissions, permissions) =>
         val permissionMap       = permissions.map(p => p.id -> p).toMap
-        val rolePermissionIdMap = rolePermissions.groupMap(_._3)(_._3)
+        val rolePermissionIdMap = rolePermissions.groupMap(_._2)(_._3)
         rolePermissionIdMap.toSeq.map { tuple =>
           val permissions = tuple._2.map(pid => permissionMap.get(pid)).map(_.get)
           tuple._1 -> permissions
