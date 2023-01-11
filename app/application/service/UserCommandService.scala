@@ -15,9 +15,10 @@ import scala.concurrent.Future
 class UserCommandService @Inject() (userQueryRepository: UserQueryRepository, userAggregateRepository: UserRepository) {
 
   def login(loginRequest: LoginCommand): Future[Either[Errors, User]] =
-    userQueryRepository.findByUsername(loginRequest.username).map(toDoOpt) map {
-      case Some(user) => user.login(loginRequest.password)
-      case None       => Left(NO_USER)
+    userQueryRepository.findByUsername(loginRequest.username).map(toDoOpt) flatMap {
+      case Some(user) =>
+        userAggregateRepository.get(user.id).map(_.get).map(u => u.login(loginRequest.password))
+      case None => Future.successful(Left(NO_USER))
     }
 
   def deleteUser(id: Int): Future[Unit] = userAggregateRepository.remove(id)

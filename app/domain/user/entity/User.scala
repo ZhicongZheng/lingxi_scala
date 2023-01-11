@@ -48,11 +48,7 @@ final case class User(
 
 object User {
 
-  private val random: ThreadLocalRandom = ThreadLocalRandom.current()
-
   implicit val format: OFormat[User] = Json.format[User]
-
-  def loginCode: String = random.nextInt(1000, 10000).toString
 
   def entryPwd(password: String): String = BCrypt.hashpw(password, BCrypt.gensalt())
 }
