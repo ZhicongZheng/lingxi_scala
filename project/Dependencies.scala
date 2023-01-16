@@ -18,6 +18,7 @@ object Dependencies {
     val aliyunOss = "3.15.2"
     val kaptcha = "2.3.2"
     val guice = "5.1.0"
+    val mailer = "8.0.1"
   }
 
   object Compiles {
@@ -47,6 +48,11 @@ object Dependencies {
       "com.google.inject.extensions" % "guice-assistedinject" % Versions.guice
     )
 
+    val mailer: Seq[ModuleID] = Seq (
+      "com.typesafe.play" %% "play-mailer" % Versions.mailer,
+    "com.typesafe.play" %% "play-mailer-guice" % Versions.mailer
+    )
+
     val kaptcha = "com.github.penggle" % "kaptcha" % Versions.kaptcha
 
     lazy val scalaTest = "org.scalatestplus.play" %% "scalatestplus-play" % Versions.scalaTest % Test
@@ -56,6 +62,6 @@ object Dependencies {
   import Compiles._
 
   lazy val dependencies: Setting[Seq[ModuleID]] =
-    libraryDependencies ++= Seq(config, ws, guice ,caffeine, postgresql, bcrypt, kaptcha, aliyunOss, scalaTest) ++ slick ++ tapir ++ guice_5_1_0
+    libraryDependencies ++= Seq(config, ws, guice ,caffeine, postgresql, bcrypt, kaptcha, aliyunOss, scalaTest) ++ slick ++ tapir ++ guice_5_1_0 ++ mailer
 
 }

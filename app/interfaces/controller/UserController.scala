@@ -35,7 +35,9 @@ class UserController @Inject() (
           .login(loginRequest)
           .map {
             case Left(error) => Results.fail(error)
-            case Right(user) => Ok.withSession(Session(Map(Constant.SESSION_USER -> Json.toJson(user).toString())))
+            case Right(user) =>
+              val userJson = Json.toJson(user.copy(password = "")).toString()
+              Ok.withSession(Session(Map(Constant.SESSION_USER -> userJson)))
           }
           .recover(ex => Results.fail(ex))
 

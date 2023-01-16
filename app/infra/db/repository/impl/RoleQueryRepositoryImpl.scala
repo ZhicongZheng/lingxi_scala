@@ -58,7 +58,7 @@ class RoleQueryRepositoryImpl @Inject() (private val dbConfigProvider: DatabaseC
   override def findRolePermissionMap(roleIds: Seq[Long]): Future[Map[Long, Seq[PermissionPo]]] =
     for {
       rolePermissions <- db.run(rolePermissions.filter(_.roleId inSet roleIds).result)
-      permissions     <- db.run(permissions.filter(_.id inSet rolePermissions.map(_._3)).result)
+      permissions     <- db.run(permissions.filter(_.id inSet rolePermissions.map(_._3).distinct).result)
     } yield (rolePermissions, permissions) match {
       case (rolePermissions, permissions) =>
         val permissionMap       = permissions.map(p => p.id -> p).toMap
