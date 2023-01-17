@@ -14,10 +14,14 @@ final case class Comment(
   userEmail: String,
   // 评论下面的回复
   reply: Seq[Comment] = Nil,
-  // 评论的字段（文章）
+  // 回复的评论id
+  replyTo: Long = -1,
+  // 评论的资源（文章）
   resourceId: Long,
   // 评论用户的ip
   remoteAddress: String,
+  // 评论有回复时是否允许通知
+  allowNotify: Boolean = false,
   createBy: Long = 0L,
   updateBy: Long = 0L,
   createAt: LocalDateTime = LocalDateTime.now(),

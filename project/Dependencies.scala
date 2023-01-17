@@ -27,7 +27,8 @@ object Dependencies {
     lazy val bcrypt = "org.mindrot" % "jbcrypt" % Versions.bcrypt
 
     lazy val slick: Seq[ModuleID] = Seq(
-      "com.typesafe.play" %% "play-slick" % Versions.slick
+      "com.typesafe.play" %% "play-slick" % Versions.slick,
+      "com.typesafe.slick" %% "slick-codegen" % "3.4.1"
     )
 
     lazy val tapir: Seq[ModuleID] = Seq(
