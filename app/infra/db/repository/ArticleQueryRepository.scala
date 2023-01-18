@@ -1,7 +1,5 @@
 package infra.db.repository
 
-import domain.article.Article
+import infra.db.po.ArticlePo
 
-trait ArticleQueryRepository extends QueryRepository[Article]{
-
-}
+trait ArticleQueryRepository extends QueryRepository[ArticlePo] {}

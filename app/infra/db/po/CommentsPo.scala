@@ -65,4 +65,3 @@ object CommentsPo {
     val updateAt: Rep[LocalDateTime] = column[LocalDateTime]("update_at")
   }
 }
-

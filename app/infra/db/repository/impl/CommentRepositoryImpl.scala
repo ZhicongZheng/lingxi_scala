@@ -4,7 +4,7 @@ import domain.comment.{Comment, CommentRepository}
 
 import scala.concurrent.Future
 
-class CommentRepositoryImpl extends CommentRepository{
+class CommentRepositoryImpl extends CommentRepository {
   override def save(domain: Comment): Future[Long] = ???
 
   override def get(id: Long): Future[Option[Comment]] = ???
