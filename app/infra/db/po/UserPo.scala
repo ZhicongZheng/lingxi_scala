@@ -22,7 +22,7 @@ final case class UserPo(
 
 object UserPo {
 
-  class UserTable(tag: Tag) extends Table[UserPo](tag, "users") {
+  class UserTable(tag: Tag) extends Table[UserPo](tag, "users") with BaseTable {
 
     def id = column[Long]("id", O.PrimaryKey, O.AutoInc)
 

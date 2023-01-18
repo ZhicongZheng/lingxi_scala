@@ -18,7 +18,7 @@ final case class PermissionPo(
 
 object PermissionPo {
 
-  class PermissionTable(tag: Tag) extends Table[PermissionPo](tag, "permissions") {
+  class PermissionTable(tag: Tag) extends Table[PermissionPo](tag, "permissions") with BaseTable {
 
     def id = column[Long]("id", O.PrimaryKey, O.AutoInc)
 

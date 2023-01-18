@@ -2,14 +2,15 @@ package infra.actions
 
 import common.{Constant, TOKEN_CHECK_ERROR}
 import domain.user.entity.User
-import infra.actions.AuthenticationAction.{noAuthRoute, tokenValidateError}
+import infra.actions.AuthenticationAction.{tokenValidateError, withoutAuth}
+import play.api.Logging
 import play.api.libs.json.Json
 import play.api.mvc._
-import play.api.Logging
+import play.api.routing.{HandlerDef, Router}
 
-import java.util.regex.Pattern
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.matching.Regex
 
 case class UserRequest[A](user: User, request: Request[A]) extends WrappedRequest(request)
 
@@ -24,7 +25,7 @@ class AuthenticationAction @Inject() (parser: BodyParsers.Default)(implicit
     def success(user: User) = block.apply(UserRequest(user, request))
 
     implicit val path: String = request.path
-    if ("/" == path || noAuthRoute.exists(p => p.matcher(path).find())) {
+    if (withoutAuth(request)) {
       return success(null)
     }
 
@@ -42,12 +43,27 @@ class AuthenticationAction @Inject() (parser: BodyParsers.Default)(implicit
 
 object AuthenticationAction extends Logging {
 
-  val noAuthRoute: Seq[Pattern] = Seq(
-    Pattern.compile("/users/login"),
-    Pattern.compile("/users/logout"),
-    Pattern.compile("/docs/*"),
-    Pattern.compile("/*.ico")
+  private final case class WithoutAuthRoute(method: Regex, path: Regex) {
+    def matches(handlerDef: HandlerDef): Boolean = {
+      val method = handlerDef.verb
+      val path   = handlerDef.path
+
+      this.path.matches(path) && this.method.matches(method)
+    }
+  }
+
+  lazy private val withoutAuthRouteList: Seq[WithoutAuthRoute] = Seq(
+    WithoutAuthRoute("POST".r, "/users/login.*".r),
+    WithoutAuthRoute("POST".r, "/users/logout".r),
+    WithoutAuthRoute(".*".r, "/docs/*".r),
+    WithoutAuthRoute(".*".r, "/*.ico".r)
   )
+
+  def withoutAuth[A](request: Request[A]): Boolean = {
+    val handlerDefOpt                                = request.attrs.get(Router.Attrs.HandlerDef)
+    def withoutAuth(handlerDef: HandlerDef): Boolean = withoutAuthRouteList.map(_.matches(handlerDef)).reduce((a, b) => a && b)
+    handlerDefOpt.exists(withoutAuth)
+  }
 
   private def tokenValidateError(implicit path: String) = {
     logger.info(s"request path : $path, jwt token in cookie validate fail")
