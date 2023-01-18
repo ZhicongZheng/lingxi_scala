@@ -7,7 +7,4 @@ import javax.inject.Singleton
 import scala.concurrent.ExecutionContext.Implicits.global
 
 @Singleton
-class ArticleCommandService @Inject() (articleRepository: ArticleRepository) {
-
-
-}
+class ArticleCommandService @Inject() (articleRepository: ArticleRepository) {}

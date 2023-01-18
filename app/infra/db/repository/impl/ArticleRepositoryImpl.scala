@@ -44,7 +44,7 @@ class ArticleRepositoryImpl @Inject() (private val dbConfigProvider: DatabaseCon
         val tagIds     = articlePo.tags.split(",").map(_.toLong)
         val categoryId = articlePo.category
 
-        val selectTags = queryRepository.listTagsById(tagIds)
+        val selectTags = queryRepository.listTagsById(tagIds.toSeq)
         val selectCategory =
           if (categoryId.isEmpty) Future.successful(None)
           else queryRepository.getCategoryById(categoryId.get)

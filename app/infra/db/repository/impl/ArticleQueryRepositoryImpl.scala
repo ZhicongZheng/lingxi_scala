@@ -41,5 +41,6 @@ class ArticleQueryRepositoryImpl @Inject() (private val dbConfigProvider: Databa
 
   override def listTagsById(tagIds: Seq[Long]): Future[Seq[TagPo]] = db.run(tags.filter(_.id inSet tagIds.toSet).result)
 
-  override def getCategoryById(categoryId: Long): Future[Option[CategoryPo]] = db.run(categories.filter(_.id === categoryId).result.headOption)
+  override def getCategoryById(categoryId: Long): Future[Option[CategoryPo]] =
+    db.run(categories.filter(_.id === categoryId).result.headOption)
 }
