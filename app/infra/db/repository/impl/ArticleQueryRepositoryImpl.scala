@@ -29,7 +29,6 @@ class ArticleQueryRepositoryImpl @Inject() (private val dbConfigProvider: Databa
   private val articles   = TableQuery[ArticleTable]
   private val tags       = TableQuery[TagTable]
   private val categories = TableQuery[CategoryTable]
-  private val actions    = TableQuery[ActionTable]
 
   override def get(id: Long): Future[Option[ArticlePo]] = db.run(articles.filter(_.id === id).result.headOption)
 

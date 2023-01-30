@@ -6,8 +6,6 @@ import domain.article.{Article, ArticleRepository}
 import infra.db.assembler.ArticleAssembler._
 import infra.db.po.ActionPo.ActionTable
 import infra.db.po.ArticlePo.ArticleTable
-import infra.db.po.CategoryPo.CategoryTable
-import infra.db.po.TagPo.TagTable
 import infra.db.repository.ArticleQueryRepository
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfig}
 import slick.basic.DatabaseConfig
@@ -26,10 +24,8 @@ class ArticleRepositoryImpl @Inject() (private val dbConfigProvider: DatabaseCon
 
   override protected val dbConfig: DatabaseConfig[PostgresProfile] = dbConfigProvider.get[PostgresProfile]
 
-  private val articles   = TableQuery[ArticleTable]
-  private val tags       = TableQuery[TagTable]
-  private val categories = TableQuery[CategoryTable]
-  private val actions    = TableQuery[ActionTable]
+  private val articles = TableQuery[ArticleTable]
+  private val actions  = TableQuery[ActionTable]
 
   override def save(article: Article): Future[Long] =
     article.id match {
