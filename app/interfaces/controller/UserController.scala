@@ -1,14 +1,12 @@
 package interfaces.controller
 
-import akka.util.ByteString
 import application.command.{ChangePasswordCommand, CreateUserCommand, LoginCommand, UpdateUserCommand}
 import application.service.{UserCommandService, UserQueryService}
 import common.{Constant, Kaptcha, LOGIC_CODE_ERR, Page, PageQuery, Results}
 import infra.actions.{AuthenticationAction, AuthorizationAction}
 import interfaces.dto.UserDto
-import play.api.http.HttpEntity
 import play.api.libs.json.{Json, OFormat}
-import play.api.mvc.{Action, AnyContent, ControllerComponents, InjectedController, ResponseHeader, Result, Session}
+import play.api.mvc.{Action, AnyContent, ControllerComponents, InjectedController, Session}
 
 import java.io.ByteArrayOutputStream
 import java.util.Base64
@@ -26,7 +24,7 @@ class UserController @Inject() (
   authorizationAction: AuthorizationAction
 ) extends InjectedController {
 
-  def login = Action(parse.json[LoginCommand]).async { request =>
+  def login: Action[LoginCommand] = Action(parse.json[LoginCommand]).async { request =>
     val loginRequest = request.body
     request.session.get(Constant.loginCode) match {
       case Some(code) if code == loginRequest.code =>
@@ -45,15 +43,15 @@ class UserController @Inject() (
     }
   }
 
-  def logout = authenticationAction async { request =>
+  def logout: Action[AnyContent] = authenticationAction async { request =>
     Future.successful(Ok.withSession(request.session - Constant.SESSION_USER))
   }
 
-  def current = authenticationAction { implicit request =>
+  def current: Action[AnyContent] = authenticationAction { implicit request =>
     Results.success(UserDto.fromDo(request.user))
   }
 
-  def loginCode = Action {
+  def loginCode: Action[AnyContent] = Action {
     val code  = Kaptcha.createText
     val image = Kaptcha.createImage(code)
     val os    = new ByteArrayOutputStream()
@@ -62,7 +60,7 @@ class UserController @Inject() (
     Ok(base64).withSession(Session(Map(Constant.loginCode -> code)))
   }
 
-  def listUserByPage(page: Int, size: Int, sort: Option[String] = None) =
+  def listUserByPage(page: Int, size: Int, sort: Option[String] = None): Action[AnyContent] =
     authenticationAction andThen authorizationAction async {
       implicit val userFormat: OFormat[Page[UserDto]] = Json.format[Page[UserDto]]
       val pageQuery                                   = PageQuery(page, size, sort)
@@ -84,7 +82,7 @@ class UserController @Inject() (
         .recover(ex => Results.fail(ex))
     }
 
-  def updateUser: Action[UpdateUserCommand] =
+  def updateUser(): Action[UpdateUserCommand] =
     authenticationAction(parse.json[UpdateUserCommand]) andThen authorizationAction async { request =>
       userCommandService
         .updateUser(request.body.copy(updateBy = request.user.id))

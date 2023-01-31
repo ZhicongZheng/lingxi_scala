@@ -16,8 +16,6 @@ final case class ArticlePo(
   status: Int = 0,
   tags: String,
   category: Option[Long] = None,
-  viewCount: Int = 0,
-  likeCount: Int = 0,
   createBy: Long = 0L,
   updateBy: Long = 0L,
   createAt: LocalDateTime = LocalDateTime.now(),
@@ -56,12 +54,6 @@ object ArticlePo {
     /** Database column category SqlType(int8), Default(None) */
     val category: Rep[Option[Long]] = column[Option[Long]]("category", O.Default(None))
 
-    /** Database column view_count SqlType(int4), Default(0) */
-    val viewCount: Rep[Int] = column[Int]("view_count", O.Default(0))
-
-    /** Database column like_count SqlType(int4), Default(0) */
-    val likeCount: Rep[Int] = column[Int]("like_count", O.Default(0))
-
     /** Database column create_by SqlType(int8), Default(0) */
     val createBy: Rep[Long] = column[Long]("create_by", O.Default(0L))
 
@@ -84,8 +76,6 @@ object ArticlePo {
       status,
       tags,
       category,
-      viewCount,
-      likeCount,
       createBy,
       updateBy,
       createAt,

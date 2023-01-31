@@ -8,7 +8,6 @@ import org.mindrot.jbcrypt.BCrypt
 import play.api.libs.json.{Json, OFormat}
 
 import java.time.LocalDateTime
-import java.util.concurrent.ThreadLocalRandom
 import scala.util.{Success, Try}
 
 final case class User(

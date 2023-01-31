@@ -70,7 +70,7 @@ CREATE TABLE IF NOT EXISTS actions
 (
     id             SERIAL PRIMARY KEY,
     typ            INT       NOT NULL,
-    source_id      BIGINT    NOT NULL,
+    resource_id      BIGINT    NOT NULL,
     remote_address inet      NOT NULL,
     create_by      BIGINT    NOT NULL DEFAULT 0,
     update_by      BIGINT    NOT NULL DEFAULT 0,
@@ -90,8 +90,6 @@ CREATE TABLE IF NOT EXISTS articles
     status       SMALLINT  not null DEFAULT 0,
     tags         BIGINT[]  NOT NULL DEFAULT ARRAY[]::BIGINT[],
     category     BIGINT,
-    view_count   INT       NOT NULL DEFAULT 0,
-    like_count   INT       NOT NULL DEFAULT 0,
     create_by    BIGINT    NOT NULL DEFAULT 0,
     update_by    BIGINT    NOT NULL DEFAULT 0,
     create_at    TIMESTAMP NOT NULL DEFAULT current_timestamp,

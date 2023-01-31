@@ -59,4 +59,19 @@ object Article {
     val RELEASE     = 1
   }
 
+  def apply(
+    id: Long,
+    title: String,
+    introduction: String,
+    frontCover: Option[String],
+    contentMd: String,
+    contentHtml: String,
+    status: Int,
+    createBy: Long,
+    updateBy: Long,
+    createAt: LocalDateTime,
+    updateAt: LocalDateTime
+  ): Article =
+    Article(id, title, introduction, frontCover, Nil, None, contentMd, contentHtml, status, 0, 0, createBy, updateBy, createAt, updateAt)
+
 }

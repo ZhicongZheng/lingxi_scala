@@ -9,7 +9,7 @@ import scala.language.implicitConversions
 final case class ActionPo(
   id: Long,
   typ: Int,
-  sourceId: Long,
+  resourceId: Long,
   remoteAddress: String,
   createBy: Long = 0L,
   updateBy: Long = 0L,
@@ -20,8 +20,8 @@ final case class ActionPo(
 object ActionPo {
 
   /** Table description of table actions. Objects of this class serve as prototypes for rows in queries. */
-  class Actions(_tableTag: Tag) extends Table[ActionPo](_tableTag, "actions") {
-    def * = (id, typ, sourceId, remoteAddress, createBy, updateBy, createAt, updateAt).<>((ActionPo.apply _).tupled, ActionPo.unapply)
+  class ActionTable(_tableTag: Tag) extends Table[ActionPo](_tableTag, "actions") {
+    def * = (id, typ, resourceId, remoteAddress, createBy, updateBy, createAt, updateAt).<>((ActionPo.apply _).tupled, ActionPo.unapply)
 
     /** Database column id SqlType(serial), AutoInc, PrimaryKey */
     val id: Rep[Long] = column[Long]("id", O.AutoInc, O.PrimaryKey)
@@ -30,7 +30,7 @@ object ActionPo {
     val typ: Rep[Int] = column[Int]("typ")
 
     /** Database column source_id SqlType(int8) */
-    val sourceId: Rep[Long] = column[Long]("source_id")
+    val resourceId: Rep[Long] = column[Long]("resource_id")
 
     /** Database column remote_address SqlType(inet), Length(2147483647,false) */
     val remoteAddress: Rep[String] = column[String]("remote_address", O.Length(2147483647, varying = false))

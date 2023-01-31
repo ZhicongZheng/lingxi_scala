@@ -1,10 +1,18 @@
 package infra.inject
 
 import com.google.inject.{AbstractModule, Singleton}
+import domain.article.ArticleRepository
 import domain.auth.repository.RoleRepository
 import domain.user.repository.UserRepository
-import infra.db.repository.{RoleQueryRepository, UserQueryRepository}
-import infra.db.repository.impl.{RoleQueryRepositoryImpl, RoleRepositoryImpl, UserQueryRepositoryImpl, UserRepositoryImpl}
+import infra.db.repository.{ArticleQueryRepository, RoleQueryRepository, UserQueryRepository}
+import infra.db.repository.impl.{
+  ArticleQueryRepositoryImpl,
+  ArticleRepositoryImpl,
+  RoleQueryRepositoryImpl,
+  RoleRepositoryImpl,
+  UserQueryRepositoryImpl,
+  UserRepositoryImpl
+}
 import infra.mail.{MailService, MailServiceImpl}
 import infra.oss.{AliyunOssRepository, OssRepository}
 
@@ -17,6 +25,8 @@ class Module extends AbstractModule {
     bind(classOf[RoleRepository]).to(classOf[RoleRepositoryImpl]).in(classOf[Singleton])
     bind(classOf[UserQueryRepository]).to(classOf[UserQueryRepositoryImpl]).in(classOf[Singleton])
     bind(classOf[RoleQueryRepository]).to(classOf[RoleQueryRepositoryImpl]).in(classOf[Singleton])
+    bind(classOf[ArticleRepository]).to(classOf[ArticleRepositoryImpl]).in(classOf[Singleton])
+    bind(classOf[ArticleQueryRepository]).to(classOf[ArticleQueryRepositoryImpl]).in(classOf[Singleton])
   }
 
 }
