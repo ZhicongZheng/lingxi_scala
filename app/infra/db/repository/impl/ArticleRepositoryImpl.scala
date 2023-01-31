@@ -2,10 +2,11 @@ package infra.db.repository.impl
 
 import common.Constant
 import domain.action.Action
-import domain.article.{Article, ArticleRepository}
+import domain.article.{Article, ArticleCategory, ArticleRepository, ArticleTag}
 import infra.db.assembler.ArticleAssembler._
 import infra.db.po.ActionPo.ActionTable
 import infra.db.po.ArticlePo.ArticleTable
+import infra.db.po.{CategoryTable, TagTable}
 import infra.db.repository.ArticleQueryRepository
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfig}
 import slick.basic.DatabaseConfig
@@ -24,8 +25,10 @@ class ArticleRepositoryImpl @Inject() (private val dbConfigProvider: DatabaseCon
 
   override protected val dbConfig: DatabaseConfig[PostgresProfile] = dbConfigProvider.get[PostgresProfile]
 
-  private val articles = TableQuery[ArticleTable]
-  private val actions  = TableQuery[ActionTable]
+  private val articles   = TableQuery[ArticleTable]
+  private val actions    = TableQuery[ActionTable]
+  private val tags       = TableQuery[TagTable]
+  private val categories = TableQuery[CategoryTable]
 
   override def save(article: Article): Future[Long] =
     article.id match {
@@ -58,7 +61,7 @@ class ArticleRepositoryImpl @Inject() (private val dbConfigProvider: DatabaseCon
           val actionMap = tuple._3.groupBy(_.typ)
           val viewCount = actionMap.get(Action.Type.VIEW_ARTICLE).size
           val likeCount = actionMap.get(Action.Type.LICK_ARTICLE).size
-          Some(toDo(articlePo).copy(tags = tuple._1.map(toDo), category = tuple._2.map(toDo), viewCount = viewCount, likeCount = likeCount))
+          Some(toDo(articlePo).copy(tags = tuple._1, category = tuple._2, viewCount = viewCount, likeCount = likeCount))
         }
     }
 
@@ -68,4 +71,11 @@ class ArticleRepositoryImpl @Inject() (private val dbConfigProvider: DatabaseCon
 
   private def doUpdate(article: Article): Future[Long] = db.run(articles.filter(_.id === article.id).update(article)).map(_ => article.id)
 
+  override def addTag(tag: ArticleTag): Future[Unit] = db.run(tags += tag).map(_ => ())
+
+  override def removeTag(id: Long): Future[Unit] = db.run(tags.filter(_.id === id).delete).map(_ => ())
+
+  override def addCategory(category: ArticleCategory): Future[Unit] = db.run(categories += category).map(_ => ())
+
+  override def removeCategory(id: Long): Future[Unit] = db.run(categories.filter(_.id === id).delete).map(_ => ())
 }

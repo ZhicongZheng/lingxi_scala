@@ -12,9 +12,9 @@ package object endpoints {
 
   implicit val format: OFormat[ErrorMessage] = Json.format[ErrorMessage]
 
-  // 需要验证 token 的接口
+  // 需要验证 cookie 的接口
   val securedWithBearerEndpoint = endpoint
-    .securityIn(auth.bearer[String]())
+    .securityIn(auth.apiKey[String](cookie("cookie")))
     .errorOut(statusCode(StatusCode.Unauthorized))
     .errorOut(jsonBody[ErrorMessage])
 

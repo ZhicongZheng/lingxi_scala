@@ -11,7 +11,7 @@ final case class Comment(
   // 评论用户名
   userName: String,
   // 用户邮箱
-  userEmail: String,
+  userEmail: Option[String] = None,
   // 评论下面的回复
   reply: Seq[Comment] = Nil,
   // 回复的评论id

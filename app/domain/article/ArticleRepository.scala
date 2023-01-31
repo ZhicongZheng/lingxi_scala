@@ -4,4 +4,13 @@ import domain.AggregateRepository
 
 import scala.concurrent.Future
 
-trait ArticleRepository extends AggregateRepository[Article] {}
+trait ArticleRepository extends AggregateRepository[Article] {
+
+  def addTag(tag: ArticleTag): Future[Unit]
+
+  def removeTag(id: Long): Future[Unit]
+
+  def addCategory(category: ArticleCategory): Future[Unit]
+
+  def removeCategory(id: Long): Future[Unit]
+}

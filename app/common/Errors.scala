@@ -40,3 +40,7 @@ case object NO_ROLE extends Errors { val code = 10010; val message = "角色不�
 case object ROLE_CODE_EXIST extends Errors {
   val code = 10011; val message = "角色 code 已经存在"; override val httpStatus: Results.Status = Conflict
 }
+
+case object TAG_EXIST extends Errors { val code = 10012; val message = "标签已经存在" }
+
+case object CATEGORY_EXIST extends Errors { val code = 10013; val message = "分类已经存在" }

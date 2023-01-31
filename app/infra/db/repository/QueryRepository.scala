@@ -1,7 +1,6 @@
 package infra.db.repository
 
 import common.{Page, PageQuery}
-import infra.db.po.{CategoryPo, TagPo}
 
 import scala.concurrent.Future
 
