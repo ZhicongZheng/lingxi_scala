@@ -1,6 +1,6 @@
 package interfaces.controller
 
-import application.command.{ArticleCategoryCommand, ArticleTagCommand}
+import application.command.{ArticleCategoryCommand, ArticleTagCommand, CreateArticleCommand}
 import application.service.{ArticleCommandService, ArticleQueryService}
 import common.Results
 import domain.article.{ArticleCategory, ArticleTag}
@@ -21,6 +21,16 @@ class ArticleController @Inject() (
 
   implicit val tagFormat: OFormat[ArticleTag]           = Json.format[ArticleTag]
   implicit val categoryFormat: OFormat[ArticleCategory] = Json.format[ArticleCategory]
+
+  def createArticle = authenticationAction(parse.json[CreateArticleCommand]) andThen authorizationAction async { command =>
+    articleCommandService
+      .createArticle(command.body)
+      .map {
+        case Left(err) => Results.fail(err)
+        case Right(id) => Created(Json.toJson(id))
+      }
+      .recover(ex => Results.fail(ex))
+  }
 
   def listArticleTags = Action async {
     articleQueryService.listTags().map(tags => Results.success(tags)).recover(ex => Results.fail(ex))

@@ -14,7 +14,6 @@ final case class ArticlePo(
   contentMd: String = "",
   contentHtml: String = "",
   status: Int = 0,
-  tags: String,
   category: Option[Long] = None,
   createBy: Long = 0L,
   updateBy: Long = 0L,
@@ -48,9 +47,6 @@ object ArticlePo {
     /** Database column status SqlType(int2), Default(0) */
     val status: Rep[Int] = column[Int]("status", O.Default(0))
 
-    /** Database column tags SqlType(_int8), Length(19,false) */
-    val tags: Rep[String] = column[String]("tags", O.Length(19, varying = false))
-
     /** Database column category SqlType(int8), Default(None) */
     val category: Rep[Option[Long]] = column[Option[Long]]("category", O.Default(None))
 
@@ -74,7 +70,6 @@ object ArticlePo {
       contentMd,
       contentHtml,
       status,
-      tags,
       category,
       createBy,
       updateBy,

@@ -3,7 +3,7 @@ package infra.db.repository.impl
 import common.{Page, PageQuery}
 import domain.article.{ArticleCategory, ArticleTag}
 import infra.db.po.ArticlePo.ArticleTable
-import infra.db.po.{ArticlePo, CategoryTable, TagTable}
+import infra.db.po.{ArticlePo, ArticleTagTable, CategoryTable, TagTable}
 import infra.db.repository.ArticleQueryRepository
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfig}
 import slick.basic.DatabaseConfig
@@ -21,9 +21,10 @@ class ArticleQueryRepositoryImpl @Inject() (private val dbConfigProvider: Databa
 
   override protected val dbConfig: DatabaseConfig[PostgresProfile] = dbConfigProvider.get[PostgresProfile]
 
-  private val articles   = TableQuery[ArticleTable]
-  private val tags       = TableQuery[TagTable]
-  private val categories = TableQuery[CategoryTable]
+  private val articles    = TableQuery[ArticleTable]
+  private val tags        = TableQuery[TagTable]
+  private val categories  = TableQuery[CategoryTable]
+  private val articleTags = TableQuery[ArticleTagTable]
 
   override def get(id: Long): Future[Option[ArticlePo]] = db.run(articles.filter(_.id === id).result.headOption)
 
@@ -46,4 +47,17 @@ class ArticleQueryRepositoryImpl @Inject() (private val dbConfigProvider: Databa
 
   override def getCategoryByName(name: String): Future[Option[ArticleCategory]] =
     db.run(categories.filter(_.name === name).result.headOption)
+
+  override def getArticleTagMap(articleIds: Seq[Long]): Future[Map[Long, Seq[ArticleTag]]] =
+    for {
+      articleTags <- db.run(articleTags.filter(_.articleId inSet articleIds).result)
+      articleTagMap = articleTags.groupMap(_._2)(_._3)
+      tagMap <- db.run(tags.filter(_.id inSet articleTags.map(_._3)).result).map(tags => tags.map(tag => tag.id -> tag).toMap)
+      result = articleTagMap.map(item => item._1 -> item._2.map(tagId => tagMap(tagId)))
+    } yield result
+
+  override def listTagsByArticle(articleId: Long): Future[Seq[ArticleTag]] = {
+    val joinQuery = tags join articleTags on (_.id === _.tagId)
+    db.run(joinQuery.filter(_._2.articleId === articleId).map(_._1).result)
+  }
 }

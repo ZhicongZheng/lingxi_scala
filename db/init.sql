@@ -70,7 +70,7 @@ CREATE TABLE IF NOT EXISTS actions
 (
     id             SERIAL PRIMARY KEY,
     typ            INT       NOT NULL,
-    resource_id      BIGINT    NOT NULL,
+    resource_id    BIGINT    NOT NULL,
     remote_address inet      NOT NULL,
     create_by      BIGINT    NOT NULL DEFAULT 0,
     update_by      BIGINT    NOT NULL DEFAULT 0,
@@ -78,6 +78,12 @@ CREATE TABLE IF NOT EXISTS actions
     update_at      TIMESTAMP NOT NULL DEFAULT current_timestamp
 );
 
+CREATE TABLE IF NOT EXISTS article_tags
+(
+    id         SERIAL PRIMARY KEY,
+    article_id BIGINT NOT NULL,
+    tag_id     BIGINT NOT NULL
+);
 
 CREATE TABLE IF NOT EXISTS articles
 (
@@ -85,10 +91,10 @@ CREATE TABLE IF NOT EXISTS articles
     title        VARCHAR   NOT NULL,
     introduction VARCHAR   NOT NULL DEFAULT '',
     front_cover  VARCHAR,
-    content_md   TEXT   NOT NULL DEFAULT '',
-    content_html TEXT   NOT NULL DEFAULT '',
+    content_md   TEXT      NOT NULL DEFAULT '',
+    content_html TEXT      NOT NULL DEFAULT '',
     status       SMALLINT  not null DEFAULT 0,
-    tags         BIGINT[]  NOT NULL DEFAULT ARRAY[]::BIGINT[],
+    tags         BIGINT[]  NOT NULL DEFAULT ARRAY []::BIGINT[],
     category     BIGINT,
     create_by    BIGINT    NOT NULL DEFAULT 0,
     update_by    BIGINT    NOT NULL DEFAULT 0,

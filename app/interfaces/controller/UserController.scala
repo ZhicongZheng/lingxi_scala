@@ -82,7 +82,7 @@ class UserController @Inject() (
         .recover(ex => Results.fail(ex))
     }
 
-  def updateUser(): Action[UpdateUserCommand] =
+  def updateUser: Action[UpdateUserCommand] =
     authenticationAction(parse.json[UpdateUserCommand]) andThen authorizationAction async { request =>
       userCommandService
         .updateUser(request.body.copy(updateBy = request.user.id))

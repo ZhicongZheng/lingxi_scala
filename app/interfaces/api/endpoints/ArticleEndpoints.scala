@@ -1,6 +1,6 @@
 package interfaces.api.endpoints
 
-import application.command.ArticleTagCommand
+import application.command.{ArticleTagCommand, CreateArticleCommand}
 import domain.article.ArticleTag
 import play.api.libs.json.{Json, OFormat}
 import sttp.model.StatusCode
@@ -20,8 +20,28 @@ object ArticleEndpoints {
 
   val categoryAuthEndpoint = securedWithBearerEndpoint.in("categories").tag("Article Categories")
 
+  val articleWithoutAuthEndpoint = endpoint.in("articles").tag("Article").errorOut(jsonBody[ErrorMessage])
+
+  val articleAuthEndpoint = securedWithBearerEndpoint.in("articles").tag("Article")
+
   def endpoints =
-    Seq(listTagsEndpoint, addTagsEndpoing, deleteTagsEndpoint, listCategoryEndpoint, addCategoryEndpoing, deleteCategoryEndpoint)
+    Seq(
+      listTagsEndpoint,
+      addTagsEndpoing,
+      deleteTagsEndpoint,
+      listCategoryEndpoint,
+      addCategoryEndpoing,
+      deleteCategoryEndpoint,
+      createArticleEndpoint
+    )
+
+  val createArticleEndpoint = articleAuthEndpoint.post
+    .name("createArticle")
+    .summary("创建文章")
+    .description("创建文章")
+    .in(jsonBody[CreateArticleCommand])
+    .out(statusCode(StatusCode.Created))
+    .out(jsonBody[Long])
 
   val listTagsEndpoint = tagWithoutAuthEndpoint.get
     .name("listTags")

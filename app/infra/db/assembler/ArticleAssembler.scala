@@ -1,7 +1,7 @@
 package infra.db.assembler
 
 import domain.action.Action
-import domain.article.{Article, ArticleCategory, ArticleTag}
+import domain.article.Article
 import infra.db.po.{ActionPo, ArticlePo}
 
 import scala.language.implicitConversions
@@ -16,7 +16,6 @@ object ArticleAssembler {
     a.contentMd,
     a.contentHtml,
     a.status,
-    a.tags.map(_.name).mkString(","),
     a.category.map(_.id),
     a.createBy,
     a.updateBy,

@@ -38,6 +38,9 @@ POST          /users/$useId<[0-9]+>/roles/$roleId<[0-9]+>        interfaces.cont
 
 GET           /roles/permissions                                 interfaces.controller.RoleController.listPermission()
 
+# aricle api
+POST          /articles                                          interfaces.controller.ArticleController.createArticle
+
 # article tag api
 GET           /tags                                              interfaces.controller.ArticleController.listArticleTags
 

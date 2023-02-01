@@ -8,6 +8,10 @@ import scala.concurrent.Future
 trait ArticleQueryRepository extends QueryRepository[ArticlePo] {
   def listTagsById(tagIds: Seq[Long]): Future[Seq[ArticleTag]]
 
+  def getArticleTagMap(articleIds: Seq[Long]): Future[Map[Long, Seq[ArticleTag]]]
+
+  def listTagsByArticle(articleId: Long): Future[Seq[ArticleTag]]
+
   def listTags(): Future[Seq[ArticleTag]]
 
   def getTagByName(name: String): Future[Option[ArticleTag]]
