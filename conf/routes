@@ -41,6 +41,12 @@ GET           /roles/permissions                                 interfaces.cont
 # aricle api
 POST          /articles                                          interfaces.controller.ArticleController.createArticle
 
+DELETE        /articles/$id<[0-9]+>                              interfaces.controller.ArticleController.deleteArticle(id: Long)
+
+PUT           /articles                                          interfaces.controller.ArticleController.updateArticle
+
+GET           /articles                                          interfaces.controller.ArticleController.listArticleByPage(page: Int ?= 1,size: Int ?= 10, sort: Option[String])
+
 # article tag api
 GET           /tags                                              interfaces.controller.ArticleController.listArticleTags
 

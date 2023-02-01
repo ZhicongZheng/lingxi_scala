@@ -46,3 +46,5 @@ case object TAG_EXIST extends Errors { val code = 10012; val message = "标签�
 case object CATEGORY_EXIST extends Errors { val code = 10013; val message = "分类已经存在" }
 
 case object TAG_OR_CATEGORY_NOT_EXIST extends Errors { val code = 10014; val message = "标签或分类不存在" }
+
+case object ARTICLE_NOT_EXIST extends Errors { val code = 10015; val message = "文章不存在" }

@@ -1,7 +1,9 @@
 package interfaces.api.endpoints
 
-import application.command.{ArticleTagCommand, CreateArticleCommand}
-import domain.article.ArticleTag
+import application.command.{ArticleCommand, ArticleTagCommand}
+import common.Page
+import domain.article.{ArticleCategory, ArticleTag}
+import interfaces.dto.ArticleDto
 import play.api.libs.json.{Json, OFormat}
 import sttp.model.StatusCode
 import sttp.tapir._
@@ -10,7 +12,10 @@ import sttp.tapir.json.play._
 
 object ArticleEndpoints {
 
-  implicit val tagFormat: OFormat[ArticleTag] = Json.format[ArticleTag]
+  implicit val tagFormat: OFormat[ArticleTag]               = Json.format[ArticleTag]
+  implicit val categoryFormat: OFormat[ArticleCategory]     = Json.format[ArticleCategory]
+  implicit val format: OFormat[ArticleDto]                  = Json.format[ArticleDto]
+  implicit val articlePageFormat: OFormat[Page[ArticleDto]] = Json.format[Page[ArticleDto]]
 
   val tagWithoutAuthEndpoint = endpoint.in("tags").tag("Article Tags").errorOut(jsonBody[ErrorMessage])
 
@@ -32,16 +37,40 @@ object ArticleEndpoints {
       listCategoryEndpoint,
       addCategoryEndpoing,
       deleteCategoryEndpoint,
-      createArticleEndpoint
+      createArticleEndpoint,
+      deleteArticleEndpoint,
+      updateArticleEndpoint,
+      listArticleByPageEndpoint
     )
 
   val createArticleEndpoint = articleAuthEndpoint.post
     .name("createArticle")
     .summary("创建文章")
     .description("创建文章")
-    .in(jsonBody[CreateArticleCommand])
+    .in(jsonBody[ArticleCommand])
     .out(statusCode(StatusCode.Created))
     .out(jsonBody[Long])
+
+  val updateArticleEndpoint = articleAuthEndpoint.put
+    .name("updateArticle")
+    .summary("更新文章")
+    .description("更新文章")
+    .in(jsonBody[ArticleCommand])
+    .out(statusCode(StatusCode.Ok))
+
+  val deleteArticleEndpoint = articleAuthEndpoint.delete
+    .name("deleteArticle")
+    .summary("删除文章")
+    .description("删除文章")
+    .in(path[Long]("id"))
+    .out(statusCode(StatusCode.Ok))
+
+  val listArticleByPageEndpoint = articleWithoutAuthEndpoint.get
+    .name("listArticleByPage")
+    .summary("分页获取文章")
+    .description("分页获取文章列表")
+    .in(query[Int]("page").default(1) / query[Int]("size").default(10) / query[Option[String]]("sort"))
+    .out(jsonBody[Page[ArticleDto]])
 
   val listTagsEndpoint = tagWithoutAuthEndpoint.get
     .name("listTags")

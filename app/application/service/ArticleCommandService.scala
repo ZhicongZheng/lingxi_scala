@@ -1,9 +1,9 @@
 package application.service
 
-import application.command.CreateArticleCommand
-import application.command.CreateArticleCommand.toDo
+import application.command.ArticleCommand
+import application.command.ArticleCommand.toDo
 import com.google.inject.Inject
-import common.{CATEGORY_EXIST, Errors, TAG_EXIST, TAG_OR_CATEGORY_NOT_EXIST}
+import common.{ARTICLE_NOT_EXIST, CATEGORY_EXIST, Constant, Errors, TAG_EXIST, TAG_OR_CATEGORY_NOT_EXIST}
 import domain.article.{ArticleCategory, ArticleRepository, ArticleTag}
 import infra.db.repository.ArticleQueryRepository
 
@@ -14,7 +14,7 @@ import scala.concurrent.Future
 @Singleton
 class ArticleCommandService @Inject() (articleRepository: ArticleRepository, articleQueryRepository: ArticleQueryRepository) {
 
-  def createArticle(command: CreateArticleCommand): Future[Either[Errors, Long]] = {
+  def createArticle(command: ArticleCommand): Future[Either[Errors, Long]] = {
 
     val categoryFuture = command.category match {
       case Some(id) => articleQueryRepository.getCategoryById(id)
@@ -32,6 +32,19 @@ class ArticleCommandService @Inject() (articleRepository: ArticleRepository, art
       result   <- saveArticle(tags, category)
     } yield result
   }
+
+  def updateArticle(command: ArticleCommand): Future[Either[Errors, Long]] =
+    // 如果没传id, 默认按照 -1 查找，返回 文章不存在
+    articleRepository.get(command.id.getOrElse(Constant.domainCreateId)).flatMap {
+      case None => Future.successful(Left(ARTICLE_NOT_EXIST))
+      case Some(article) =>
+        val updatedArticle = article
+          .updateBrief(command.title, command.introduction, command.frontCover)
+          .updateContent(command.contentMd, command.contentHtml)
+        articleRepository.save(updatedArticle).map(id => Right(id))
+    }
+
+  def deleteArticle(id: Long): Future[Unit] = articleRepository.remove(id)
 
   def addTags(tag: ArticleTag): Future[Either[Errors, Unit]] =
     for {

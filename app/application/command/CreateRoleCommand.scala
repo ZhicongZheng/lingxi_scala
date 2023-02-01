@@ -12,5 +12,5 @@ object CreateRoleCommand {
   implicit val format: OFormat[CreateRoleCommand] = Json.format[CreateRoleCommand]
 
   implicit def requestToDo(request: CreateRoleCommand): Role =
-    Role(Constant.domainCreateId, request.code, request.name, permissions = request.permission.map(id => Permission.just(id)))
+    Role(Constant.domainCreateId, request.code, request.name, permissions = request.permission.map(id => Permission.justId(id)))
 }

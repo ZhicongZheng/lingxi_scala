@@ -14,6 +14,7 @@ import slick.jdbc.PostgresProfile
 import slick.jdbc.PostgresProfile.api._
 import slick.lifted.TableQuery
 
+import java.time.LocalDateTime
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -31,6 +32,9 @@ class ArticleRepositoryImpl @Inject() (private val dbConfigProvider: DatabaseCon
   private val categories  = TableQuery[CategoryTable]
   private val articleTags = TableQuery[ArticleTagTable]
 
+  val queryArticleAction = (id: Long) =>
+    articles.filter(table => Seq(table.id === id, table.status =!= Article.Status.DELETE).reduce(_ && _))
+
   override def save(article: Article): Future[Long] =
     article.id match {
       case Constant.domainCreateId => doInsert(article)
@@ -38,7 +42,7 @@ class ArticleRepositoryImpl @Inject() (private val dbConfigProvider: DatabaseCon
     }
 
   override def get(id: Long): Future[Option[Article]] =
-    db.run(articles.filter(_.id === id).result.headOption) flatMap {
+    db.run(queryArticleAction(id).result.headOption) flatMap {
       case None => Future.successful(None)
       case Some(articlePo) =>
         val categoryId = articlePo.category
@@ -64,7 +68,7 @@ class ArticleRepositoryImpl @Inject() (private val dbConfigProvider: DatabaseCon
         }
     }
 
-  override def remove(id: Long): Future[Unit] = db.run(articles.filter(_.id === id).delete).map(_ => ())
+  override def remove(id: Long): Future[Unit] = db.run(queryArticleAction(id).map(_.status).update(Article.Status.DELETE)).map(_ => ())
 
   private def doInsert(article: Article): Future[Long] =
     db.run(articles returning articles.map(_.id) += article).flatMap { articleId =>
@@ -73,9 +77,9 @@ class ArticleRepositoryImpl @Inject() (private val dbConfigProvider: DatabaseCon
 
   private def doUpdate(article: Article): Future[Long] =
     for {
-      _ <- db.run(articles.filter(_.id === article.id).update(article)).map(_ => article.id)
-      _ <- deleteArticleTagRef(article.id)
-      _ <- insertArticleTagRef(article.id, article.tags.map(_.id))
+      updateCount <- db.run(queryArticleAction(article.id).update(article.copy(updateAt = LocalDateTime.now()))).map(_ => article.id)
+      _           <- if (updateCount > 0) deleteArticleTagRef(article.id) else Future.successful(())
+      _           <- if (updateCount > 0) insertArticleTagRef(article.id, article.tags.map(_.id)) else Future.successful(())
     } yield article.id
 
   override def addTag(tag: ArticleTag): Future[Unit] = db.run(tags += tag).map(_ => ())

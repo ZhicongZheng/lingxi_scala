@@ -1,7 +1,7 @@
 package infra.db.repository.impl
 
 import common.{Page, PageQuery}
-import domain.article.{ArticleCategory, ArticleTag}
+import domain.article.{Article, ArticleCategory, ArticleTag}
 import infra.db.po.ArticlePo.ArticleTable
 import infra.db.po.{ArticlePo, ArticleTagTable, CategoryTable, TagTable}
 import infra.db.repository.ArticleQueryRepository
@@ -26,13 +26,21 @@ class ArticleQueryRepositoryImpl @Inject() (private val dbConfigProvider: Databa
   private val categories  = TableQuery[CategoryTable]
   private val articleTags = TableQuery[ArticleTagTable]
 
-  override def get(id: Long): Future[Option[ArticlePo]] = db.run(articles.filter(_.id === id).result.headOption)
+  val queryArticleAction = (id: Long) =>
+    articles.filter(table => Seq(table.id === id, table.status =!= Article.Status.DELETE).reduce(_ && _))
 
-  override def list(): Future[Seq[ArticlePo]] = db.run(articles.result)
+  override def get(id: Long): Future[Option[ArticlePo]] = db.run(queryArticleAction(id).result.headOption)
 
-  override def count(): Future[Int] = db.run(articles.size.result)
+  override def list(): Future[Seq[ArticlePo]] = ???
 
-  override def listByPage(pageQuery: PageQuery): Future[Page[ArticlePo]] = ???
+  override def count(): Future[Int] = ???
+
+  override def listByPage(pageQuery: PageQuery): Future[Page[ArticlePo]] = db.run {
+    for {
+      articlePos <- articles.drop(pageQuery.offset).take(pageQuery.limit).filter(_.status =!= Article.Status.DELETE).result
+      count      <- articles.filter(_.status =!= Article.Status.DELETE).length.result
+    } yield Page(pageQuery.page, pageQuery.size, count, articlePos)
+  }
 
   override def listTagsById(tagIds: Seq[Long]): Future[Seq[ArticleTag]] = db.run(tags.filter(_.id inSet tagIds.toSet).result)
 
@@ -60,4 +68,6 @@ class ArticleQueryRepositoryImpl @Inject() (private val dbConfigProvider: Databa
     val joinQuery = tags join articleTags on (_.id === _.tagId)
     db.run(joinQuery.filter(_._2.articleId === articleId).map(_._1).result)
   }
+
+  override def listCategoryByIds(ids: Seq[Long]): Future[Seq[ArticleCategory]] = db.run(categories.filter(_.id inSet ids).result)
 }

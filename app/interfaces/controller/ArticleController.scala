@@ -1,10 +1,11 @@
 package interfaces.controller
 
-import application.command.{ArticleCategoryCommand, ArticleTagCommand, CreateArticleCommand}
+import application.command.{ArticleCategoryCommand, ArticleCommand, ArticleTagCommand}
 import application.service.{ArticleCommandService, ArticleQueryService}
-import common.Results
+import common.{Page, PageQuery, Results}
 import domain.article.{ArticleCategory, ArticleTag}
 import infra.actions.{AuthenticationAction, AuthorizationAction}
+import interfaces.dto.ArticleDto
 import play.api.libs.json.{Json, OFormat}
 import play.api.mvc.InjectedController
 
@@ -19,17 +20,38 @@ class ArticleController @Inject() (
   authorizationAction: AuthorizationAction
 ) extends InjectedController {
 
-  implicit val tagFormat: OFormat[ArticleTag]           = Json.format[ArticleTag]
-  implicit val categoryFormat: OFormat[ArticleCategory] = Json.format[ArticleCategory]
+  implicit val tagFormat: OFormat[ArticleTag]               = Json.format[ArticleTag]
+  implicit val categoryFormat: OFormat[ArticleCategory]     = Json.format[ArticleCategory]
+  implicit val format: OFormat[ArticleDto]                  = Json.format[ArticleDto]
+  implicit val articlePageFormat: OFormat[Page[ArticleDto]] = Json.format[Page[ArticleDto]]
 
-  def createArticle = authenticationAction(parse.json[CreateArticleCommand]) andThen authorizationAction async { command =>
+  def createArticle = authenticationAction(parse.json[ArticleCommand]) andThen authorizationAction async { request =>
     articleCommandService
-      .createArticle(command.body)
+      .createArticle(request.body)
       .map {
         case Left(err) => Results.fail(err)
         case Right(id) => Created(Json.toJson(id))
       }
       .recover(ex => Results.fail(ex))
+  }
+
+  def deleteArticle(id: Long) = authenticationAction andThen authorizationAction async {
+    articleCommandService.deleteArticle(id).map(_ => Ok).recover(ex => Results.fail(ex))
+  }
+
+  def updateArticle = authenticationAction(parse.json[ArticleCommand]) andThen authorizationAction async { request =>
+    articleCommandService
+      .updateArticle(request.body)
+      .map {
+        case Left(err) => Results.fail(err)
+        case Right(_)  => Ok
+      }
+      .recover(ex => Results.fail(ex))
+  }
+
+  def listArticleByPage(page: Int, size: Int, sort: Option[String] = None) = Action async {
+    val pageQuery = PageQuery(page, size, sort)
+    articleQueryService.listArticleByPage(pageQuery).map(pageDto => Results.success(pageDto)).recover(ex => Results.fail(ex))
   }
 
   def listArticleTags = Action async {

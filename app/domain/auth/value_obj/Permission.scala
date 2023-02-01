@@ -14,11 +14,11 @@ final case class Permission(
   updateBy: Long = 0L,
   createAt: LocalDateTime = LocalDateTime.now(),
   updateAt: LocalDateTime = LocalDateTime.now()
-) extends BaseEntity {}
+) extends BaseEntity
 
 object Permission {
 
   implicit val format: OFormat[Permission] = Json.format[Permission]
 
-  def just(id: Long): Permission = Permission(id, "", "", "")
+  def justId(id: Long): Permission = Permission(id, "", "", "")
 }

@@ -6,7 +6,8 @@ import play.api.libs.json.{Json, OFormat}
 
 import scala.language.implicitConversions
 
-case class CreateArticleCommand(
+case class ArticleCommand(
+  id: Option[Long] = None,
   title: String,
   introduction: String,
   frontCover: Option[String] = None,
@@ -16,13 +17,13 @@ case class CreateArticleCommand(
   contentHtml: String = ""
 )
 
-object CreateArticleCommand {
+object ArticleCommand {
 
-  implicit val format: OFormat[CreateArticleCommand] = Json.format[CreateArticleCommand]
+  implicit val format: OFormat[ArticleCommand] = Json.format[ArticleCommand]
 
-  implicit def toDo(cmd: CreateArticleCommand): Article =
+  implicit def toDo(cmd: ArticleCommand): Article =
     Article(
-      id = Constant.domainCreateId,
+      id = cmd.id.getOrElse(Constant.domainCreateId),
       title = cmd.title,
       introduction = cmd.introduction,
       frontCover = cmd.frontCover,

@@ -20,7 +20,7 @@ final case class Role(
 
   def update(name: String, permissionIds: Seq[Long]): Role = {
     val role = this.copy(name = name, updateAt = LocalDateTime.now())
-    role.copy(permissions = permissionIds.map(id => Permission.just(id)))
+    role.copy(permissions = permissionIds.map(id => Permission.justId(id)))
   }
 
   def beSuperAdmin: Boolean = name == superAdmin
@@ -30,5 +30,5 @@ final case class Role(
 object Role {
 
   implicit val format: OFormat[Role] = Json.format[Role]
-  def just(id: Long): Role           = Role(id, "", "")
+  def justId(id: Long): Role         = Role(id, "", "")
 }
