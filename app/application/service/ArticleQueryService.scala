@@ -13,24 +13,27 @@ import scala.concurrent.ExecutionContext.Implicits.global
 class ArticleQueryService @Inject() (articleQueryRepository: ArticleQueryRepository) {
 
   def listArticleByPage(pageQuery: PageQuery): Future[Page[ArticleDto]] =
-    for {
-      // 分页文章列表
-      articlePage <- articleQueryRepository.listByPage(pageQuery).map(_.map(ArticleDto.fromPo))
+    articleQueryRepository.listByPage(pageQuery).map(_.map(ArticleDto.fromPo)).flatMap { articlePage =>
       // 文章分类id 的map
-      articleCategoryMap = articlePage.data.map(article => article.id -> article.category).toMap
-      // 文章标签map
-      tagsMap <- articleQueryRepository.getArticleTagMap(articleCategoryMap.keySet.toSeq)
+      val articleCategoryMap = articlePage.data.map(article => article.id -> article.category).toMap
+      val tagsMapFuture      = articleQueryRepository.getArticleTagMap(articleCategoryMap.keySet.toSeq)
       // 分类的id
-      categoryIds = articleCategoryMap.values.filter(_.isDefined).map(_.get.id).toSeq
-      // 文章分类map
-      categoryMap <- articleQueryRepository.listCategoryByIds(categoryIds).map(seq => seq.map(category => category.id -> category).toMap)
-      pageResult = articlePage.map { dto =>
-        dto.category match {
-          case Some(category) => dto.copy(category = categoryMap.get(category.id), tags = tagsMap.getOrElse(dto.id, Nil))
-          case None           => dto.copy(tags = tagsMap.getOrElse(dto.id, Nil))
+      val categoryIds = articleCategoryMap.values.filter(_.isDefined).map(_.get.id).toSeq
+      val categoryMapFuture =
+        articleQueryRepository.listCategoryByIds(categoryIds).map(seq => seq.map(category => category.id -> category).toMap)
+      for {
+        // 文章标签map
+        tagsMap <- tagsMapFuture
+        // 文章分类map
+        categoryMap <- categoryMapFuture
+        pageResult = articlePage.map { dto =>
+          dto.category match {
+            case Some(category) => dto.copy(category = categoryMap.get(category.id), tags = tagsMap.getOrElse(dto.id, Nil))
+            case None           => dto.copy(tags = tagsMap.getOrElse(dto.id, Nil))
+          }
         }
-      }
-    } yield pageResult
+      } yield pageResult
+    }
 
   def listTags(): Future[Seq[ArticleTag]] = articleQueryRepository.listTags()
 
