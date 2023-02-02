@@ -49,6 +49,10 @@ class ArticleController @Inject() (
       .recover(ex => Results.fail(ex))
   }
 
+  def releaseArticle(id: Long) = authenticationAction andThen authorizationAction async {
+    articleCommandService.releaseArticle(id).map(_ => Ok).recover(ex => Results.fail(ex))
+  }
+
   def listArticleByPage(page: Int, size: Int, sort: Option[String] = None) = Action async {
     val pageQuery = PageQuery(page, size, sort)
     articleQueryService.listArticleByPage(pageQuery).map(pageDto => Results.success(pageDto)).recover(ex => Results.fail(ex))

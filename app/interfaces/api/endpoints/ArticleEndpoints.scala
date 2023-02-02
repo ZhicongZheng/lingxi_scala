@@ -40,7 +40,8 @@ object ArticleEndpoints {
       createArticleEndpoint,
       deleteArticleEndpoint,
       updateArticleEndpoint,
-      listArticleByPageEndpoint
+      listArticleByPageEndpoint,
+      releaseArticleEndpoint
     )
 
   val createArticleEndpoint = articleAuthEndpoint.post
@@ -62,6 +63,14 @@ object ArticleEndpoints {
     .name("deleteArticle")
     .summary("删除文章")
     .description("删除文章")
+    .in(path[Long]("id"))
+    .out(statusCode(StatusCode.Ok))
+
+  val releaseArticleEndpoint = articleAuthEndpoint.post
+    .name("releaseArticle")
+    .summary("发布文章")
+    .description("发布文章")
+    .in("release")
     .in(path[Long]("id"))
     .out(statusCode(StatusCode.Ok))
 

@@ -43,6 +43,8 @@ POST          /articles                                          interfaces.cont
 
 DELETE        /articles/$id<[0-9]+>                              interfaces.controller.ArticleController.deleteArticle(id: Long)
 
+POST          /articles/release/$id<[0-9]+>                      interfaces.controller.ArticleController.releaseArticle(id: Long)
+
 PUT           /articles                                          interfaces.controller.ArticleController.updateArticle
 
 GET           /articles                                          interfaces.controller.ArticleController.listArticleByPage(page: Int ?= 1,size: Int ?= 10, sort: Option[String])
