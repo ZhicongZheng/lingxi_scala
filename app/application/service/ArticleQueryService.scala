@@ -1,19 +1,19 @@
 package application.service
 
-import common.{Page, PageQuery}
+import common.Page
 import domain.article.{ArticleCategory, ArticleTag}
 import infra.db.repository.ArticleQueryRepository
-import interfaces.dto.ArticleDto
+import interfaces.dto.{ArticleDto, ArticlePageQuery}
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 
 @Singleton
 class ArticleQueryService @Inject() (articleQueryRepository: ArticleQueryRepository) {
 
-  def listArticleByPage(pageQuery: PageQuery): Future[Page[ArticleDto]] =
-    articleQueryRepository.listByPage(pageQuery).map(_.map(ArticleDto.fromPo)).flatMap { articlePage =>
+  def listArticleByPage(pageQuery: ArticlePageQuery): Future[Page[ArticleDto]] =
+    articleQueryRepository.listArticleByPage(pageQuery).map(_.map(ArticleDto.fromPo)).flatMap { articlePage =>
       // 文章分类id 的map
       val articleCategoryMap = articlePage.data.map(article => article.id -> article.category).toMap
       val tagsMapFuture      = articleQueryRepository.getArticleTagMap(articleCategoryMap.keySet.toSeq)

@@ -5,6 +5,7 @@ import domain.article.{Article, ArticleCategory, ArticleTag}
 import infra.db.po.ArticlePo.ArticleTable
 import infra.db.po.{ArticlePo, ArticleTagTable, CategoryTable, TagTable}
 import infra.db.repository.ArticleQueryRepository
+import interfaces.dto.ArticlePageQuery
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfig}
 import slick.basic.DatabaseConfig
 import slick.jdbc.PostgresProfile
@@ -26,7 +27,7 @@ class ArticleQueryRepositoryImpl @Inject() (private val dbConfigProvider: Databa
   private val categories  = TableQuery[CategoryTable]
   private val articleTags = TableQuery[ArticleTagTable]
 
-  val queryArticleAction = (id: Long) =>
+  val queryArticleAction: Long => Query[ArticleTable, ArticlePo, Seq] = (id: Long) =>
     articles.filter(table => Seq(table.id === id, table.status =!= Article.Status.DELETE).reduce(_ && _))
 
   override def get(id: Long): Future[Option[ArticlePo]] = db.run(queryArticleAction(id).result.headOption)
@@ -35,12 +36,7 @@ class ArticleQueryRepositoryImpl @Inject() (private val dbConfigProvider: Databa
 
   override def count(): Future[Int] = ???
 
-  override def listByPage(pageQuery: PageQuery): Future[Page[ArticlePo]] = db.run {
-    for {
-      articlePos <- articles.drop(pageQuery.offset).take(pageQuery.limit).filter(_.status =!= Article.Status.DELETE).result
-      count      <- articles.filter(_.status =!= Article.Status.DELETE).length.result
-    } yield Page(pageQuery.page, pageQuery.size, count, articlePos)
-  }
+  override def listByPage(pageQuery: PageQuery): Future[Page[ArticlePo]] = ???
 
   override def listTagsById(tagIds: Seq[Long]): Future[Seq[ArticleTag]] = db.run(tags.filter(_.id inSet tagIds.toSet).result)
 
@@ -70,4 +66,24 @@ class ArticleQueryRepositoryImpl @Inject() (private val dbConfigProvider: Databa
   }
 
   override def listCategoryByIds(ids: Seq[Long]): Future[Seq[ArticleCategory]] = db.run(categories.filter(_.id inSet ids).result)
+
+  override def listArticleByPage(query: ArticlePageQuery): Future[Page[ArticlePo]] = {
+    val baseQuery  = articles.filter(_.status =!= Article.Status.DELETE)
+    val queryByTag = (tagIds: Seq[Long], q: Query[ArticleTable, ArticlePo, Seq]) => if (tagIds.nonEmpty) q.filter(_.id inSet tagIds) else q
+
+    val queryByCategory = (q: Query[ArticleTable, ArticlePo, Seq]) =>
+      query.category.map(category => q.filter(_.category === category)).getOrElse(q)
+
+    val queryByTitle = (q: Query[ArticleTable, ArticlePo, Seq]) => query.searchTitle.map(title => q.filter(_.title like title)).getOrElse(q)
+
+    for {
+      articleTagIds <-
+        if (query.tag.isDefined) db.run(articleTags.filter(_.articleId === query.tag).map(_.articleId).result)
+        else Future.successful(Seq.empty)
+      finalQuery = queryByTitle(queryByCategory(queryByTag(articleTagIds, baseQuery)))
+      articlePos <- db.run(finalQuery.drop(query.offset).take(query.limit).map(ArticlePo.selectFields).result)
+      count      <- db.run(finalQuery.length.result)
+    } yield Page(query.page, query.size, count, articlePos)
+  }
+
 }

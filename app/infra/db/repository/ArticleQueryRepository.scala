@@ -1,7 +1,9 @@
 package infra.db.repository
 
+import common.Page
 import domain.article.{ArticleCategory, ArticleTag}
 import infra.db.po.ArticlePo
+import interfaces.dto.ArticlePageQuery
 
 import scala.concurrent.Future
 
@@ -10,6 +12,8 @@ trait ArticleQueryRepository extends QueryRepository[ArticlePo] {
   def listTagsById(tagIds: Seq[Long]): Future[Seq[ArticleTag]]
 
   def getArticleTagMap(articleIds: Seq[Long]): Future[Map[Long, Seq[ArticleTag]]]
+
+  def listArticleByPage(query: ArticlePageQuery): Future[Page[ArticlePo]]
 
   def listTagsByArticle(articleId: Long): Future[Seq[ArticleTag]]
 

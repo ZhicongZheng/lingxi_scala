@@ -1,6 +1,6 @@
 package application.service
 
-import common.{Page, PageQuery}
+import common.{BasePageQuery, Page}
 import infra.db.po.PermissionPo
 import infra.db.repository.RoleQueryRepository
 import interfaces.dto.{PermissionDto, RoleDto}
@@ -13,7 +13,7 @@ import scala.concurrent.Future
 @Singleton
 class RoleQueryService @Inject() (roleQueryRepository: RoleQueryRepository) extends Logging {
 
-  def listRolesByPage(pageQuery: PageQuery): Future[Page[RoleDto]] =
+  def listRolesByPage(pageQuery: BasePageQuery): Future[Page[RoleDto]] =
     roleQueryRepository.listByPage(pageQuery).flatMap { rolePage =>
       val roleMap = rolePage.data.map(role => role.id -> role).toMap
       val roleIds = roleMap.keys.toSeq

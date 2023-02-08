@@ -2,10 +2,10 @@ package interfaces.controller
 
 import application.command.{ArticleCategoryCommand, ArticleCommand, ArticleTagCommand}
 import application.service.{ArticleCommandService, ArticleQueryService}
-import common.{Page, PageQuery, Results}
+import common.{BasePageQuery, Page, Results}
 import domain.article.{ArticleCategory, ArticleTag}
 import infra.actions.{AuthenticationAction, AuthorizationAction}
-import interfaces.dto.ArticleDto
+import interfaces.dto.{ArticleDto, ArticlePageQuery}
 import play.api.libs.json.{Json, OFormat}
 import play.api.mvc.InjectedController
 
@@ -53,10 +53,11 @@ class ArticleController @Inject() (
     articleCommandService.releaseArticle(id).map(_ => Ok).recover(ex => Results.fail(ex))
   }
 
-  def listArticleByPage(page: Int, size: Int, sort: Option[String] = None) = Action async {
-    val pageQuery = PageQuery(page, size, sort)
-    articleQueryService.listArticleByPage(pageQuery).map(pageDto => Results.success(pageDto)).recover(ex => Results.fail(ex))
-  }
+  def listArticleByPage(page: Int, size: Int, tag: Option[Long] = None, category: Option[Long] = None, searchTitle: Option[String] = None) =
+    Action async {
+      val pageQuery = ArticlePageQuery(page, size, tag, category, searchTitle)
+      articleQueryService.listArticleByPage(pageQuery).map(pageDto => Results.success(pageDto)).recover(ex => Results.fail(ex))
+    }
 
   def listArticleTags = Action async {
     articleQueryService.listTags().map(tags => Results.success(tags)).recover(ex => Results.fail(ex))

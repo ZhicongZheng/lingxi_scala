@@ -78,7 +78,11 @@ object ArticleEndpoints {
     .name("listArticleByPage")
     .summary("分页获取文章")
     .description("分页获取文章列表")
-    .in(query[Int]("page").default(1) / query[Int]("size").default(10) / query[Option[String]]("sort"))
+    .in(
+      query[Int]("page").default(1) / query[Int]("size").default(10)
+        / query[Option[Long]]("tag").default(None) / query[Option[Long]]("category").default(None)
+        / query[Option[String]]("searchTitle").default(None)
+    )
     .out(jsonBody[Page[ArticleDto]])
 
   val listTagsEndpoint = tagWithoutAuthEndpoint.get

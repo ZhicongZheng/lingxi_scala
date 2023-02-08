@@ -2,7 +2,7 @@ package interfaces.controller
 
 import application.command.{CreateRoleCommand, UpdateRoleCommand}
 import application.service.{RoleCommandService, RoleQueryService}
-import common.{Page, PageQuery, Results}
+import common.{BasePageQuery, Page, Results}
 import infra.actions.{AuthenticationAction, AuthorizationAction}
 import interfaces.dto.{PermissionDto, RoleDto}
 import play.api.libs.json.{Json, OFormat}
@@ -20,10 +20,10 @@ class RoleController @Inject() (
   authorizationAction: AuthorizationAction
 ) extends InjectedController {
 
-  def listRoleByPage(page: Int, size: Int, sort: Option[String] = None) =
+  def listRoleByPage(page: Int, size: Int) =
     authenticationAction andThen authorizationAction async {
       implicit val roleFormat: OFormat[Page[RoleDto]] = Json.format[Page[RoleDto]]
-      val pageQuery                                   = PageQuery(page, size, sort)
+      val pageQuery                                   = BasePageQuery(page, size)
       roleQueryService.listRolesByPage(pageQuery).map(pageDto => Results.success(pageDto)).recover(ex => Results.fail(ex))
     }
 

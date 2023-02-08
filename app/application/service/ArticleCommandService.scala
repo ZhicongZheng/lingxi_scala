@@ -48,7 +48,7 @@ class ArticleCommandService @Inject() (articleRepository: ArticleRepository, art
     articleRepository.get(id).flatMap {
       case None => Future.successful(Left(ARTICLE_NOT_EXIST))
       case Some(article) =>
-        articleRepository.save(article.release()).map(_ => Right())
+        articleRepository.save(article.release()).map(_ => Right(()))
     }
 
   def deleteArticle(id: Long): Future[Unit] = articleRepository.remove(id)

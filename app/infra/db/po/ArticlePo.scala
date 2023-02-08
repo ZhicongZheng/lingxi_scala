@@ -23,6 +23,22 @@ final case class ArticlePo(
 
 object ArticlePo {
 
+  implicit def briefConvert(
+    tuple: (Long, String, String, Option[String], Int, Option[Long], java.time.LocalDateTime, java.time.LocalDateTime)
+  ): ArticlePo = ArticlePo(tuple._1, tuple._2, tuple._3, tuple._4)
+
+  val selectFields = (article: ArticleTable) =>
+    (
+      article.id,
+      article.title,
+      article.introduction,
+      article.frontCover,
+      article.status,
+      article.category,
+      article.createAt,
+      article.updateAt
+    )
+
   /** Table description of table articles. Objects of this class serve as prototypes for rows in queries. */
   class ArticleTable(tag: Tag) extends Table[ArticlePo](tag, "articles") with BaseTable {
 
@@ -76,5 +92,6 @@ object ArticlePo {
       createAt,
       updateAt
     ) <> ((ArticlePo.apply _).tupled, ArticlePo.unapply)
+
   }
 }
