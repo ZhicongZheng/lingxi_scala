@@ -27,7 +27,7 @@ class ArticleQueryRepositoryImpl @Inject() (private val dbConfigProvider: Databa
   private val categories  = TableQuery[CategoryTable]
   private val articleTags = TableQuery[ArticleTagTable]
 
-  val queryArticleAction: Long => Query[ArticleTable, ArticlePo, Seq] = (id: Long) =>
+  val queryArticleAction = (id: Long) =>
     articles.filter(table => Seq(table.id === id, table.status =!= Article.Status.DELETE).reduce(_ && _))
 
   override def get(id: Long): Future[Option[ArticlePo]] = db.run(queryArticleAction(id).result.headOption)
@@ -68,22 +68,18 @@ class ArticleQueryRepositoryImpl @Inject() (private val dbConfigProvider: Databa
   override def listCategoryByIds(ids: Seq[Long]): Future[Seq[ArticleCategory]] = db.run(categories.filter(_.id inSet ids).result)
 
   override def listArticleByPage(query: ArticlePageQuery): Future[Page[ArticlePo]] = {
-    val baseQuery  = articles.filter(_.status =!= Article.Status.DELETE)
-    val queryByTag = (tagIds: Seq[Long], q: Query[ArticleTable, ArticlePo, Seq]) => if (tagIds.nonEmpty) q.filter(_.id inSet tagIds) else q
+    val baseQuery = (articles join articleTags on (_.id === _.articleId))
+      .filterOpt(query.tag)(_._2.tagId === _)
+      .filterOpt(query.category)(_._1.category === _)
+      .filterOpt(query.searchTitle)(_._1.title like _)
 
-    val queryByCategory = (q: Query[ArticleTable, ArticlePo, Seq]) =>
-      query.category.map(category => q.filter(_.category === category)).getOrElse(q)
+    db.run {
+      for {
+        articlePos <- baseQuery.drop(query.offset).take(query.limit).map(_._1).map(ArticlePo.selectFields).result
+        count      <- baseQuery.length.result
+      } yield Page(query.page, query.size, count, articlePos.map(ArticlePo.briefConvert))
+    }
 
-    val queryByTitle = (q: Query[ArticleTable, ArticlePo, Seq]) => query.searchTitle.map(title => q.filter(_.title like title)).getOrElse(q)
-
-    for {
-      articleTagIds <-
-        if (query.tag.isDefined) db.run(articleTags.filter(_.articleId === query.tag).map(_.articleId).result)
-        else Future.successful(Seq.empty)
-      finalQuery = queryByTitle(queryByCategory(queryByTag(articleTagIds, baseQuery)))
-      articlePos <- db.run(finalQuery.drop(query.offset).take(query.limit).map(ArticlePo.selectFields).result)
-      count      <- db.run(finalQuery.length.result)
-    } yield Page(query.page, query.size, count, articlePos.map(ArticlePo.briefConvert))
   }
 
 }
