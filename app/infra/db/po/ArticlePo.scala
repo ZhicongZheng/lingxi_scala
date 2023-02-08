@@ -25,7 +25,16 @@ object ArticlePo {
 
   implicit def briefConvert(
     tuple: (Long, String, String, Option[String], Int, Option[Long], java.time.LocalDateTime, java.time.LocalDateTime)
-  ): ArticlePo = ArticlePo(tuple._1, tuple._2, tuple._3, tuple._4)
+  ): ArticlePo = ArticlePo(
+    id = tuple._1,
+    title = tuple._2,
+    introduction = tuple._3,
+    frontCover = tuple._4,
+    status = tuple._5,
+    category = tuple._6,
+    createAt = tuple._7,
+    updateAt = tuple._8
+  )
 
   val selectFields = (article: ArticleTable) =>
     (

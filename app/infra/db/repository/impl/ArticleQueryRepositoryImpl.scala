@@ -83,7 +83,7 @@ class ArticleQueryRepositoryImpl @Inject() (private val dbConfigProvider: Databa
       finalQuery = queryByTitle(queryByCategory(queryByTag(articleTagIds, baseQuery)))
       articlePos <- db.run(finalQuery.drop(query.offset).take(query.limit).map(ArticlePo.selectFields).result)
       count      <- db.run(finalQuery.length.result)
-    } yield Page(query.page, query.size, count, articlePos)
+    } yield Page(query.page, query.size, count, articlePos.map(ArticlePo.briefConvert))
   }
 
 }
