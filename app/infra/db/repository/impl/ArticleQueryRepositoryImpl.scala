@@ -68,16 +68,19 @@ class ArticleQueryRepositoryImpl @Inject() (private val dbConfigProvider: Databa
   override def listCategoryByIds(ids: Seq[Long]): Future[Seq[ArticleCategory]] = db.run(categories.filter(_.id inSet ids).result)
 
   override def listArticleByPage(query: ArticlePageQuery): Future[Page[ArticlePo]] = {
-    val baseQuery = (articles join articleTags on (_.id === _.articleId))
+    val filteredQuery = (articles join articleTags on (_.id === _.articleId))
       .filterOpt(query.tag)(_._2.tagId === _)
       .filterOpt(query.category)(_._1.category === _)
       .filterOpt(query.searchTitle)((e, v) => e._1.title like s"%$v%")
 
     db.run {
-      for {
-        articlePos <- baseQuery.drop(query.offset).take(query.limit).map(_._1).map(ArticlePo.selectFields).result
-        count      <- baseQuery.length.result
-      } yield Page(query.page, query.size, count, articlePos.map(ArticlePo.briefConvert))
+      filteredQuery
+        .drop(query.offset)
+        .take(query.limit)
+        .map(_._1)
+        .map(ArticlePo.selectFields)
+        .result
+        .map(articlePos => Page(query.page, query.size, articlePos.length, articlePos.map(ArticlePo.briefConvert)))
     }
 
   }

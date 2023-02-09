@@ -21,15 +21,13 @@ class ArticleCommandService @Inject() (articleRepository: ArticleRepository, art
       case None     => Future.successful[Option[ArticleCategory]](None)
     }
 
-    val saveArticle = (tags: Seq[ArticleTag], category: Option[ArticleCategory]) =>
-      if (tags.size == command.tags.size && category.exists(_.id == command.category.get)) {
-        articleRepository.save(toDo(command).copy(tags = tags, category = category)).map(Right(_))
-      } else Future.successful(Left(TAG_OR_CATEGORY_NOT_EXIST))
-
     for {
       tags     <- articleQueryRepository.listTagsById(command.tags)
       category <- categoryFuture
-      result   <- saveArticle(tags, category)
+      result <-
+        if (tags.size == command.tags.size && category.exists(_.id == command.category.get)) {
+          articleRepository.save(toDo(command).copy(tags = tags, category = category)).map(Right(_))
+        } else Future.successful(Left(TAG_OR_CATEGORY_NOT_EXIST))
     } yield result
   }
 
