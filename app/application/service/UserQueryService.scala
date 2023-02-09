@@ -15,13 +15,11 @@ class UserQueryService @Inject() (
 ) {
 
   def listUserByPage(pageQuery: BasePageQuery): Future[Page[UserDto]] =
-    userQueryRepository.listByPage(pageQuery).map(_.map(UserDto.fromPo)).flatMap { userPage =>
-      val users   = userPage.data
-      val userIds = users.map(_.id)
-
-      roleQueryRepository.findUserRoleMap(userIds).map { userRoleMap =>
-        userPage.copy(data = users.map(user => user.copy(role = Some(userRoleMap(user.id)))))
-      }
-    }
+    for {
+      userPage <- userQueryRepository.listByPage(pageQuery).map(_.map(UserDto.fromPo))
+      users = userPage.data
+      userRoleMap <- roleQueryRepository.findUserRoleMap(users.map(_.id))
+      result = userPage.copy(data = users.map(user => user.copy(role = Some(userRoleMap(user.id)))))
+    } yield result
 
 }

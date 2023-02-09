@@ -4,7 +4,7 @@ import application.command.ArticleCommand
 import application.command.ArticleCommand.toDo
 import com.google.inject.Inject
 import common.{ARTICLE_NOT_EXIST, CATEGORY_EXIST, Constant, Errors, TAG_EXIST, TAG_OR_CATEGORY_NOT_EXIST}
-import domain.article.{ArticleCategory, ArticleRepository, ArticleTag}
+import domain.article.{Article, ArticleCategory, ArticleRepository, ArticleTag}
 import infra.db.repository.ArticleQueryRepository
 
 import javax.inject.Singleton
@@ -38,9 +38,11 @@ class ArticleCommandService @Inject() (articleRepository: ArticleRepository, art
     articleRepository.get(command.id.getOrElse(Constant.domainCreateId)).flatMap {
       case None => Future.successful(Left(ARTICLE_NOT_EXIST))
       case Some(article) =>
-        val updatedArticle = article
+        val updatedArticle: Article = article
           .updateBrief(command.title, command.introduction, command.frontCover)
           .updateContent(command.contentMd, command.contentHtml)
+          .changeTags(command.tags.map(ArticleTag.justId))
+          .changeCategory(command.category.map(ArticleCategory.justId))
         articleRepository.save(updatedArticle).map(id => Right(id))
     }
 
