@@ -1,9 +1,9 @@
 package application.service
 
 import common.Page
-import domain.article.{ArticleCategory, ArticleTag}
+import domain.article.ArticleTag
 import infra.db.repository.ArticleQueryRepository
-import interfaces.dto.{ArticleDto, ArticlePageQuery}
+import interfaces.dto.{ArticleCategoryDto, ArticleDto, ArticlePageQuery}
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -37,6 +37,10 @@ class ArticleQueryService @Inject() (articleQueryRepository: ArticleQueryReposit
 
   def listTags(): Future[Seq[ArticleTag]] = articleQueryRepository.listTags()
 
-  def listCategorises(): Future[Seq[ArticleCategory]] = articleQueryRepository.listCategorises()
+  def listCategorises(): Future[Seq[ArticleCategoryDto]] =
+    for {
+      categories <- articleQueryRepository.listCategorises().map(seq => seq.map(ArticleCategoryDto.fromPo))
+      result = categories.map(c => c.copy(children = categories.filter(_.parent == c.id)))
+    } yield result
 
 }

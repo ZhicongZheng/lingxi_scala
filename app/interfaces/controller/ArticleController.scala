@@ -2,7 +2,7 @@ package interfaces.controller
 
 import application.command.{ArticleCategoryCommand, ArticleCommand, ArticleTagCommand}
 import application.service.{ArticleCommandService, ArticleQueryService}
-import common.{BasePageQuery, Page, Results}
+import common.{Page, Results}
 import domain.article.{ArticleCategory, ArticleTag}
 import infra.actions.{AuthenticationAction, AuthorizationAction}
 import interfaces.dto.{ArticleDto, ArticlePageQuery}

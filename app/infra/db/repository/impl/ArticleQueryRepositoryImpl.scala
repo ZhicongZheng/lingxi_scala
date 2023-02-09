@@ -71,7 +71,7 @@ class ArticleQueryRepositoryImpl @Inject() (private val dbConfigProvider: Databa
     val baseQuery = (articles join articleTags on (_.id === _.articleId))
       .filterOpt(query.tag)(_._2.tagId === _)
       .filterOpt(query.category)(_._1.category === _)
-      .filterOpt(query.searchTitle)(_._1.title like _)
+      .filterOpt(query.searchTitle)((e, v) => e._1.title like s"%$v%")
 
     db.run {
       for {
