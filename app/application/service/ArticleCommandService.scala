@@ -69,6 +69,12 @@ class ArticleCommandService @Inject() (articleRepository: ArticleRepository, art
         else articleRepository.addCategory(category).map(_ => Right(()))
     } yield result
 
+  def updateCategory(category: ArticleCategory): Future[Either[Errors, Unit]] =
+    articleQueryRepository.getCategoryById(category.id).flatMap {
+      case None           => Future.successful(Left(TAG_OR_CATEGORY_NOT_EXIST))
+      case Some(category) => articleRepository.updateCategory(category).map(_ => Right(()))
+    }
+
   def removeCategory(id: Long): Future[Unit] = articleRepository.removeCategory(id)
 
 }

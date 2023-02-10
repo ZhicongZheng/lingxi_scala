@@ -97,4 +97,6 @@ class ArticleRepositoryImpl @Inject() (private val dbConfigProvider: DatabaseCon
     db.run(articleTags.map(t => (t.articleId, t.tagId)) ++= articleTagRows).map(_ => ())
   }
 
+  override def updateCategory(category: ArticleCategory): Future[Unit] =
+    db.run(categories.filter(_.id === category.id).update(category)).map(_ => ())
 }

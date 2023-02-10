@@ -61,6 +61,8 @@ GET           /categories                                        interfaces.cont
 
 POST          /categories                                        interfaces.controller.ArticleController.addArticleCategory
 
+PUT           /categories                                        interfaces.controller.ArticleController.updateCategory
+
 DELETE        /categories/$id<[0-9]+>                            interfaces.controller.ArticleController.deleteArticleCategory(id: Long)
 
 

@@ -3,7 +3,7 @@ package application.service
 import common.Page
 import domain.article.ArticleTag
 import infra.db.repository.ArticleQueryRepository
-import interfaces.dto.{ArticleCategoryDto, ArticleDto, ArticlePageQuery}
+import interfaces.dto.{ArticleCategoryDto, ArticleDto, ArticlePageQuery, ArticleTagDto}
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -26,21 +26,29 @@ class ArticleQueryService @Inject() (articleQueryRepository: ArticleQueryReposit
         tagsMap <- tagsMapFuture
         // 文章分类map
         categoryMap <- categoryMapFuture
-        pageResult = articlePage.map { dto =>
-          dto.category match {
-            case Some(category) => dto.copy(category = categoryMap.get(category.id), tags = tagsMap.getOrElse(dto.id, Nil))
-            case None           => dto.copy(tags = tagsMap.getOrElse(dto.id, Nil))
-          }
+      } yield articlePage.map { dto =>
+        dto.category match {
+          case Some(category) => dto.copy(category = categoryMap.get(category.id), tags = tagsMap.getOrElse(dto.id, Nil))
+          case None           => dto.copy(tags = tagsMap.getOrElse(dto.id, Nil))
         }
-      } yield pageResult
+      }
     }
 
-  def listTags(): Future[Seq[ArticleTag]] = articleQueryRepository.listTags()
+  def listTags(): Future[Seq[ArticleTagDto]] =
+    for {
+      tags               <- articleQueryRepository.listTags()
+      tagArticleCountMap <- articleQueryRepository.getArticleCountMapByTags(tags.map(_.id))
+    } yield tags.map { tag =>
+      var count = tagArticleCountMap.getOrElse(tag.id, 0)
+      ArticleTagDto.fromPo(tag).copy(articleCount = count)
+    }
 
   def listCategorises(): Future[Seq[ArticleCategoryDto]] =
     for {
-      categories <- articleQueryRepository.listCategorises().map(seq => seq.map(ArticleCategoryDto.fromPo))
-      result = categories.map(c => c.copy(children = categories.filter(_.parent == c.id)))
-    } yield result
+      categories      <- articleQueryRepository.listCategorises().map(seq => seq.map(ArticleCategoryDto.fromPo))
+      articleCountMap <- articleQueryRepository.getArticleCountMapByCategory(categories.map(_.id))
+    } yield categories.map { category =>
+      category.copy(children = categories.filter(_.parent == category.id), articleCount = articleCountMap.getOrElse(category.id, 0))
+    }
 
 }

@@ -85,4 +85,23 @@ class ArticleQueryRepositoryImpl @Inject() (private val dbConfigProvider: Databa
 
   }
 
+  override def getArticleCountMapByTags(tagIds: Seq[Long]): Future[Map[Long, Int]] =
+    db.run(
+      articleTags
+        .filter(_.tagId inSet tagIds)
+        .groupBy(_.tagId)
+        .map { case (tagId, group) => (tagId, group.length) }
+        .result
+    ).map(_.toMap)
+
+  override def getArticleCountMapByCategory(categoryIds: Seq[Long]): Future[Map[Long, Int]] =
+    db.run(
+      articles
+        .filter(_.category inSet categoryIds)
+        .groupBy(_.category)
+        .map { case (category, group) =>
+          (category.get, group.length)
+        }
+        .result
+    ).map(_.toMap)
 }

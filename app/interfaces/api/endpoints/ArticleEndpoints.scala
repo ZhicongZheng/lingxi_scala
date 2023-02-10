@@ -3,7 +3,7 @@ package interfaces.api.endpoints
 import application.command.{ArticleCommand, ArticleTagCommand}
 import common.Page
 import domain.article.{ArticleCategory, ArticleTag}
-import interfaces.dto.{ArticleCategoryDto, ArticleDto}
+import interfaces.dto.{ArticleCategoryDto, ArticleDto, ArticleTagDto}
 import play.api.libs.json.{Json, OFormat}
 import sttp.model.StatusCode
 import sttp.tapir._
@@ -89,7 +89,7 @@ object ArticleEndpoints {
     .name("listTags")
     .summary("获取文章标签列表")
     .description("获取文章标签列表")
-    .out(jsonBody[Seq[ArticleTag]])
+    .out(jsonBody[Array[ArticleTagDto]])
     .out(statusCode(StatusCode.Ok))
 
   val addTagsEndpoing = tagAuthEndpoint.post
@@ -110,7 +110,7 @@ object ArticleEndpoints {
     .name("listCategories")
     .summary("获取文章分类列表")
     .description("获取分类列表")
-    .out(jsonBody[List[ArticleCategoryDto]])
+    .out(jsonBody[Array[ArticleCategoryDto]])
     .out(statusCode(StatusCode.Ok))
 
   val addCategoryEndpoing = categoryAuthEndpoint.post

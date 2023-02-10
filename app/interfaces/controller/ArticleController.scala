@@ -91,6 +91,16 @@ class ArticleController @Inject() (
       .recover(ex => Results.fail(ex))
   }
 
+  def updateCategory = authenticationAction(parse.json[ArticleCategory]) andThen authorizationAction async { request =>
+    articleCommandService
+      .updateCategory(request.body)
+      .map {
+        case Left(err) => Results.fail(err)
+        case Right(_)  => Ok
+      }
+      .recover(ex => Results.fail(ex))
+  }
+
   def deleteArticleCategory(id: Long) = authenticationAction andThen authorizationAction async {
     articleCommandService.removeCategory(id).map(_ => Ok).recover(ex => Results.fail(ex))
   }

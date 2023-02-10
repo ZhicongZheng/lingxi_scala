@@ -29,4 +29,8 @@ trait ArticleQueryRepository extends QueryRepository[ArticlePo] {
 
   def getCategoryByName(name: String): Future[Option[ArticleCategory]]
 
+  def getArticleCountMapByTags(tagIds: Seq[Long]): Future[Map[Long, Int]]
+
+  def getArticleCountMapByCategory(categoryIds: Seq[Long]): Future[Map[Long, Int]]
+
 }
