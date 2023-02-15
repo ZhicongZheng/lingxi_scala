@@ -88,7 +88,11 @@ class ArticleRepositoryImpl @Inject() (private val dbConfigProvider: DatabaseCon
 
   override def addCategory(category: ArticleCategory): Future[Unit] = db.run(categories += category).map(_ => ())
 
-  override def removeCategory(id: Long): Future[Unit] = db.run(categories.filter(_.id === id).delete).map(_ => ())
+  override def removeCategory(id: Long): Future[Unit] =
+    db.run(categories.filter { table =>
+      Seq(table.id === id, table.parent === id).reduce(_ || _)
+    }.delete)
+      .map(_ => ())
 
   private def deleteArticleTagRef(articleId: Long): Future[Unit] = db.run(articleTags.filter(_.articleId === articleId).delete).map(_ => ())
 

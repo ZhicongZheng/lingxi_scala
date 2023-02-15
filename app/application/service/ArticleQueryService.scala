@@ -39,7 +39,7 @@ class ArticleQueryService @Inject() (articleQueryRepository: ArticleQueryReposit
       tags               <- articleQueryRepository.listTags()
       tagArticleCountMap <- articleQueryRepository.getArticleCountMapByTags(tags.map(_.id))
     } yield tags.map { tag =>
-      var count = tagArticleCountMap.getOrElse(tag.id, 0)
+      val count = tagArticleCountMap.getOrElse(tag.id, 0)
       ArticleTagDto.fromPo(tag).copy(articleCount = count)
     }
 
@@ -47,8 +47,9 @@ class ArticleQueryService @Inject() (articleQueryRepository: ArticleQueryReposit
     for {
       categories      <- articleQueryRepository.listCategorises().map(seq => seq.map(ArticleCategoryDto.fromPo))
       articleCountMap <- articleQueryRepository.getArticleCountMapByCategory(categories.map(_.id))
-    } yield categories.map { category =>
-      category.copy(children = categories.filter(_.parent == category.id), articleCount = articleCountMap.getOrElse(category.id, 0))
-    }
+      result = categories.map { category =>
+        category.copy(articleCount = articleCountMap.getOrElse(category.id, 0))
+      }
+    } yield result
 
 }

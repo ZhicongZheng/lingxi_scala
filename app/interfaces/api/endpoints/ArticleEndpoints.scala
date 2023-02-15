@@ -1,6 +1,6 @@
 package interfaces.api.endpoints
 
-import application.command.{ArticleCommand, ArticleTagCommand}
+import application.command.{ArticleCategoryCommand, ArticleCommand, ArticleTagCommand}
 import common.Page
 import domain.article.{ArticleCategory, ArticleTag}
 import interfaces.dto.{ArticleCategoryDto, ArticleDto, ArticleTagDto}
@@ -117,7 +117,7 @@ object ArticleEndpoints {
     .name("addCategory")
     .summary("增加文章分类")
     .description("增加文章分类")
-    .in(jsonBody[ArticleTagCommand])
+    .in(jsonBody[ArticleCategoryCommand])
     .out(statusCode(StatusCode.Created))
 
   val deleteCategoryEndpoint = categoryAuthEndpoint.delete
