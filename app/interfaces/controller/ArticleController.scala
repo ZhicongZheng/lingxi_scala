@@ -91,7 +91,7 @@ class ArticleController @Inject() (
       .recover(ex => Results.fail(ex))
   }
 
-  def updateCategory = authenticationAction(parse.json[ArticleCategory]) andThen authorizationAction async { request =>
+  def updateCategory = authenticationAction(parse.json[ArticleCategoryCommand]) andThen authorizationAction async { request =>
     articleCommandService
       .updateCategory(request.body)
       .map {

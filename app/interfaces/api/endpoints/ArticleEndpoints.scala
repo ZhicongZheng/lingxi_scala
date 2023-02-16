@@ -41,7 +41,8 @@ object ArticleEndpoints {
       deleteArticleEndpoint,
       updateArticleEndpoint,
       listArticleByPageEndpoint,
-      releaseArticleEndpoint
+      releaseArticleEndpoint,
+      updateCategoryEndpoint
     )
 
   val createArticleEndpoint = articleAuthEndpoint.post
@@ -125,6 +126,13 @@ object ArticleEndpoints {
     .summary("删除文章分类")
     .description("删除文章分类")
     .in(path[Long]("id"))
+    .out(statusCode(StatusCode.Ok))
+
+  val updateCategoryEndpoint = categoryAuthEndpoint.put
+    .name("updateCategory")
+    .summary("更新分类")
+    .description("更新文章分类")
+    .in(jsonBody[ArticleCategoryCommand])
     .out(statusCode(StatusCode.Ok))
 
 }
