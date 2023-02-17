@@ -25,6 +25,16 @@ class ArticleController @Inject() (
   implicit val format: OFormat[ArticleDto]                  = Json.format[ArticleDto]
   implicit val articlePageFormat: OFormat[Page[ArticleDto]] = Json.format[Page[ArticleDto]]
 
+  def getArticle(id: Long) = Action async { request =>
+    articleQueryService
+      .getArticle(id)
+      .map {
+        case Left(err)      => Results.fail(err)
+        case Right(article) => Results.success(article)
+      }
+      .recover(ex => Results.fail(ex))
+  }
+
   def createArticle = authenticationAction(parse.json[ArticleCommand]) andThen authorizationAction async { request =>
     articleCommandService
       .createArticle(request.body)

@@ -31,6 +31,7 @@ object ArticleEndpoints {
 
   def endpoints =
     Seq(
+      getArticleEndpoint,
       listTagsEndpoint,
       addTagsEndpoing,
       deleteTagsEndpoint,
@@ -44,6 +45,13 @@ object ArticleEndpoints {
       releaseArticleEndpoint,
       updateCategoryEndpoint
     )
+
+  val getArticleEndpoint = articleWithoutAuthEndpoint.get
+    .name("getArticle")
+    .summary("获取文章详情")
+    .description("根据id获取文章详情")
+    .in(path[Long]("id"))
+    .out(jsonBody[ArticleDto])
 
   val createArticleEndpoint = articleAuthEndpoint.post
     .name("createArticle")

@@ -1,7 +1,7 @@
 package application.service
 
-import common.Page
-import domain.article.ArticleTag
+import common.{ARTICLE_NOT_EXIST, Errors, Page}
+import domain.article.ArticleRepository
 import infra.db.repository.ArticleQueryRepository
 import interfaces.dto.{ArticleCategoryDto, ArticleDto, ArticlePageQuery, ArticleTagDto}
 
@@ -10,7 +10,12 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 @Singleton
-class ArticleQueryService @Inject() (articleQueryRepository: ArticleQueryRepository) {
+class ArticleQueryService @Inject() (articleQueryRepository: ArticleQueryRepository, articleRepository: ArticleRepository) {
+
+  def getArticle(id: Long): Future[Either[Errors, ArticleDto]] = articleRepository.get(id).map {
+    case None          => Left(ARTICLE_NOT_EXIST)
+    case Some(article) => Right(article)
+  }
 
   def listArticleByPage(pageQuery: ArticlePageQuery): Future[Page[ArticleDto]] =
     articleQueryRepository.listArticleByPage(pageQuery).map(_.map(ArticleDto.fromPo)).flatMap { articlePage =>

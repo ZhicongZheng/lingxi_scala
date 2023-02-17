@@ -49,6 +49,8 @@ PUT           /articles                                          interfaces.cont
 
 GET           /articles                                          interfaces.controller.ArticleController.listArticleByPage(page: Int ?= 1,size: Int ?= 10, tag: Option[Long] ?= None, category: Option[Long] ?= None, searchTitle: Option[String] ?= None)
 
+GET           /articles/$id<[0-9]+>                              interfaces.controller.ArticleController.getArticle(id: Long)
+
 # article tag api
 GET           /tags                                              interfaces.controller.ArticleController.listArticleTags
 

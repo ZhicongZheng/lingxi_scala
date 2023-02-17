@@ -8,9 +8,11 @@ import infra.db.repository.ArticleQueryRepository
 import interfaces.dto.ArticlePageQuery
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfig}
 import slick.basic.DatabaseConfig
+import slick.dbio.Effect
 import slick.jdbc.PostgresProfile
 import slick.jdbc.PostgresProfile.api._
 import slick.lifted.TableQuery
+import slick.sql.FixedSqlStreamingAction
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -52,35 +54,54 @@ class ArticleQueryRepositoryImpl @Inject() (private val dbConfigProvider: Databa
   override def getCategoryByName(name: String): Future[Option[ArticleCategory]] =
     db.run(categories.filter(_.name === name).result.headOption)
 
-  override def getArticleTagMap(articleIds: Seq[Long]): Future[Map[Long, Seq[ArticleTag]]] =
+  override def getArticleTagMap(articleIds: Seq[Long]): Future[Map[Long, Seq[ArticleTag]]] = {
+    if (articleIds.isEmpty) {
+      return Future.successful(Map.empty)
+    }
     for {
       articleTags <- db.run(articleTags.filter(_.articleId inSet articleIds).result)
       articleTagMap = articleTags.groupMap(_._2)(_._3)
       tagMap <- db.run(tags.filter(_.id inSet articleTags.map(_._3)).result).map(tags => tags.map(tag => tag.id -> tag).toMap)
       result = articleTagMap.map(item => item._1 -> item._2.map(tagId => tagMap(tagId)))
     } yield result
+  }
 
   override def listTagsByArticle(articleId: Long): Future[Seq[ArticleTag]] = {
     val joinQuery = tags join articleTags on (_.id === _.tagId)
     db.run(joinQuery.filter(_._2.articleId === articleId).map(_._1).result)
   }
 
-  override def listCategoryByIds(ids: Seq[Long]): Future[Seq[ArticleCategory]] = db.run(categories.filter(_.id inSet ids).result)
+  override def listCategoryByIds(ids: Seq[Long]): Future[Seq[ArticleCategory]] =
+    if (ids.isEmpty) {
+      Future.successful(Seq.empty)
+    } else {
+      db.run(categories.filter(_.id inSet ids).result)
+    }
 
   override def listArticleByPage(query: ArticlePageQuery): Future[Page[ArticlePo]] = {
-    val filteredQuery = (articles join articleTags on (_.id === _.articleId))
-      .filterOpt(query.tag)(_._2.tagId === _)
-      .filterOpt(query.category)(_._1.category === _)
-      .filterOpt(query.searchTitle)((e, v) => e._1.title like s"%$v%")
+    val filteredQuery = articles
+      .filterOpt(query.category)(_.category === _)
+      .filterOpt(query.searchTitle)((e, v) => e.title like s"%$v%")
+      .filter(_.status =!= Article.Status.DELETE)
 
-    db.run {
-      filteredQuery
-        .drop(query.offset)
-        .take(query.limit)
-        .map(_._1)
-        .map(ArticlePo.selectFields)
-        .result
-        .map(articlePos => Page(query.page, query.size, articlePos.length, articlePos.map(ArticlePo.briefConvert)))
+    val finalQueryFuture = query.tag match {
+      case None => Future.successful(filteredQuery)
+      case Some(tagId) =>
+        db.run(articleTags.filter(_.tagId === tagId).map(_.articleId).result)
+          .map(articleIdByTag => filteredQuery.filter(_.id inSet articleIdByTag))
+    }
+
+    finalQueryFuture.flatMap { finalQuery =>
+      db.run {
+        for {
+          pageResult <- finalQuery
+            .drop(query.offset)
+            .take(query.limit)
+            .map(ArticlePo.selectFields)
+            .result
+          count <- finalQuery.length.result
+        } yield Page(query.page, query.size, count, pageResult.map(ArticlePo.briefConvert))
+      }
     }
 
   }
