@@ -15,6 +15,8 @@ final case class ArticlePo(
   contentHtml: String = "",
   status: Int = 0,
   category: Option[Long] = None,
+  viewCount: Long = 0,
+  likeCount: Long = 0,
   createBy: Long = 0L,
   updateBy: Long = 0L,
   createAt: LocalDateTime = LocalDateTime.now(),
@@ -24,7 +26,7 @@ final case class ArticlePo(
 object ArticlePo {
 
   implicit def briefConvert(
-    tuple: (Long, String, String, Option[String], Int, Option[Long], java.time.LocalDateTime, java.time.LocalDateTime)
+    tuple: (Long, String, String, Option[String], Int, Option[Long], Long, Long, java.time.LocalDateTime, java.time.LocalDateTime)
   ): ArticlePo = ArticlePo(
     id = tuple._1,
     title = tuple._2,
@@ -32,8 +34,10 @@ object ArticlePo {
     frontCover = tuple._4,
     status = tuple._5,
     category = tuple._6,
-    createAt = tuple._7,
-    updateAt = tuple._8
+    viewCount = tuple._7,
+    likeCount = tuple._8,
+    createAt = tuple._9,
+    updateAt = tuple._10
   )
 
   val selectFields = (article: ArticleTable) =>
@@ -44,6 +48,8 @@ object ArticlePo {
       article.frontCover,
       article.status,
       article.category,
+      article.viewCount,
+      article.likeCount,
       article.createAt,
       article.updateAt
     )
@@ -75,6 +81,10 @@ object ArticlePo {
     /** Database column category SqlType(int8), Default(None) */
     val category: Rep[Option[Long]] = column[Option[Long]]("category", O.Default(None))
 
+    val viewCount = column[Long]("view_count", O.Default(0))
+
+    val likeCount = column[Long]("like_count", O.Default(0))
+
     /** Database column create_by SqlType(int8), Default(0) */
     val createBy: Rep[Long] = column[Long]("create_by", O.Default(0L))
 
@@ -96,6 +106,8 @@ object ArticlePo {
       contentHtml,
       status,
       category,
+      viewCount,
+      likeCount,
       createBy,
       updateBy,
       createAt,

@@ -50,21 +50,13 @@ class ArticleRepositoryImpl @Inject() (private val dbConfigProvider: DatabaseCon
         val selectCategory =
           if (categoryId.isEmpty) Future.successful(None) else queryRepository.getCategoryById(categoryId.get)
 
-        val selectAction = db.run(actions.filter { a =>
-          Seq(a.resourceId === articlePo.id, a.typ inSet Seq(Action.Type.LICK_ARTICLE, Action.Type.VIEW_ARTICLE)).reduce(_ && _)
-        }.result)
-
         val future = for {
           tags     <- selectTags
           category <- selectCategory
-          actions  <- selectAction
-        } yield (tags, category, actions)
+        } yield (tags, category)
 
         future.map { tuple =>
-          val actionMap = tuple._3.groupBy(_.typ)
-          val viewCount = actionMap.get(Action.Type.VIEW_ARTICLE).size
-          val likeCount = actionMap.get(Action.Type.LICK_ARTICLE).size
-          Some(toDo(articlePo).copy(tags = tuple._1, category = tuple._2, viewCount = viewCount, likeCount = likeCount))
+          Some(toDo(articlePo).copy(tags = tuple._1, category = tuple._2))
         }
     }
 

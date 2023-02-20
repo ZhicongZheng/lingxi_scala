@@ -96,6 +96,8 @@ CREATE TABLE IF NOT EXISTS articles
     status       SMALLINT  not null DEFAULT 0,
     tags         BIGINT[]  NOT NULL DEFAULT ARRAY []::BIGINT[],
     category     BIGINT,
+    view_count   BIGINT    NOT NULL DEFAULT 0,
+    like_count   BIGINT    NOT NULL DEFAULT 0,
     create_by    BIGINT    NOT NULL DEFAULT 0,
     update_by    BIGINT    NOT NULL DEFAULT 0,
     create_at    TIMESTAMP NOT NULL DEFAULT current_timestamp,

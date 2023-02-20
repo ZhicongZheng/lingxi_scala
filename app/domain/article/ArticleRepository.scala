@@ -15,4 +15,5 @@ trait ArticleRepository extends AggregateRepository[Article] {
   def removeCategory(id: Long): Future[Unit]
 
   def updateCategory(category: ArticleCategory): Future[Unit]
+
 }

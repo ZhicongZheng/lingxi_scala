@@ -75,11 +75,29 @@ object Article {
     contentMd: String,
     contentHtml: String,
     status: Int,
+    viewCount: Long,
+    likeCount: Long,
     createBy: Long,
     updateBy: Long,
     createAt: LocalDateTime,
     updateAt: LocalDateTime
   ): Article =
-    Article(id, title, introduction, frontCover, Nil, None, contentMd, contentHtml, status, 0, 0, createBy, updateBy, createAt, updateAt)
+    Article(
+      id,
+      title,
+      introduction,
+      frontCover,
+      Nil,
+      None,
+      contentMd,
+      contentHtml,
+      status,
+      viewCount,
+      likeCount,
+      createBy,
+      updateBy,
+      createAt,
+      updateAt
+    )
 
 }

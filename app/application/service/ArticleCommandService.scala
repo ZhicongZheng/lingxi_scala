@@ -6,6 +6,7 @@ import com.google.inject.Inject
 import common.{ARTICLE_NOT_EXIST, CATEGORY_EXIST, Constant, Errors, TAG_EXIST, TAG_OR_CATEGORY_NOT_EXIST}
 import domain.article.{Article, ArticleCategory, ArticleRepository, ArticleTag}
 import infra.db.repository.ArticleQueryRepository
+import interfaces.dto.ArticleDto
 
 import javax.inject.Singleton
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -13,6 +14,13 @@ import scala.concurrent.Future
 
 @Singleton
 class ArticleCommandService @Inject() (articleRepository: ArticleRepository, articleQueryRepository: ArticleQueryRepository) {
+
+  def getArticle(id: Long): Future[Either[Errors, ArticleDto]] = articleRepository.get(id).flatMap {
+    case None => Future.successful(Left(ARTICLE_NOT_EXIST))
+    case Some(article) =>
+      val result = article.onView()
+      articleRepository.save(result).map(_ => Right(result))
+  }
 
   def createArticle(command: ArticleCommand): Future[Either[Errors, Long]] = {
 
