@@ -40,7 +40,7 @@ final case class User(
   def update(param: (String, String, String, String, Long, Long)): User = {
     val user =
       copy(avatar = param._1, nickName = param._2, phone = param._3, email = param._4, updateBy = param._5, updateAt = LocalDateTime.now())
-    user.changeRole(Role.just(param._6))
+    user.changeRole(Role.justId(param._6))
   }
 
 }

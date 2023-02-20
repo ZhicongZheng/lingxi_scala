@@ -28,7 +28,4 @@ object Page {
   }
 }
 
-case class PageQuery(page: Int, size: Int, sort: Option[String] = None) {
-  def offset: Int = (page - 1) * size
-  def limit: Int  = size
-}
+case class BasePageQuery(page: Int, size: Int) extends PageQuery

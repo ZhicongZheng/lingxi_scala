@@ -39,17 +39,19 @@ trait OssRepository {
 @Singleton
 class AliyunOssRepository @Inject() (config: Configuration) extends OssRepository with Logging {
 
-  lazy val ossConfig: OssConfig = config.get[OssConfig]("oss.aliyun")
+  private lazy val ossConfig: OssConfig = config.get[OssConfig]("oss.aliyun")
 
-  lazy val ossClient: OSS = new OSSClientBuilder().build(ossConfig.endpoint, ossConfig.accessKeyId, ossConfig.accessKeySecret)
+  private lazy val ossClient: OSS = new OSSClientBuilder().build(ossConfig.endpoint, ossConfig.accessKeyId, ossConfig.accessKeySecret)
 
   override def upload(input: InputStream, fileName: String): Future[String] = {
     val tuple = inputCheckSum(input)
     val path  = s"${extension(fileName)}/${tuple._1}-$fileName"
     Future {
-      Try(ossClient.putObject(ossConfig.bucketName, path, tuple._2))
+      Try(ossClient.putObject(ossConfig.bucketName, path, tuple._2)).map(_ =>
+        s"https://${ossConfig.bucketName}.${ossConfig.endpoint}/$path"
+      )
     } flatMap {
-      case Success(_) => Future.successful(path)
+      case Success(url) => Future.successful(url)
       case Failure(ex) =>
         logger.error("upload error ", ex)
         Future.failed(ex)

@@ -36,7 +36,7 @@ object RoleEndpoints {
     .name("listRoleByPage")
     .summary("分页获取角色")
     .description("分页的方式获取角色列表，支持排序")
-    .in(query[Int]("page").default(1) / query[Int]("size").default(10) / query[Option[String]]("sort"))
+    .in(query[Int]("page").default(1) / query[Int]("size").default(10))
     .out(jsonBody[Page[RoleDto]])
 
   val updateRoleEndpoint = baseSecuredUserEndpoint.put

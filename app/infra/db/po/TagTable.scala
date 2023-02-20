@@ -19,3 +19,13 @@ class TagTable(_tableTag: Tag) extends Table[ArticleTag](_tableTag, "tags") {
   /** Database column create_at SqlType(timestamp) */
   val createAt: Rep[LocalDateTime] = column[LocalDateTime]("create_at")
 }
+
+class ArticleTagTable(tag: Tag) extends Table[(Long, Long, Long)](tag, "article_tags") {
+  def id = column[Long]("id", O.PrimaryKey, O.AutoInc)
+
+  def articleId = column[Long]("article_id")
+
+  def tagId = column[Long]("tag_id")
+
+  override def * = (id, articleId, tagId)
+}

@@ -30,6 +30,6 @@ object CreateUserCommand {
       command.nickName,
       command.phone.getOrElse(""),
       command.email,
-      Some(Role.just(command.role))
+      Some(Role.justId(command.role))
     )
 }

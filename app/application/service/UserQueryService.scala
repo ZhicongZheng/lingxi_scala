@@ -1,6 +1,6 @@
 package application.service
 
-import common.{Page, PageQuery}
+import common.{BasePageQuery, Page}
 import infra.db.repository.{RoleQueryRepository, UserQueryRepository}
 import interfaces.dto.UserDto
 
@@ -14,14 +14,12 @@ class UserQueryService @Inject() (
   private val roleQueryRepository: RoleQueryRepository
 ) {
 
-  def listUserByPage(pageQuery: PageQuery): Future[Page[UserDto]] =
-    userQueryRepository.listByPage(pageQuery).map(_.map(UserDto.fromPo)).flatMap { userPage =>
-      val users   = userPage.data
-      val userIds = users.map(_.id)
-
-      roleQueryRepository.findUserRoleMap(userIds).map { userRoleMap =>
-        userPage.copy(data = users.map(user => user.copy(role = Some(userRoleMap(user.id)))))
-      }
-    }
+  def listUserByPage(pageQuery: BasePageQuery): Future[Page[UserDto]] =
+    for {
+      userPage <- userQueryRepository.listByPage(pageQuery).map(_.map(UserDto.fromPo))
+      users = userPage.data
+      userRoleMap <- roleQueryRepository.findUserRoleMap(users.map(_.id))
+      result = userPage.copy(data = users.map(user => user.copy(role = Some(userRoleMap(user.id)))))
+    } yield result
 
 }

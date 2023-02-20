@@ -43,9 +43,17 @@ final case class Article(
 
   def onLike(): Article = this.copy(likeCount = likeCount + 1)
 
-  def changeCategory(category: ArticleCategory): Article = this.copy(category = Some(category), updateAt = LocalDateTime.now())
+  def changeCategory(category: Option[ArticleCategory]): Article =
+    category match {
+      case None    => this
+      case Some(_) => this.copy(category = category, updateAt = LocalDateTime.now())
+    }
 
-  def changeTags(tags: Seq[ArticleTag]): Article = this.copy(tags = tags, updateAt = LocalDateTime.now())
+  def changeTags(tags: Seq[ArticleTag]): Article =
+    tags match {
+      case Nil                => this
+      case _: Seq[ArticleTag] => this.copy(tags = tags, updateAt = LocalDateTime.now())
+    }
 
   def release(): Article = this.copy(status = Status.RELEASE)
 
@@ -67,11 +75,29 @@ object Article {
     contentMd: String,
     contentHtml: String,
     status: Int,
+    viewCount: Long,
+    likeCount: Long,
     createBy: Long,
     updateBy: Long,
     createAt: LocalDateTime,
     updateAt: LocalDateTime
   ): Article =
-    Article(id, title, introduction, frontCover, Nil, None, contentMd, contentHtml, status, 0, 0, createBy, updateBy, createAt, updateAt)
+    Article(
+      id,
+      title,
+      introduction,
+      frontCover,
+      Nil,
+      None,
+      contentMd,
+      contentHtml,
+      status,
+      viewCount,
+      likeCount,
+      createBy,
+      updateBy,
+      createAt,
+      updateAt
+    )
 
 }

@@ -1,9 +1,9 @@
 package infra.db.repository.impl
 
 import common.{Page, PageQuery}
-import infra.db.po.{PermissionPo, RolePo}
 import infra.db.po.PermissionPo.{PermissionTable, RolePermissionTable}
 import infra.db.po.RolePo.{RoleTable, UserRoleTable}
+import infra.db.po.{PermissionPo, RolePo}
 import infra.db.repository.RoleQueryRepository
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfig}
 import slick.jdbc.PostgresProfile

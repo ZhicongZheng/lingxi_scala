@@ -14,8 +14,9 @@ final case class ArticlePo(
   contentMd: String = "",
   contentHtml: String = "",
   status: Int = 0,
-  tags: String,
   category: Option[Long] = None,
+  viewCount: Long = 0,
+  likeCount: Long = 0,
   createBy: Long = 0L,
   updateBy: Long = 0L,
   createAt: LocalDateTime = LocalDateTime.now(),
@@ -23,6 +24,35 @@ final case class ArticlePo(
 ) extends Po
 
 object ArticlePo {
+
+  implicit def briefConvert(
+    tuple: (Long, String, String, Option[String], Int, Option[Long], Long, Long, java.time.LocalDateTime, java.time.LocalDateTime)
+  ): ArticlePo = ArticlePo(
+    id = tuple._1,
+    title = tuple._2,
+    introduction = tuple._3,
+    frontCover = tuple._4,
+    status = tuple._5,
+    category = tuple._6,
+    viewCount = tuple._7,
+    likeCount = tuple._8,
+    createAt = tuple._9,
+    updateAt = tuple._10
+  )
+
+  val selectFields = (article: ArticleTable) =>
+    (
+      article.id,
+      article.title,
+      article.introduction,
+      article.frontCover,
+      article.status,
+      article.category,
+      article.viewCount,
+      article.likeCount,
+      article.createAt,
+      article.updateAt
+    )
 
   /** Table description of table articles. Objects of this class serve as prototypes for rows in queries. */
   class ArticleTable(tag: Tag) extends Table[ArticlePo](tag, "articles") with BaseTable {
@@ -48,11 +78,12 @@ object ArticlePo {
     /** Database column status SqlType(int2), Default(0) */
     val status: Rep[Int] = column[Int]("status", O.Default(0))
 
-    /** Database column tags SqlType(_int8), Length(19,false) */
-    val tags: Rep[String] = column[String]("tags", O.Length(19, varying = false))
-
     /** Database column category SqlType(int8), Default(None) */
     val category: Rep[Option[Long]] = column[Option[Long]]("category", O.Default(None))
+
+    val viewCount = column[Long]("view_count", O.Default(0))
+
+    val likeCount = column[Long]("like_count", O.Default(0))
 
     /** Database column create_by SqlType(int8), Default(0) */
     val createBy: Rep[Long] = column[Long]("create_by", O.Default(0L))
@@ -74,12 +105,14 @@ object ArticlePo {
       contentMd,
       contentHtml,
       status,
-      tags,
       category,
+      viewCount,
+      likeCount,
       createBy,
       updateBy,
       createAt,
       updateAt
     ) <> ((ArticlePo.apply _).tupled, ArticlePo.unapply)
+
   }
 }

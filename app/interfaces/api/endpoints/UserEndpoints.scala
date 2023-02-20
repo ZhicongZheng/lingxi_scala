@@ -59,7 +59,7 @@ object UserEndpoints {
     .name("listUserByPage")
     .summary("分页获取用户")
     .description("分页的方式获取用户列表，支持排序")
-    .in(query[Int]("page").default(1) / query[Int]("size").default(10) / query[Option[String]]("sort"))
+    .in(query[Int]("page").default(1) / query[Int]("size").default(10))
     .out(jsonBody[Page[UserDto]])
 
   val deleteUserEndpoint = baseSecuredUserEndpoint.delete

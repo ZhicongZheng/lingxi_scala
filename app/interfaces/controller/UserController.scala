@@ -2,7 +2,7 @@ package interfaces.controller
 
 import application.command.{ChangePasswordCommand, CreateUserCommand, LoginCommand, UpdateUserCommand}
 import application.service.{UserCommandService, UserQueryService}
-import common.{Constant, Kaptcha, LOGIC_CODE_ERR, Page, PageQuery, Results}
+import common.{BasePageQuery, Constant, Kaptcha, LOGIC_CODE_ERR, Page, Results}
 import infra.actions.{AuthenticationAction, AuthorizationAction}
 import interfaces.dto.UserDto
 import play.api.libs.json.{Json, OFormat}
@@ -63,7 +63,7 @@ class UserController @Inject() (
   def listUserByPage(page: Int, size: Int, sort: Option[String] = None): Action[AnyContent] =
     authenticationAction andThen authorizationAction async {
       implicit val userFormat: OFormat[Page[UserDto]] = Json.format[Page[UserDto]]
-      val pageQuery                                   = PageQuery(page, size, sort)
+      val pageQuery                                   = BasePageQuery(page, size)
       userQueryService.listUserByPage(pageQuery).map(pageDto => Results.success(pageDto)).recover(ex => Results.fail(ex))
     }
 
@@ -82,7 +82,7 @@ class UserController @Inject() (
         .recover(ex => Results.fail(ex))
     }
 
-  def updateUser(): Action[UpdateUserCommand] =
+  def updateUser: Action[UpdateUserCommand] =
     authenticationAction(parse.json[UpdateUserCommand]) andThen authorizationAction async { request =>
       userCommandService
         .updateUser(request.body.copy(updateBy = request.user.id))

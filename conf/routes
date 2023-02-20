@@ -12,7 +12,7 @@ POST          /users/logout                                      interfaces.cont
 
 GET           /users/current                                     interfaces.controller.UserController.current
 
-GET           /users                                             interfaces.controller.UserController.listUserByPage(page: Int ?= 1,size: Int ?= 10, sort: Option[String])
+GET           /users                                             interfaces.controller.UserController.listUserByPage(page: Int ?= 1,size: Int ?= 10)
 
 DELETE        /users/$id<[0-9]+>                                 interfaces.controller.UserController.deleteUser(id: Int)
 
@@ -30,13 +30,26 @@ POST          /roles                                             interfaces.cont
 
 DELETE        /roles/$id<[0-9]+>                                 interfaces.controller.RoleController.deleteRole(id: Int)
 
-GET           /roles                                             interfaces.controller.RoleController.listRoleByPage(page: Int ?= 1,size: Int ?= 10, sort: Option[String])
+GET           /roles                                             interfaces.controller.RoleController.listRoleByPage(page: Int ?= 1,size: Int ?= 10)
 
 PUT           /roles                                             interfaces.controller.RoleController.updateRole
 
 POST          /users/$useId<[0-9]+>/roles/$roleId<[0-9]+>        interfaces.controller.RoleController.changeUserRole(useId: Long, roleId: Long)
 
 GET           /roles/permissions                                 interfaces.controller.RoleController.listPermission()
+
+# aricle api
+POST          /articles                                          interfaces.controller.ArticleController.createArticle
+
+DELETE        /articles/$id<[0-9]+>                              interfaces.controller.ArticleController.deleteArticle(id: Long)
+
+POST          /articles/release/$id<[0-9]+>                      interfaces.controller.ArticleController.releaseArticle(id: Long)
+
+PUT           /articles                                          interfaces.controller.ArticleController.updateArticle
+
+GET           /articles                                          interfaces.controller.ArticleController.listArticleByPage(page: Int ?= 1,size: Int ?= 10, tag: Option[Long] ?= None, category: Option[Long] ?= None, searchTitle: Option[String] ?= None)
+
+GET           /articles/$id<[0-9]+>                              interfaces.controller.ArticleController.getArticle(id: Long)
 
 # article tag api
 GET           /tags                                              interfaces.controller.ArticleController.listArticleTags
@@ -49,6 +62,8 @@ DELETE        /tags/$id<[0-9]+>                                  interfaces.cont
 GET           /categories                                        interfaces.controller.ArticleController.listArticleCategory
 
 POST          /categories                                        interfaces.controller.ArticleController.addArticleCategory
+
+PUT           /categories                                        interfaces.controller.ArticleController.updateCategory
 
 DELETE        /categories/$id<[0-9]+>                            interfaces.controller.ArticleController.deleteArticleCategory(id: Long)
 
