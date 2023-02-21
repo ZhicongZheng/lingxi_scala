@@ -41,6 +41,8 @@ object ArticleDto {
       introduction = po.introduction,
       frontCover = po.frontCover,
       status = po.status,
+      viewCount = po.viewCount,
+      likeCount = po.likeCount,
       createAt = po.createAt,
       updateAt = po.updateAt,
       contentHtml = po.contentHtml,

@@ -25,17 +25,24 @@ class ArticleCommandService @Inject() (articleRepository: ArticleRepository, art
   def createArticle(command: ArticleCommand): Future[Either[Errors, Long]] = {
 
     val categoryFuture = command.category match {
-      case Some(id) => articleQueryRepository.getCategoryById(id)
       case None     => Future.successful[Option[ArticleCategory]](None)
+      case Some(id) => articleQueryRepository.getCategoryById(id)
+    }
+
+    val tagsFuture = command.tags match {
+      case Nil            => Future.successful(Nil)
+      case seq: Seq[Long] => articleQueryRepository.listTagsById(seq)
     }
 
     for {
-      tags     <- articleQueryRepository.listTagsById(command.tags)
+      tags     <- tagsFuture
       category <- categoryFuture
       result <-
-        if (tags.size == command.tags.size && category.exists(_.id == command.category.get)) {
+        if (tags.size != command.tags.size || (command.category.isDefined && category.isEmpty)) {
+          Future.successful(Left(TAG_OR_CATEGORY_NOT_EXIST))
+        } else {
           articleRepository.save(toDo(command).copy(tags = tags, category = category)).map(Right(_))
-        } else Future.successful(Left(TAG_OR_CATEGORY_NOT_EXIST))
+        }
     } yield result
   }
 
