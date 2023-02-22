@@ -41,6 +41,7 @@ object ArticleDto {
       introduction = po.introduction,
       frontCover = po.frontCover,
       status = po.status,
+      category = po.category.map(ArticleCategory.justId),
       viewCount = po.viewCount,
       likeCount = po.likeCount,
       createAt = po.createAt,

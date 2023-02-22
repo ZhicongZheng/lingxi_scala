@@ -33,4 +33,8 @@ trait ArticleQueryRepository extends QueryRepository[ArticlePo] {
 
   def getArticleCountMapByCategory(categoryIds: Seq[Long]): Future[Map[Long, Int]]
 
+  def tagCount(): Future[Int]
+
+  def categoryCount(): Future[Int]
+
 }

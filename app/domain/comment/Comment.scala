@@ -22,8 +22,5 @@ final case class Comment(
   remoteAddress: String,
   // 评论有回复时是否允许通知
   allowNotify: Boolean = false,
-  createBy: Long = 0L,
-  updateBy: Long = 0L,
-  createAt: LocalDateTime = LocalDateTime.now(),
-  updateAt: LocalDateTime = LocalDateTime.now()
+  createAt: LocalDateTime = LocalDateTime.now()
 ) extends BaseEntity

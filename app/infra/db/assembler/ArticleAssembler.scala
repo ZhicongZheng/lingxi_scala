@@ -42,7 +42,7 @@ object ArticleAssembler {
   )
 
   implicit def toDo(po: ActionPo): Action =
-    Action(po.id, po.typ, po.resourceId, po.remoteAddress, po.createBy, po.updateBy, po.createAt, po.updateAt)
+    Action(po.id, po.typ, po.resourceId, po.resourceInfo, po.remoteIp, po.remoteAddress, po.createAt)
 
   implicit def toDoOpt(opt: Option[ArticlePo]): Option[Article] = opt.map(toDo)
 

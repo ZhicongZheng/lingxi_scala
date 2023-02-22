@@ -7,7 +7,7 @@ import domain.article.{ArticleCategory, ArticleTag}
 import infra.actions.{AuthenticationAction, AuthorizationAction}
 import interfaces.dto.{ArticleDto, ArticlePageQuery}
 import play.api.libs.json.{Json, OFormat}
-import play.api.mvc.InjectedController
+import play.api.mvc.{AnyContent, InjectedController, Request}
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -61,6 +61,10 @@ class ArticleController @Inject() (
 
   def releaseArticle(id: Long) = authenticationAction andThen authorizationAction async {
     articleCommandService.releaseArticle(id).map(_ => Ok).recover(ex => Results.fail(ex))
+  }
+
+  def likeArticle(id: Long) = Action async { request: Request[AnyContent] =>
+    articleCommandService.likeArticle(id).map(_ => Ok).recover(ex => Results.fail(ex))
   }
 
   def listArticleByPage(page: Int, size: Int, tag: Option[Long] = None, category: Option[Long] = None, searchTitle: Option[String] = None) =

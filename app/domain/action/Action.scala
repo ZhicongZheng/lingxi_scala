@@ -8,11 +8,10 @@ final case class Action(
   id: Long,
   typ: Int,
   resourceId: Long,
+  resourceInfo: String,
+  remoteIp: String,
   remoteAddress: String,
-  createBy: Long = 0L,
-  updateBy: Long = 0L,
-  createAt: LocalDateTime = LocalDateTime.now(),
-  updateAt: LocalDateTime = LocalDateTime.now()
+  createAt: LocalDateTime = LocalDateTime.now()
 ) extends BaseEntity
 
 object Action {
@@ -21,6 +20,7 @@ object Action {
     val VIEW_ARTICLE = 1
     val LICK_ARTICLE = 2
     val COMMENT      = 3
+    val VISIT        = 4
   }
 
 }
