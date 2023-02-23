@@ -27,6 +27,7 @@ final case class Article(
   viewCount: Long = 0,
   // 点赞次数
   likeCount: Long = 0,
+  beTop: Boolean = false,
   createBy: Long = 0L,
   updateBy: Long = 0L,
   createAt: LocalDateTime = LocalDateTime.now(),
@@ -77,6 +78,7 @@ object Article {
     status: Int,
     viewCount: Long,
     likeCount: Long,
+    beTop: Boolean,
     createBy: Long,
     updateBy: Long,
     createAt: LocalDateTime,
@@ -94,6 +96,7 @@ object Article {
       status,
       viewCount,
       likeCount,
+      beTop,
       createBy,
       updateBy,
       createAt,

@@ -3,6 +3,7 @@ package interfaces.dto
 import domain.auth.Permission
 import infra.db.po.PermissionPo
 import play.api.libs.json.{Json, OFormat}
+import io.scalaland.chimney.dsl._
 
 import java.time.LocalDateTime
 import scala.language.implicitConversions
@@ -21,11 +22,9 @@ case class PermissionDto(
 object PermissionDto {
   implicit val format: OFormat[PermissionDto] = Json.format[PermissionDto]
 
-  implicit def fromDo(p: Permission): PermissionDto =
-    PermissionDto(p.id, p.`type`, p.value, p.name, p.createBy, p.updateBy, p.createAt, p.updateAt)
+  implicit def fromDo(p: Permission): PermissionDto = p.into[PermissionDto].transform
 
-  implicit def fromPo(p: PermissionPo): PermissionDto =
-    PermissionDto(p.id, p.`type`, p.value, p.name, p.createBy, p.updateBy, p.createAt, p.updateAt)
+  implicit def fromPo(p: PermissionPo): PermissionDto = p.into[PermissionDto].transform
 
   implicit def fromDoSeq(seq: Seq[Permission]): Seq[PermissionDto] = seq.map(p => PermissionDto.fromDo(p))
 }

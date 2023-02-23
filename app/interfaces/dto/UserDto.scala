@@ -3,6 +3,7 @@ package interfaces.dto
 import domain.user.User
 import infra.db.po.UserPo
 import play.api.libs.json.{Json, OFormat}
+import io.scalaland.chimney.dsl._
 
 import java.time.LocalDateTime
 import scala.language.implicitConversions
@@ -27,34 +28,12 @@ object UserDto {
   implicit val format: OFormat[UserDto] = Json.format[UserDto]
 
   implicit def fromDo(user: User): UserDto =
-    UserDto(
-      user.id,
-      user.username,
-      "",
-      user.avatar,
-      user.nickName,
-      user.phone,
-      user.email,
-      user.role,
-      user.createBy,
-      user.updateBy,
-      user.createAt,
-      user.updateAt
-    )
+    user.into[UserDto].withFieldConst(_.password, "").transform
 
   implicit def fromPo(user: UserPo): UserDto =
-    UserDto(
-      user.id,
-      user.username,
-      "",
-      user.avatar,
-      user.nickName,
-      user.phone,
-      user.email,
-      None,
-      user.createBy,
-      user.updateBy,
-      user.createAt,
-      user.updateAt
-    )
+    user
+      .into[UserDto]
+      .withFieldConst(_.password, "")
+      .withFieldConst(_.role, None)
+      .transform
 }

@@ -7,20 +7,21 @@ import scala.language.postfixOps
 object Dependencies {
 
   object Versions {
-    val scala      = "2.13.8"
-    val config     = "1.4.2"
-    val scalaTest  = "5.1.0"
-    val playJson   = "2.9.3"
-    val slick      = "5.1.0"
+    val scala        = "2.13.8"
+    val config       = "1.4.2"
+    val scalaTest    = "5.1.0"
+    val playJson     = "2.9.3"
+    val slick        = "5.1.0"
     val slickCodeGen = "3.4.1"
-    val postgresql = "42.5.4"
-    val bcrypt     = "0.4"
-    val tapir      = "1.2.9"
-    val aliyunOss  = "3.16.1"
-    val kaptcha    = "2.3.2"
-    val guice      = "5.1.0"
-    val mailer     = "8.0.1"
-    val slick_pg   = "0.21.1"
+    val postgresql   = "42.5.4"
+    val bcrypt       = "0.4"
+    val tapir        = "1.2.9"
+    val aliyunOss    = "3.16.1"
+    val kaptcha      = "2.3.2"
+    val guice        = "5.1.0"
+    val mailer       = "8.0.1"
+    val slick_pg     = "0.21.1"
+    val chimney      = "0.6.2"
   }
 
   object Compiles {
@@ -39,7 +40,7 @@ object Dependencies {
       "com.softwaremill.sttp.tapir"   %% "tapir-json-play"    % Versions.tapir,
       "com.softwaremill.sttp.tapir"   %% "tapir-openapi-docs" % Versions.tapir,
       "com.softwaremill.sttp.tapir"   %% "tapir-swagger-ui"   % Versions.tapir,
-      "com.softwaremill.sttp.apispec" %% "openapi-circe-yaml" % "0.3.2",
+      "com.softwaremill.sttp.apispec" %% "openapi-circe-yaml" % "0.3.2"
     )
 
     val slick_pg: Seq[ModuleID] = Seq(
@@ -61,6 +62,9 @@ object Dependencies {
       "com.typesafe.play" %% "play-mailer-guice" % Versions.mailer
     )
 
+    // case class 转换
+    val chimney = "io.scalaland" %% "chimney" % Versions.chimney
+
     val kaptcha = "com.github.penggle" % "kaptcha" % Versions.kaptcha
 
     val scalaTest = "org.scalatestplus.play" %% "scalatestplus-play" % Versions.scalaTest % Test
@@ -79,6 +83,7 @@ object Dependencies {
       bcrypt,
       kaptcha,
       aliyunOss,
+      chimney,
       scalaTest
     ) ++ slick ++ slick_pg ++ tapir ++ guice_5_1_0 ++ mailer
 
