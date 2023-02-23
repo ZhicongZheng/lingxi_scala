@@ -9,17 +9,14 @@ object CommentAssembler {
 
   implicit def toPo(c: Comment): CommentsPo = CommentsPo(
     c.id,
+    c.typ,
     c.content,
     c.userName,
     c.userEmail,
     c.replyTo,
     c.resourceId,
     c.remoteAddress,
-    c.allowNotify,
-    c.createBy,
-    c.updateBy,
-    c.updateAt,
-    c.updateAt
+    c.allowNotify
   )
 
 }

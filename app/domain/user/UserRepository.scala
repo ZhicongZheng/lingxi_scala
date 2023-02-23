@@ -1,7 +1,6 @@
-package domain.user.repository
+package domain.user
 
 import domain.AggregateRepository
-import domain.user.entity.User
 
 import scala.concurrent.Future
 

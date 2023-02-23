@@ -1,9 +1,9 @@
 package application.command
 
-import domain.user.entity.User
-import User.entryPwd
+import domain.user.User.entryPwd
 import common.Constant
-import domain.auth.entity.Role
+import domain.auth.Role
+import domain.user.User
 import play.api.libs.json.{Json, OFormat}
 
 import scala.language.implicitConversions

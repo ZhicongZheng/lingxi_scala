@@ -1,4 +1,4 @@
-package domain.auth.value_obj
+package domain.auth
 
 import domain.BaseEntity
 import play.api.libs.json.{Json, OFormat}

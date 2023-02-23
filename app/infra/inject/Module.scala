@@ -3,8 +3,8 @@ package infra.inject
 import com.google.inject.{AbstractModule, Singleton}
 import domain.action.ActionRepository
 import domain.article.ArticleRepository
-import domain.auth.repository.RoleRepository
-import domain.user.repository.UserRepository
+import domain.auth.RoleRepository
+import domain.user.UserRepository
 import infra.db.repository.{ArticleQueryRepository, RoleQueryRepository, UserQueryRepository}
 import infra.db.repository.impl.{
   ActionRepositoryImpl,

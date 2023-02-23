@@ -13,7 +13,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 @Singleton
-class ArticleCommandService @Inject() (articleRepository: ArticleRepository, articleQueryRepository: ArticleQueryRepository) {
+class ArticleService @Inject() (articleRepository: ArticleRepository, articleQueryRepository: ArticleQueryRepository) {
 
   def getArticle(id: Long): Future[Either[Errors, ArticleDto]] = articleRepository.get(id).flatMap {
     case None => Future.successful(Left(ARTICLE_NOT_EXIST))

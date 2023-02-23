@@ -1,6 +1,6 @@
 package interfaces.dto
 
-import domain.user.entity.User
+import domain.user.User
 import infra.db.po.UserPo
 import play.api.libs.json.{Json, OFormat}
 

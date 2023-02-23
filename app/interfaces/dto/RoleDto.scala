@@ -1,6 +1,6 @@
 package interfaces.dto
 
-import domain.auth.entity.Role
+import domain.auth.Role
 import infra.db.po.RolePo
 import play.api.libs.json.{Json, OFormat}
 

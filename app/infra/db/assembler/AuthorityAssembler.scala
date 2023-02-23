@@ -1,7 +1,6 @@
 package infra.db.assembler
 
-import domain.auth.entity.Role
-import domain.auth.value_obj.Permission
+import domain.auth.{Permission, Role}
 import infra.db.po.{PermissionPo, RolePo}
 
 import scala.language.implicitConversions

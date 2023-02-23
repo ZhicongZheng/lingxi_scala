@@ -10,7 +10,7 @@ import javax.inject.Singleton
 @Singleton
 class ApiDocumentation {
 
-  private val openApiInfo = Info("Tapir By LingXi", "1.0.0")
+  private val openApiInfo = Info("Tapir By ZhengZhiCong", "1.0.0")
 
   val endpoints =
     UserEndpoints.endpoints ++ RoleEndpoints.endpoints ++ FileEndpoints.endpoints ++ ArticleEndpoints.endpoints ++ SiteEndpoints.endpoints

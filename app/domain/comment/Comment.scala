@@ -1,11 +1,13 @@
 package domain.comment
 
 import domain.BaseEntity
+import domain.comment.Comment.Type
 
 import java.time.LocalDateTime
 
 final case class Comment(
   id: Long,
+  typ: Int = Type.comment,
   // 评论内容
   content: String,
   // 评论用户名
@@ -24,3 +26,12 @@ final case class Comment(
   allowNotify: Boolean = false,
   createAt: LocalDateTime = LocalDateTime.now()
 ) extends BaseEntity
+
+object Comment {
+
+  object Type {
+    val comment = 1
+    val message = 2
+  }
+
+}

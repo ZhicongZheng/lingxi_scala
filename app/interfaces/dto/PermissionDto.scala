@@ -1,6 +1,6 @@
 package interfaces.dto
 
-import domain.auth.value_obj.Permission
+import domain.auth.Permission
 import infra.db.po.PermissionPo
 import play.api.libs.json.{Json, OFormat}
 

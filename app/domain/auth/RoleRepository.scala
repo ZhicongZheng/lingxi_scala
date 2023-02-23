@@ -1,7 +1,6 @@
-package domain.auth.repository
+package domain.auth
 
 import domain.AggregateRepository
-import domain.auth.entity.Role
 
 import scala.concurrent.Future
 

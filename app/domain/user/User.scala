@@ -1,9 +1,9 @@
-package domain.user.entity
+package domain.user
 
 import common.{Errors, LOGIN_FAILED}
 import domain.BaseEntity
-import domain.auth.entity.Role
-import domain.user.entity.User.entryPwd
+import domain.auth.Role
+import domain.user.User.entryPwd
 import org.mindrot.jbcrypt.BCrypt
 import play.api.libs.json.{Json, OFormat}
 

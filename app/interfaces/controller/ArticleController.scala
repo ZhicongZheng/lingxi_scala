@@ -1,10 +1,10 @@
 package interfaces.controller
 
 import application.command.{ArticleCategoryCommand, ArticleCommand, ArticleTagCommand}
-import application.service.{ArticleCommandService, ArticleQueryService}
+import application.service.{ArticleQueryService, ArticleService}
 import common.{Page, Results}
 import domain.article.{ArticleCategory, ArticleTag}
-import infra.actions.{AuthenticationAction, AuthorizationAction}
+import infra.auth.{AuthenticationAction, AuthorizationAction}
 import interfaces.dto.{ArticleDto, ArticlePageQuery}
 import play.api.libs.json.{Json, OFormat}
 import play.api.mvc.{AnyContent, InjectedController, Request}
@@ -15,7 +15,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 @Singleton
 class ArticleController @Inject() (
   articleQueryService: ArticleQueryService,
-  articleCommandService: ArticleCommandService,
+  articleCommandService: ArticleService,
   authenticationAction: AuthenticationAction,
   authorizationAction: AuthorizationAction
 ) extends InjectedController {

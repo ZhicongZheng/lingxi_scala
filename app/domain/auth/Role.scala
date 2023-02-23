@@ -1,7 +1,6 @@
-package domain.auth.entity
+package domain.auth
 
 import common.Constant.superAdmin
-import domain.auth.value_obj.Permission
 import domain.BaseEntity
 import play.api.libs.json.{Json, OFormat}
 

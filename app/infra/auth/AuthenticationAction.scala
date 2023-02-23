@@ -1,8 +1,8 @@
-package infra.actions
+package infra.auth
 
 import common.{Constant, TOKEN_CHECK_ERROR}
-import domain.user.entity.User
-import infra.actions.AuthenticationAction.{tokenValidateError, withoutAuth}
+import domain.user.User
+import infra.auth.AuthenticationAction.{tokenValidateError, withoutAuth}
 import play.api.Logging
 import play.api.libs.json.Json
 import play.api.mvc._

@@ -1,9 +1,8 @@
 package infra.db.repository.impl
 
 import common.Constant
-import domain.auth.repository.RoleRepository
-import domain.user.entity.User
-import domain.user.repository.UserRepository
+import domain.auth.RoleRepository
+import domain.user.{User, UserRepository}
 import infra.db.assembler.UserAssembler._
 import infra.db.po.RolePo.UserRoleTable
 import infra.db.po.UserPo.UserTable

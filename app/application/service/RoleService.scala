@@ -2,8 +2,8 @@ package application.service
 
 import application.command.{CreateRoleCommand, UpdateRoleCommand}
 import common._
-import domain.auth.repository.RoleRepository
-import domain.user.repository.UserRepository
+import domain.auth.RoleRepository
+import domain.user.UserRepository
 import infra.db.repository.RoleQueryRepository
 
 import javax.inject.{Inject, Singleton}
@@ -11,7 +11,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 @Singleton
-class RoleCommandService @Inject() (
+class RoleService @Inject() (
   roleQueryRepository: RoleQueryRepository,
   userAggregateRepository: UserRepository,
   roleAggregateRepository: RoleRepository

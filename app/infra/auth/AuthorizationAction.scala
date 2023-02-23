@@ -1,8 +1,8 @@
-package infra.actions
+package infra.auth
 
 import common.{Constant, PERMISSION_DENIED}
 import common.Constant.superAdmin
-import infra.actions.AuthorizationAction.{failureResult, parsePermission}
+import infra.auth.AuthorizationAction.{failureResult, parsePermission}
 import play.api.mvc.{ActionRefiner, Result}
 import play.api.routing.{HandlerDef, Router}
 

@@ -1,9 +1,7 @@
 package infra.db.repository.impl
 
 import common.Constant
-import domain.auth.entity.Role
-import domain.auth.repository.RoleRepository
-import domain.auth.value_obj.Permission
+import domain.auth.{Permission, Role, RoleRepository}
 import infra.db.assembler.AuthorityAssembler._
 import infra.db.po.PermissionPo.{PermissionTable, RolePermissionTable}
 import infra.db.po.RolePo.{RoleTable, UserRoleTable}

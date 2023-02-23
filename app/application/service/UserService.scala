@@ -2,8 +2,7 @@ package application.service
 
 import application.command.{ChangePasswordCommand, CreateUserCommand, LoginCommand, UpdateUserCommand}
 import common.{Errors, NO_USER, OLD_PWD_ERROR, USER_EXIST}
-import domain.user.entity.User
-import domain.user.repository.UserRepository
+import domain.user.{User, UserRepository}
 import infra.db.assembler.UserAssembler._
 import infra.db.repository.UserQueryRepository
 
@@ -12,7 +11,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 @Singleton
-class UserCommandService @Inject() (userQueryRepository: UserQueryRepository, userAggregateRepository: UserRepository) {
+class UserService @Inject() (userQueryRepository: UserQueryRepository, userAggregateRepository: UserRepository) {
 
   def login(loginRequest: LoginCommand): Future[Either[Errors, User]] =
     userAggregateRepository.getByName(loginRequest.username) flatMap {
