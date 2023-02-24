@@ -14,7 +14,9 @@ final case class CommentsPo(
   userName: String = "",
   userEmail: Option[String] = None,
   replyTo: Long = -1L,
+  replyUser: String = "",
   resourceId: Long,
+  remoteIp: String,
   remoteAddress: String,
   allowNotify: Boolean = false,
   createAt: LocalDateTime = LocalDateTime.now()
@@ -23,7 +25,7 @@ object CommentsPo {
 
   class CommentTable(_tableTag: Tag) extends Table[CommentsPo](_tableTag, "comments") {
     def * =
-      (id, typ, content, userName, userEmail, replyTo, resourceId, remoteAddress, allowNotify, createAt).<>(
+      (id, typ, content, userName, userEmail, replyTo, replyUser, resourceId, remoteIp, remoteAddress, allowNotify, createAt).<>(
         (CommentsPo.apply _).tupled,
         CommentsPo.unapply
       )
@@ -44,6 +46,8 @@ object CommentsPo {
 
     /** Database column reply_to SqlType(int8), Default(-1) */
     val replyTo: Rep[Long] = column[Long]("reply_to", O.Default(-1L))
+
+    val replyUser: Rep[String] = column[String]("reply_user", O.Default(""))
 
     /** Database column resource_id SqlType(int8) */
     val resourceId: Rep[Long] = column[Long]("resource_id")

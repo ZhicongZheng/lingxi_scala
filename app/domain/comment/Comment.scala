@@ -18,9 +18,12 @@ final case class Comment(
   reply: Seq[Comment] = Nil,
   // 回复的评论id
   replyTo: Long = -1,
+  // 回复的用户
+  replyUser: String = "",
   // 评论的资源（文章）
   resourceId: Long,
   // 评论用户的ip
+  remoteIp: String,
   remoteAddress: String,
   // 评论有回复时是否允许通知
   allowNotify: Boolean = false,

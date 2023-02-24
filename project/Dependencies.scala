@@ -22,6 +22,7 @@ object Dependencies {
     val mailer       = "8.0.1"
     val slick_pg     = "0.21.1"
     val chimney      = "0.6.2"
+    val ip2region    = "2.7.0"
   }
 
   object Compiles {
@@ -67,6 +68,8 @@ object Dependencies {
 
     val kaptcha = "com.github.penggle" % "kaptcha" % Versions.kaptcha
 
+    val ip2region = "org.lionsoul" % "ip2region" % Versions.ip2region
+
     val scalaTest = "org.scalatestplus.play" %% "scalatestplus-play" % Versions.scalaTest % Test
 
   }
@@ -84,6 +87,7 @@ object Dependencies {
       kaptcha,
       aliyunOss,
       chimney,
+      ip2region,
       scalaTest
     ) ++ slick ++ slick_pg ++ tapir ++ guice_5_1_0 ++ mailer
 

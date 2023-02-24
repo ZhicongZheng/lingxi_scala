@@ -4,12 +4,14 @@ import com.google.inject.{AbstractModule, Singleton}
 import domain.action.ActionRepository
 import domain.article.ArticleRepository
 import domain.auth.RoleRepository
+import domain.comment.CommentRepository
 import domain.user.UserRepository
 import infra.db.repository.{ArticleQueryRepository, RoleQueryRepository, UserQueryRepository}
 import infra.db.repository.impl.{
   ActionRepositoryImpl,
   ArticleQueryRepositoryImpl,
   ArticleRepositoryImpl,
+  CommentRepositoryImpl,
   RoleQueryRepositoryImpl,
   RoleRepositoryImpl,
   UserQueryRepositoryImpl,
@@ -30,6 +32,7 @@ class Module extends AbstractModule {
     bind(classOf[ArticleRepository]).to(classOf[ArticleRepositoryImpl]).in(classOf[Singleton])
     bind(classOf[ArticleQueryRepository]).to(classOf[ArticleQueryRepositoryImpl]).in(classOf[Singleton])
     bind(classOf[ActionRepository]).to(classOf[ActionRepositoryImpl]).in(classOf[Singleton])
+    bind(classOf[CommentRepository]).to(classOf[CommentRepositoryImpl]).in(classOf[Singleton])
   }
 
 }

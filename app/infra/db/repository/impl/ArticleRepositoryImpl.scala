@@ -80,11 +80,19 @@ class ArticleRepositoryImpl @Inject() (private val dbConfigProvider: DatabaseCon
 
   override def addCategory(category: ArticleCategory): Future[Unit] = db.run(categories += category).map(_ => ())
 
-  override def removeCategory(id: Long): Future[Unit] =
-    db.run(categories.filter { table =>
-      Seq(table.id === id, table.parent === id).reduce(_ || _)
-    }.delete)
-      .map(_ => ())
+  override def removeCategory(id: Long): Future[Unit] = {
+    val sql = sqlu"""with recursive cte as (
+                        select id, parent from categories where parent = $id
+                        union
+                        select a.id, a.parent from categories as a join cte on a.parent = cte.id
+                    ) delete from categories where id in (select id from cte)"""
+    db.run {
+      for {
+        delSub    <- sql
+        delParent <- categories.filter(_.id === id).delete
+      } yield ()
+    }
+  }
 
   private def deleteArticleTagRef(articleId: Long): Future[Unit] = db.run(articleTags.filter(_.articleId === articleId).delete).map(_ => ())
 

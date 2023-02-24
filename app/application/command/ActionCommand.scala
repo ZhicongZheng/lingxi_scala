@@ -1,6 +1,6 @@
 package application.command
 
-import common.Constant
+import common.{Constant, Ip2Region}
 import domain.action.Action
 import play.api.libs.json.{Json, OFormat}
 import play.api.mvc.Request
@@ -21,7 +21,7 @@ object ActionCommand {
     cmd.typ,
     cmd.resourceId,
     cmd.resourceInfo,
-    request.remoteAddress,
-    request.remoteAddress
+    Ip2Region.parseIp(request),
+    Ip2Region.parseAddress(request)
   )
 }

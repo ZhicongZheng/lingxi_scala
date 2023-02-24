@@ -73,5 +73,8 @@ DELETE        /categories/$id<[0-9]+>                            interfaces.cont
 GET           /site                                              interfaces.controller.SiteController.getSiteInfo
 POST          /actions                                           interfaces.controller.SiteController.onAction
 
+# comment api
+POST          /comments                                          interfaces.controller.CommentController.addComment
+
 
 
