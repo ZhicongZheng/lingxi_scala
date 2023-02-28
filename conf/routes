@@ -78,5 +78,7 @@ POST          /comments                                          interfaces.cont
 
 GET           /comments                                          interfaces.controller.CommentController.listComment(page: Int ?= 1,size: Int ?= 10)
 
+DELETE        /comments/$id<[0-9]+>                              interfaces.controller.CommentController.deleteComment(id: Long)
+
 
 

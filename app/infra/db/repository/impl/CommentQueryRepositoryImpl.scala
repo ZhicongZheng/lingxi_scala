@@ -94,7 +94,8 @@ class CommentQueryRepositoryImpl @Inject() (private val dbConfigProvider: Databa
 
     db.run {
       for {
-        pageResult <- buildQuery("*", Some(pageQuery)).as[CommentsPo]
+        ids        <- buildQuery("id", Some(pageQuery)).as[Long]
+        pageResult <- comments.filter(_.id inSet ids).result
         count      <- buildQuery("count(1)", None).as[Int].head
       } yield Page(pageQuery.page, pageQuery.size, count, pageResult)
     }
