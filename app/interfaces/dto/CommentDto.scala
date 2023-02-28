@@ -20,6 +20,7 @@ case class CommentDto(
   userEmail: Option[String] = None,
   // 评论下面的回复
   reply: Seq[CommentDto] = Nil,
+  replyCount: Int = 0,
   // 回复的评论id
   replyTo: Long = -1,
   // 回复的用户

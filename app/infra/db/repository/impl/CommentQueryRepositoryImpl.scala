@@ -32,6 +32,7 @@ class CommentQueryRepositoryImpl @Inject() (private val dbConfigProvider: Databa
   override def listByPage(pageQuery: PageQuery): Future[Page[CommentsPo]] = {
     def doQuery(query: CommentPageQuery): Future[Page[CommentsPo]] = {
       val finalQuery = comments
+        .filter(_.resourceId === query.resourceId)
         .filterOpt(query.typ)(_.typ === _)
         .filterOpt(query.parent)(_.replyTo === _)
 
@@ -57,7 +58,7 @@ class CommentQueryRepositoryImpl @Inject() (private val dbConfigProvider: Databa
    *  @return
    *    按照父评论分组的回复列表集合
    */
-  def listReply(rootCommentIds: Seq[Long], limit: Option[Int]): Future[Map[Long, Seq[CommentsPo]]] = {
+  def listReplyWithLimit(rootCommentIds: Seq[Long], limit: Option[Int]): Future[Map[Long, Seq[CommentsPo]]] = {
     if (rootCommentIds.isEmpty) {
       return Future.successful(Map.empty)
     }
@@ -102,4 +103,19 @@ class CommentQueryRepositoryImpl @Inject() (private val dbConfigProvider: Databa
 
   }
 
+  override def replyCountMap(ids: Seq[Long]): Future[Map[Long, Int]] = {
+    if (ids.isEmpty) {
+      return Future.successful(Map.empty)
+    }
+    val idString = ids.mkString(",")
+    val sqlAction =
+      sql"""
+            with recursive cte as (
+                    select id, reply_to from comments where reply_to in (#$idString)
+                    union
+                    select a.id, a.reply_to from comments as a join cte on a.reply_to = cte.id
+                ) select reply_to, count(1) from comments where id in (select id from cte)  group by reply_to
+         """.as[(Long, Int)]
+    db.run(sqlAction).map(vector => vector.map(tuple => tuple._1 -> tuple._2).toMap)
+  }
 }

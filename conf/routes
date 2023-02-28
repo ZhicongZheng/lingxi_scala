@@ -76,7 +76,9 @@ POST          /actions                                           interfaces.cont
 # comment api
 POST          /comments                                          interfaces.controller.CommentController.addComment
 
-GET           /comments                                          interfaces.controller.CommentController.listComment(page: Int ?= 1,size: Int ?= 10)
+GET           /comments                                          interfaces.controller.CommentController.listComment(page: Int ?= 1,size: Int ?= 10, resourceId: Long)
+
+GET           /comments/$parent<[0-9]+>/replies                  interfaces.controller.CommentController.listReplyBypage(page: Int ?= 1,size: Int ?= 10, parent: Long)
 
 DELETE        /comments/$id<[0-9]+>                              interfaces.controller.CommentController.deleteComment(id: Long)
 
