@@ -1,12 +1,12 @@
 package interfaces.controller
 
 import application.command.{ChangePasswordCommand, CreateUserCommand, LoginCommand, UpdateUserCommand}
-import application.service.{UserCommandService, UserQueryService}
+import application.service.{UserQueryService, UserService}
 import common.{BasePageQuery, Constant, Kaptcha, LOGIC_CODE_ERR, Page, Results}
-import infra.actions.{AuthenticationAction, AuthorizationAction}
+import infra.auth.{AuthenticationAction, AuthorizationAction}
 import interfaces.dto.UserDto
 import play.api.libs.json.{Json, OFormat}
-import play.api.mvc.{Action, AnyContent, ControllerComponents, InjectedController, Session}
+import play.api.mvc.{Action, AnyContent, InjectedController, Session}
 
 import java.io.ByteArrayOutputStream
 import java.util.Base64
@@ -17,8 +17,7 @@ import scala.concurrent.Future
 
 @Singleton
 class UserController @Inject() (
-  override val controllerComponents: ControllerComponents,
-  userCommandService: UserCommandService,
+  userCommandService: UserService,
   userQueryService: UserQueryService,
   authenticationAction: AuthenticationAction,
   authorizationAction: AuthorizationAction

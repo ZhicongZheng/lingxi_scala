@@ -2,6 +2,7 @@ package interfaces.dto
 
 import domain.article.{Article, ArticleCategory, ArticleTag}
 import infra.db.po.ArticlePo
+import io.scalaland.chimney.dsl._
 
 import java.time.LocalDateTime
 import scala.language.implicitConversions
@@ -35,32 +36,9 @@ case class ArticleDto(
 object ArticleDto {
 
   implicit def fromPo(po: ArticlePo): ArticleDto =
-    ArticleDto(
-      id = po.id,
-      title = po.title,
-      introduction = po.introduction,
-      frontCover = po.frontCover,
-      status = po.status,
-      createAt = po.createAt,
-      updateAt = po.updateAt,
-      contentHtml = po.contentHtml,
-      contentMd = po.contentMd
-    )
+    po.into[ArticleDto]
+      .withFieldComputed(_.category, _.category.map(ArticleCategory.justId))
+      .transform
 
-  implicit def fromDo(domain: Article): ArticleDto =
-    ArticleDto(
-      domain.id,
-      domain.title,
-      domain.introduction,
-      domain.frontCover,
-      domain.tags,
-      domain.category,
-      domain.contentMd,
-      domain.contentHtml,
-      domain.status,
-      domain.viewCount,
-      domain.likeCount,
-      domain.createAt,
-      domain.updateAt
-    )
+  implicit def fromDo(domain: Article): ArticleDto = domain.into[ArticleDto].transform
 }

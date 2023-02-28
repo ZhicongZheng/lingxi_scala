@@ -69,13 +69,12 @@ CREATE TABLE IF NOT EXISTS categories
 CREATE TABLE IF NOT EXISTS actions
 (
     id             SERIAL PRIMARY KEY,
-    typ            INT       NOT NULL,
-    resource_id    BIGINT    NOT NULL,
-    remote_address inet      NOT NULL,
-    create_by      BIGINT    NOT NULL DEFAULT 0,
-    update_by      BIGINT    NOT NULL DEFAULT 0,
-    create_at      TIMESTAMP NOT NULL DEFAULT current_timestamp,
-    update_at      TIMESTAMP NOT NULL DEFAULT current_timestamp
+    typ            INT          NOT NULL,
+    resource_id    BIGINT       NOT NULL DEFAULT -1,
+    resource_info  varchar(255) NOT NULL DEFAULT '',
+    remote_ip      inet         NOT NULL,
+    remote_address varchar(255) NOT NULL DEFAULT '',
+    create_at      TIMESTAMP    NOT NULL DEFAULT current_timestamp
 );
 
 CREATE TABLE IF NOT EXISTS article_tags

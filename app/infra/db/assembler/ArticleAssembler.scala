@@ -35,14 +35,12 @@ object ArticleAssembler {
     a.status,
     a.viewCount,
     a.likeCount,
+    beTop = false,
     a.createBy,
     a.updateBy,
     a.createAt,
     a.updateAt
   )
-
-  implicit def toDo(po: ActionPo): Action =
-    Action(po.id, po.typ, po.resourceId, po.remoteAddress, po.createBy, po.updateBy, po.createAt, po.updateAt)
 
   implicit def toDoOpt(opt: Option[ArticlePo]): Option[Article] = opt.map(toDo)
 

@@ -1,13 +1,13 @@
 package interfaces.controller
 
 import application.command.{ArticleCategoryCommand, ArticleCommand, ArticleTagCommand}
-import application.service.{ArticleCommandService, ArticleQueryService}
+import application.service.{ArticleQueryService, ArticleService}
 import common.{Page, Results}
 import domain.article.{ArticleCategory, ArticleTag}
-import infra.actions.{AuthenticationAction, AuthorizationAction}
+import infra.auth.{AuthenticationAction, AuthorizationAction}
 import interfaces.dto.{ArticleDto, ArticlePageQuery}
 import play.api.libs.json.{Json, OFormat}
-import play.api.mvc.InjectedController
+import play.api.mvc.{AnyContent, InjectedController, Request}
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -15,7 +15,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 @Singleton
 class ArticleController @Inject() (
   articleQueryService: ArticleQueryService,
-  articleCommandService: ArticleCommandService,
+  articleCommandService: ArticleService,
   authenticationAction: AuthenticationAction,
   authorizationAction: AuthorizationAction
 ) extends InjectedController {
@@ -61,6 +61,10 @@ class ArticleController @Inject() (
 
   def releaseArticle(id: Long) = authenticationAction andThen authorizationAction async {
     articleCommandService.releaseArticle(id).map(_ => Ok).recover(ex => Results.fail(ex))
+  }
+
+  def likeArticle(id: Long) = Action async { request: Request[AnyContent] =>
+    articleCommandService.likeArticle(id).map(_ => Ok).recover(ex => Results.fail(ex))
   }
 
   def listArticleByPage(page: Int, size: Int, tag: Option[Long] = None, category: Option[Long] = None, searchTitle: Option[String] = None) =

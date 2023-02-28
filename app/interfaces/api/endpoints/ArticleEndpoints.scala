@@ -43,6 +43,7 @@ object ArticleEndpoints {
       updateArticleEndpoint,
       listArticleByPageEndpoint,
       releaseArticleEndpoint,
+      likeArticleEndpoint,
       updateCategoryEndpoint
     )
 
@@ -80,6 +81,14 @@ object ArticleEndpoints {
     .summary("发布文章")
     .description("发布文章")
     .in("release")
+    .in(path[Long]("id"))
+    .out(statusCode(StatusCode.Ok))
+
+  val likeArticleEndpoint = articleAuthEndpoint.post
+    .name("likeArticle")
+    .summary("点赞文章")
+    .description("点赞文章")
+    .in("like")
     .in(path[Long]("id"))
     .out(statusCode(StatusCode.Ok))
 

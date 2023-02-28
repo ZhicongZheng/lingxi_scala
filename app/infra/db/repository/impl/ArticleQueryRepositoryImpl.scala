@@ -8,11 +8,9 @@ import infra.db.repository.ArticleQueryRepository
 import interfaces.dto.ArticlePageQuery
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfig}
 import slick.basic.DatabaseConfig
-import slick.dbio.Effect
 import slick.jdbc.PostgresProfile
 import slick.jdbc.PostgresProfile.api._
 import slick.lifted.TableQuery
-import slick.sql.FixedSqlStreamingAction
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -36,7 +34,7 @@ class ArticleQueryRepositoryImpl @Inject() (private val dbConfigProvider: Databa
 
   override def list(): Future[Seq[ArticlePo]] = ???
 
-  override def count(): Future[Int] = ???
+  override def count(): Future[Int] = db.run(articles.filter(_.status =!= Article.Status.DELETE).length.result)
 
   override def listByPage(pageQuery: PageQuery): Future[Page[ArticlePo]] = ???
 
@@ -97,10 +95,10 @@ class ArticleQueryRepositoryImpl @Inject() (private val dbConfigProvider: Databa
           pageResult <- finalQuery
             .drop(query.offset)
             .take(query.limit)
-            .map(ArticlePo.selectFields)
+            .sorted(_.updateAt.asc)
             .result
           count <- finalQuery.length.result
-        } yield Page(query.page, query.size, count, pageResult.map(ArticlePo.briefConvert))
+        } yield Page(query.page, query.size, count, pageResult)
       }
     }
 
@@ -125,4 +123,8 @@ class ArticleQueryRepositoryImpl @Inject() (private val dbConfigProvider: Databa
         }
         .result
     ).map(_.toMap)
+
+  override def tagCount(): Future[Int] = db.run(tags.length.result)
+
+  override def categoryCount(): Future[Int] = db.run(categories.length.result)
 }

@@ -45,6 +45,8 @@ DELETE        /articles/$id<[0-9]+>                              interfaces.cont
 
 POST          /articles/release/$id<[0-9]+>                      interfaces.controller.ArticleController.releaseArticle(id: Long)
 
+POST          /articles/like/$id<[0-9]+>                         interfaces.controller.ArticleController.likeArticle(id: Long)
+
 PUT           /articles                                          interfaces.controller.ArticleController.updateArticle
 
 GET           /articles                                          interfaces.controller.ArticleController.listArticleByPage(page: Int ?= 1,size: Int ?= 10, tag: Option[Long] ?= None, category: Option[Long] ?= None, searchTitle: Option[String] ?= None)
@@ -66,6 +68,19 @@ POST          /categories                                        interfaces.cont
 PUT           /categories                                        interfaces.controller.ArticleController.updateCategory
 
 DELETE        /categories/$id<[0-9]+>                            interfaces.controller.ArticleController.deleteArticleCategory(id: Long)
+
+# site api
+GET           /site                                              interfaces.controller.SiteController.getSiteInfo
+POST          /actions                                           interfaces.controller.SiteController.onAction
+
+# comment api
+POST          /comments                                          interfaces.controller.CommentController.addComment
+
+GET           /comments                                          interfaces.controller.CommentController.listComment(page: Int ?= 1,size: Int ?= 10, resourceId: Long)
+
+GET           /comments/$parent<[0-9]+>/replies                  interfaces.controller.CommentController.listReplyBypage(page: Int ?= 1,size: Int ?= 10, parent: Long)
+
+DELETE        /comments/$id<[0-9]+>                              interfaces.controller.CommentController.deleteComment(id: Long)
 
 
 

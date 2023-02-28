@@ -8,9 +8,9 @@ import scala.language.implicitConversions
 object ActionAssembler {
 
   implicit def fromDo(a: Action): ActionPo =
-    ActionPo(a.id, a.typ, a.resourceId, a.remoteAddress, a.createBy, a.updateBy, a.createAt, a.updateAt)
+    ActionPo(a.id, a.typ, a.resourceId, a.resourceInfo, a.remoteIp, a.remoteAddress, a.createAt)
 
   implicit def toDo(po: ActionPo): Action =
-    Action(po.id, po.typ, po.resourceId, po.remoteAddress, po.createBy, po.updateBy, po.createAt, po.updateAt)
+    Action(po.id, po.typ, po.resourceId, po.resourceInfo, po.remoteIp, po.remoteAddress, po.createAt)
 
 }

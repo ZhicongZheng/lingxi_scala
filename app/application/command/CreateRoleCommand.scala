@@ -1,8 +1,7 @@
 package application.command
 
 import common.Constant
-import domain.auth.entity.Role
-import domain.auth.value_obj.Permission
+import domain.auth.{Permission, Role}
 import play.api.libs.json.{Json, OFormat}
 
 import scala.language.implicitConversions

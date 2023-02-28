@@ -1,9 +1,9 @@
 package interfaces.controller
 
 import application.command.{CreateRoleCommand, UpdateRoleCommand}
-import application.service.{RoleCommandService, RoleQueryService}
+import application.service.{RoleQueryService, RoleService}
 import common.{BasePageQuery, Page, Results}
-import infra.actions.{AuthenticationAction, AuthorizationAction}
+import infra.auth.{AuthenticationAction, AuthorizationAction}
 import interfaces.dto.{PermissionDto, RoleDto}
 import play.api.libs.json.{Json, OFormat}
 import play.api.mvc.{ControllerComponents, InjectedController}
@@ -13,9 +13,8 @@ import scala.concurrent.ExecutionContext.Implicits.global
 
 @Singleton
 class RoleController @Inject() (
-  override val controllerComponents: ControllerComponents,
   roleQueryService: RoleQueryService,
-  roleCommandService: RoleCommandService,
+  roleCommandService: RoleService,
   authenticationAction: AuthenticationAction,
   authorizationAction: AuthorizationAction
 ) extends InjectedController {

@@ -2,6 +2,7 @@ package interfaces.dto
 
 import domain.article.ArticleCategory
 import play.api.libs.json.{Json, OFormat}
+import io.scalaland.chimney.dsl._
 
 import java.time.LocalDateTime
 import scala.language.implicitConversions
@@ -19,6 +20,6 @@ object ArticleCategoryDto {
 
   implicit val format: OFormat[ArticleCategoryDto] = Json.format[ArticleCategoryDto]
 
-  implicit def fromPo(po: ArticleCategory): ArticleCategoryDto = ArticleCategoryDto(po.id, po.name, po.parent, 0, Nil, po.createAt)
+  implicit def fromPo(po: ArticleCategory): ArticleCategoryDto = po.into[ArticleCategoryDto].transform
 
 }

@@ -1,7 +1,7 @@
 package interfaces.controller
 
 import common.{FILE_EMPTY, Results}
-import infra.actions.AuthenticationAction
+import infra.auth.AuthenticationAction
 import infra.oss.OssRepository
 import play.api.mvc.{ControllerComponents, InjectedController}
 
@@ -12,7 +12,6 @@ import scala.concurrent.Future
 
 @Singleton
 class FileController @Inject() (
-  override val controllerComponents: ControllerComponents,
   authedAction: AuthenticationAction,
   ossRepository: OssRepository
 ) extends InjectedController {
