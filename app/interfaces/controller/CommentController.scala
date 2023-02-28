@@ -23,12 +23,12 @@ class CommentController @Inject() (
   }
 
   def listComment(page: Int, size: Int, resourceId: Long) = Action async { request =>
-    val pageQuery = CommentPageQuery(page, size, resourceId, parent = Some(-1))
+    val pageQuery = CommentPageQuery(page, size, Some(resourceId), parent = Some(-1))
     commentQueryService.listCommentByPage(pageQuery).map(res => Results.success(res)).recover(ex => Results.fail(ex))
   }
 
   def listReplyBypage(page: Int, size: Int, parent: Long) = Action async {
-    val pageQuery = CommentPageQuery(page, size, -1, parent = Some(parent))
+    val pageQuery = CommentPageQuery(page, size, None, parent = Some(parent))
     commentQueryService.listReplyByPage(pageQuery).map(Results.success(_)).recover(ex => Results.fail(ex))
 
   }

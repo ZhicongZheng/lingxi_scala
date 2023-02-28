@@ -32,7 +32,7 @@ class CommentQueryRepositoryImpl @Inject() (private val dbConfigProvider: Databa
   override def listByPage(pageQuery: PageQuery): Future[Page[CommentsPo]] = {
     def doQuery(query: CommentPageQuery): Future[Page[CommentsPo]] = {
       val finalQuery = comments
-        .filter(_.resourceId === query.resourceId)
+        .filterOpt(query.resourceId)(_.resourceId === _)
         .filterOpt(query.typ)(_.typ === _)
         .filterOpt(query.parent)(_.replyTo === _)
 
@@ -77,7 +77,7 @@ class CommentQueryRepositoryImpl @Inject() (private val dbConfigProvider: Databa
     db.run {
       for {
         replyIds <- sqlAction
-        pos      <- comments.filter(_.id inSet replyIds).result
+        pos      <- comments.filter(_.id inSet replyIds).sorted(_.createAt).result
       } yield pos.groupBy(_.replyTo)
     }
   }
@@ -96,7 +96,7 @@ class CommentQueryRepositoryImpl @Inject() (private val dbConfigProvider: Databa
     db.run {
       for {
         ids        <- buildQuery("id", Some(pageQuery)).as[Long]
-        pageResult <- comments.filter(_.id inSet ids).result
+        pageResult <- comments.filter(_.id inSet ids).sorted(_.createAt).result
         count      <- buildQuery("count(1)", None).as[Int].head
       } yield Page(pageQuery.page, pageQuery.size, count, pageResult)
     }

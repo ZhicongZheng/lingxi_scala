@@ -24,7 +24,7 @@ class CommentQueryService @Inject() (commentQueryRepository: CommentQueryReposit
 
   def listReplyByPage(pageQuery: CommentPageQuery): Future[Page[CommentDto]] =
     for {
-      page       <- commentQueryRepository.listReplyByPage(pageQuery, pageQuery.parent.getOrElse(-1))
+      page       <- commentQueryRepository.listByPage(pageQuery)
       replyCount <- commentQueryRepository.replyCountMap(pageQuery.parent.toSeq)
     } yield page.map(CommentDto.fromPo).map { dto =>
       dto.copy(replyCount = replyCount.getOrElse(dto.id, 0))

@@ -3,7 +3,8 @@ package interfaces.dto
 import common.PageQuery
 import play.api.libs.json.{Json, OFormat}
 
-case class CommentPageQuery(page: Int, size: Int, resourceId: Long, typ: Option[Int] = None, parent: Option[Long] = None) extends PageQuery
+case class CommentPageQuery(page: Int, size: Int, resourceId: Option[Long] = None, typ: Option[Int] = None, parent: Option[Long] = None)
+    extends PageQuery
 
 object CommentPageQuery {
 
