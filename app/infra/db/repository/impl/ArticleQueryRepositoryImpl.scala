@@ -8,11 +8,9 @@ import infra.db.repository.ArticleQueryRepository
 import interfaces.dto.ArticlePageQuery
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfig}
 import slick.basic.DatabaseConfig
-import slick.dbio.Effect
 import slick.jdbc.PostgresProfile
 import slick.jdbc.PostgresProfile.api._
 import slick.lifted.TableQuery
-import slick.sql.FixedSqlStreamingAction
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}

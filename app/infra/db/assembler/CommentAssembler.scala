@@ -10,4 +10,6 @@ object CommentAssembler {
 
   implicit def toPo(c: Comment): CommentsPo = c.into[CommentsPo].transform
 
+  implicit def toDo(po: CommentsPo): Comment = po.into[Comment].transform
+
 }

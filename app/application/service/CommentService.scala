@@ -20,10 +20,9 @@ class CommentService @Inject() (commentRepository: CommentRepository, articleQue
         case Comment.Type.comment => articleQueryRepository.get(cmd.resourceId).map(opt => opt.nonEmpty)
         case _                    => Future.successful(false)
       }
-      res <- if (articleExist) Future.successful(Left(ARTICLE_NOT_EXIST)) else commentRepository.save(cmd).map(_ => Right())
+      res <- if (articleExist) Future.successful(Left(ARTICLE_NOT_EXIST)) else commentRepository.save(cmd).map(_ => Right(()))
     } yield res
 
   def deleteComment(id: Long): Future[Unit] = commentRepository.remove(id)
-
 
 }

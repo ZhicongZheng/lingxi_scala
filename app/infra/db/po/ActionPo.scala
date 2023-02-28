@@ -25,7 +25,6 @@ object ActionPo {
     /** Database column id SqlType(serial), AutoInc, PrimaryKey */
     val id: Rep[Long] = column[Long]("id", O.AutoInc, O.PrimaryKey)
 
-    /** Database column typ SqlType(int4) */
     val typ: Rep[Int] = column[Int]("typ")
 
     /** Database column source_id SqlType(int8) */
