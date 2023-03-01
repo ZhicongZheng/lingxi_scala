@@ -24,17 +24,24 @@ class CommentController @Inject() (
 
   def listComment(page: Int, size: Int, resourceId: Long) = Action async { request =>
     val pageQuery = CommentPageQuery(page, size, Some(resourceId), parent = Some(-1))
-    commentQueryService.listCommentByPage(pageQuery).map(res => Results.success(res)).recover(ex => Results.fail(ex))
+    listComments(pageQuery)
   }
 
   def listReplyBypage(page: Int, size: Int, parent: Long) = Action async {
     val pageQuery = CommentPageQuery(page, size, None, parent = Some(parent))
     commentQueryService.listReplyByPage(pageQuery).map(Results.success(_)).recover(ex => Results.fail(ex))
+  }
 
+  def listCommentAdmin(page: Int, size: Int) = authenticationAction andThen authenticationAction async {
+    val pageQuery = CommentPageQuery(page, size)
+    listComments(pageQuery)
   }
 
   def deleteComment(id: Long) = authenticationAction andThen authorizationAction async {
     commentService.deleteComment(id).map(_ => Ok).recover(ex => Results.fail(ex))
   }
+
+  private[this] def listComments(pageQuery: CommentPageQuery) =
+    commentQueryService.listCommentByPage(pageQuery).map(res => Results.success(res)).recover(ex => Results.fail(ex))
 
 }

@@ -7,22 +7,23 @@ import scala.language.postfixOps
 object Dependencies {
 
   object Versions {
-    val scala        = "2.13.8"
-    val config       = "1.4.2"
-    val scalaTest    = "5.1.0"
-    val playJson     = "2.9.3"
-    val slick        = "5.1.0"
-    val slickCodeGen = "3.4.1"
-    val postgresql   = "42.5.4"
-    val bcrypt       = "0.4"
-    val tapir        = "1.2.9"
-    val aliyunOss    = "3.16.1"
-    val kaptcha      = "2.3.2"
-    val guice        = "5.1.0"
-    val mailer       = "8.0.1"
-    val slick_pg     = "0.21.1"
-    val chimney      = "0.6.2"
-    val ip2region    = "2.7.0"
+    val scala         = "2.13.8"
+    val config        = "1.4.2"
+    val scalaTest     = "5.1.0"
+    val playJson      = "2.9.3"
+    val slick         = "5.1.0"
+    val slickCodeGen  = "3.4.1"
+    val postgresql    = "42.5.4"
+    val bcrypt        = "0.4"
+    val tapir         = "1.2.9"
+    val aliyunOss     = "3.16.1"
+    val kaptcha       = "2.3.2"
+    val guice         = "5.1.0"
+    val mailer        = "8.0.1"
+    val slick_pg      = "0.21.1"
+    val chimney       = "0.6.2"
+    val ip2region     = "2.7.0"
+    val sensitiveWord = "0.2.1"
   }
 
   object Compiles {
@@ -63,6 +64,9 @@ object Dependencies {
       "com.typesafe.play" %% "play-mailer-guice" % Versions.mailer
     )
 
+    // 敏感词过滤
+    val sensitiveWord: ModuleID = "com.github.houbb" % "sensitive-word" % Versions.sensitiveWord
+
     // case class 转换
     val chimney = "io.scalaland" %% "chimney" % Versions.chimney
 
@@ -88,6 +92,7 @@ object Dependencies {
       aliyunOss,
       chimney,
       ip2region,
+      sensitiveWord,
       scalaTest
     ) ++ slick ++ slick_pg ++ tapir ++ guice_5_1_0 ++ mailer
 
