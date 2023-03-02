@@ -32,7 +32,6 @@ class CommentController @Inject() (
     commentQueryService.listReplyByPage(pageQuery).map(Results.success(_)).recover(ex => Results.fail(ex))
   }
 
-
   def deleteComment(id: Long) = authenticationAction andThen authorizationAction async {
     commentService.deleteComment(id).map(_ => Ok).recover(ex => Results.fail(ex))
   }

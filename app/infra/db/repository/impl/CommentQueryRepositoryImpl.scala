@@ -71,12 +71,12 @@ class CommentQueryRepositoryImpl @Inject() (private val dbConfigProvider: Databa
                              UNION ALL
 
                              (SELECT c.id, c.reply_to FROM comments as c
-                                 JOIN cte ON c.reply_to = cte.id LIMIT #$limitSql1)
+                                 JOIN cte ON c.reply_to = cte.id  order by c.create_at LIMIT #$limitSql1)
         )
         SELECT id FROM cte;
          """.as[Long]
 
-    val res: Future[Map[Long, Seq[CommentsPo]]] = db.run {
+    db.run {
       for {
         replyIds <- sqlAction1
         pos      <- comments.filter(_.id inSet replyIds).sorted(_.createAt.desc).result
@@ -90,21 +90,24 @@ class CommentQueryRepositoryImpl @Inject() (private val dbConfigProvider: Databa
             val allSub  = sub ++ replies
             replies.flatMap(r => loop(r, allSub))
           } else sub
-        pos.filter(_.replyTo == -1).map(po => po.id -> loop(po.id, Set.empty).map(poMap(_)).toSeq).toMap
+        pos
+          .filter(_.replyTo == -1)
+          .map(po => po.id -> loop(po.id, Set.empty).map(poMap(_)).toSeq.sortBy(_.createAt)(Ordering[LocalDateTime].reverse))
+          .toMap
       }
     }
-    res
   }
 
   override def listReplyByPage(pageQuery: PageQuery, parent: Long): Future[Page[CommentsPo]] = {
     // 构建 sql
     def buildQuery(select: String, page: Option[PageQuery] = None) = {
       val limitOffset = page.map(p => s"limit ${p.limit} offset ${p.offset}").getOrElse("")
+      val order       = page.map(_ => s"order by create_at").getOrElse("")
       sql"""with recursive cte as (
                 select id, reply_to from comments where reply_to = #$parent
                 union
                 select a.id, a.reply_to from comments as a join cte on a.reply_to = cte.id
-            ) select #$select from comments where id in (select id from cte) #$limitOffset"""
+            ) select #$select from comments where id in (select id from cte) #$order #$limitOffset"""
     }
 
     db.run {
