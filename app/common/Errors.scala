@@ -48,3 +48,7 @@ case object CATEGORY_EXIST extends Errors { val code = 10013; val message = "分
 case object TAG_OR_CATEGORY_NOT_EXIST extends Errors { val code = 10014; val message = "标签或分类不存在" }
 
 case object ARTICLE_NOT_EXIST extends Errors { val code = 10015; val message = "文章不存在" }
+
+case object REPLY_TO_NOT_EXIST extends Errors { val code = 10016; val message = "回复评论不存在" }
+
+case object EMAIL_FORMAT_NOT_INCORRECT extends Errors { val code = 10017; val message = "邮箱格式不正确" }

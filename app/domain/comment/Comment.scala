@@ -26,9 +26,15 @@ final case class Comment(
   remoteIp: String,
   remoteAddress: String,
   // 评论有回复时是否允许通知
-  allowNotify: Boolean = false,
+  allowNotify: Boolean = true,
   createAt: LocalDateTime = LocalDateTime.now()
-) extends BaseEntity
+) extends BaseEntity {
+
+  def isReply: Boolean = replyTo != -1
+
+  def canNotify: Boolean = allowNotify && userEmail.nonEmpty
+
+}
 
 object Comment {
 

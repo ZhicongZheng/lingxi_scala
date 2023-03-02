@@ -4,12 +4,11 @@ import common.{Page, PageQuery}
 import infra.db.po.CommentsPo
 import infra.db.po.CommentsPo.CommentTable
 import infra.db.repository.CommentQueryRepository
-import interfaces.dto.{ArticlePageQuery, CommentPageQuery}
+import interfaces.dto.CommentPageQuery
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfig}
 import slick.basic.DatabaseConfig
-import slick.jdbc.{GetResult, PostgresProfile, SQLActionBuilder}
+import slick.jdbc.PostgresProfile
 import slick.jdbc.PostgresProfile.api._
-import slick.sql.SqlAction
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -23,7 +22,7 @@ class CommentQueryRepositoryImpl @Inject() (private val dbConfigProvider: Databa
 
   private val comments = TableQuery[CommentTable]
 
-  override def get(id: Long): Future[Option[CommentsPo]] = ???
+  override def get(id: Long): Future[Option[CommentsPo]] = db.run(comments.filter(_.id === id).result.headOption)
 
   override def list(): Future[Seq[CommentsPo]] = ???
 
@@ -38,7 +37,7 @@ class CommentQueryRepositoryImpl @Inject() (private val dbConfigProvider: Databa
 
       db.run {
         for {
-          pageResult <- finalQuery.drop(query.offset).take(query.limit).sorted(_.createAt.asc).result
+          pageResult <- finalQuery.sorted(_.createAt.desc).drop(query.offset).take(query.limit).result
           count      <- finalQuery.length.result
         } yield Page(query.page, query.size, count, pageResult)
       }
@@ -77,7 +76,7 @@ class CommentQueryRepositoryImpl @Inject() (private val dbConfigProvider: Databa
     db.run {
       for {
         replyIds <- sqlAction
-        pos      <- comments.filter(_.id inSet replyIds).sorted(_.createAt).result
+        pos      <- comments.filter(_.id inSet replyIds).sorted(_.createAt.desc).result
       } yield pos.groupBy(_.replyTo)
     }
   }
@@ -96,7 +95,7 @@ class CommentQueryRepositoryImpl @Inject() (private val dbConfigProvider: Databa
     db.run {
       for {
         ids        <- buildQuery("id", Some(pageQuery)).as[Long]
-        pageResult <- comments.filter(_.id inSet ids).sorted(_.createAt).result
+        pageResult <- comments.filter(_.id inSet ids).sorted(_.createAt.desc).result
         count      <- buildQuery("count(1)", None).as[Int].head
       } yield Page(pageQuery.page, pageQuery.size, count, pageResult)
     }

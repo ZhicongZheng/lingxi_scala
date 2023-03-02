@@ -1,7 +1,7 @@
 package application.command
 
 import common.Constant.domainCreateId
-import common.Ip2Region
+import common.{Ip2Region, Regexps}
 import domain.comment.Comment
 import domain.comment.Comment.Type
 import io.scalaland.chimney.dsl._
@@ -17,8 +17,12 @@ case class CommentCommand(
   replyTo: Option[Long] = None,
   replyUser: Option[String] = None,
   resourceId: Long,
-  allowNotify: Boolean = false
-) {}
+  allowNotify: Boolean = true
+) {
+  def validateEmail: Boolean = if (allowNotify && userEmail.isEmpty) {
+    Regexps.validEmail(userEmail.get)
+  } else true
+}
 
 object CommentCommand {
 
