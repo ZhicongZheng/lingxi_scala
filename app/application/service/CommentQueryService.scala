@@ -44,4 +44,6 @@ class CommentQueryService @Inject() (commentQueryRepository: CommentQueryReposit
       dto.copy(content = SensitiveWordHelper.replace(dto.content))
     }
 
+  def listRecentComment(): Future[Seq[CommentDto]] = commentQueryRepository.listRecent().map(_.map(CommentDto.fromPo))
+
 }

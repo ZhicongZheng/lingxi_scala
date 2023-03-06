@@ -44,6 +44,8 @@ final case class Article(
 
   def onLike(): Article = this.copy(likeCount = likeCount + 1)
 
+  def onUnLike(): Article = this.copy(likeCount = likeCount - 1)
+
   def changeCategory(category: Option[ArticleCategory]): Article =
     category match {
       case None    => this

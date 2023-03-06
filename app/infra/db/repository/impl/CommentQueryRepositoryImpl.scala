@@ -139,4 +139,6 @@ class CommentQueryRepositoryImpl @Inject() (private val dbConfigProvider: Databa
     }
 
   }
+
+  override def listRecent(): Future[Seq[CommentsPo]] = db.run(comments.sorted(_.createAt.desc).drop(0).take(5).result)
 }

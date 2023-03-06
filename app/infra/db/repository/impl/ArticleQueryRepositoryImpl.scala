@@ -93,9 +93,9 @@ class ArticleQueryRepositoryImpl @Inject() (private val dbConfigProvider: Databa
       db.run {
         for {
           pageResult <- finalQuery
+            .sorted(_.updateAt.desc)
             .drop(query.offset)
             .take(query.limit)
-            .sorted(_.updateAt.asc)
             .result
           count <- finalQuery.length.result
         } yield Page(query.page, query.size, count, pageResult)

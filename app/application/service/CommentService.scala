@@ -52,12 +52,15 @@ class CommentService @Inject() (
     }
 
     // 保存评论之后异步发送邮件
-    saveComment.onComplete { case Success(Right((article, replyToOpt))) =>
-      val allow = (!comment.isReply && comment.canNotify) || (comment.isReply && replyToOpt.nonEmpty && replyToOpt.get.allowNotify)
-      if (allow) {
-        val buildEmailInfo = CommentEmailInfo(article, replyToOpt, comment)
-        mailService.send(CommentMailBuilder.build(buildEmailInfo))
-      }
+    saveComment.onComplete {
+      case Success(Right((article, replyToOpt))) =>
+        val allow = (!comment.isReply && comment.canNotify) || (comment.isReply && replyToOpt.nonEmpty && replyToOpt.get.allowNotify)
+        if (allow) {
+          val buildEmailInfo = CommentEmailInfo(article, replyToOpt, comment)
+          // 开发中先去掉通知
+          mailService.send(CommentMailBuilder.build(buildEmailInfo))
+        }
+      case _ => ()
     }
     saveComment.map(_ => Right(()))
   }

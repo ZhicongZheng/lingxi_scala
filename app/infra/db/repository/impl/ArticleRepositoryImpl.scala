@@ -69,7 +69,7 @@ class ArticleRepositoryImpl @Inject() (private val dbConfigProvider: DatabaseCon
 
   private def doUpdate(article: Article): Future[Long] =
     for {
-      updateCount <- db.run(queryArticleAction(article.id).update(article.copy(updateAt = LocalDateTime.now()))).map(_ => article.id)
+      updateCount <- db.run(queryArticleAction(article.id).update(article)).map(_ => article.id)
       _           <- if (updateCount > 0) deleteArticleTagRef(article.id) else Future.successful(())
       _           <- if (updateCount > 0) insertArticleTagRef(article.id, article.tags.map(_.id)) else Future.successful(())
     } yield article.id
