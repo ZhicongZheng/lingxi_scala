@@ -67,16 +67,31 @@ class ArticleRepositoryImpl @Inject() (private val dbConfigProvider: DatabaseCon
       insertArticleTagRef(articleId, article.tags.map(_.id)).map(_ => articleId)
     }
 
+  private def updateArticleTagRef(article: Article): Future[Unit] =
+    for {
+      articleTag <- db.run(articleTags.filter(_.articleId === article.id).result)
+      currentTags = article.tags.map(_.id)
+      delRowId    = articleTag.map(_._1).filter(rowId => !currentTags.contains(rowId))
+      del <- if (delRowId.nonEmpty) db.run(articleTags.filter(_.id inSet delRowId).delete) else Future.successful(())
+      add            = currentTags.filter(tagId => articleTag.map(_._2).contains(tagId))
+      articleTagRows = add.map(tag => (article.id, tag))
+      _ <- if (add.nonEmpty) db.run(articleTags.map(t => (t.articleId, t.tagId)) ++= articleTagRows) else Future.successful(())
+    } yield ()
+
   private def doUpdate(article: Article): Future[Long] =
     for {
-      updateCount <- db.run(queryArticleAction(article.id).update(article.copy(updateAt = LocalDateTime.now()))).map(_ => article.id)
-      _           <- if (updateCount > 0) deleteArticleTagRef(article.id) else Future.successful(())
-      _           <- if (updateCount > 0) insertArticleTagRef(article.id, article.tags.map(_.id)) else Future.successful(())
+      updateCount      <- db.run(queryArticleAction(article.id).update(article)).map(_ => article.id)
+      updateArticleTag <- if (updateCount > 0) updateArticleTagRef(article) else Future.successful(())
     } yield article.id
 
   override def addTag(tag: ArticleTag): Future[Unit] = db.run(tags += tag).map(_ => ())
 
-  override def removeTag(id: Long): Future[Unit] = db.run(tags.filter(_.id === id).delete).map(_ => ())
+  override def removeTag(id: Long): Future[Unit] = db.run {
+    for {
+      delTag        <- tags.filter(_.id === id).delete
+      delArticleTag <- articleTags.filter(_.tagId === id).delete
+    } yield ()
+  }
 
   override def addCategory(category: ArticleCategory): Future[Unit] = db.run(categories += category).map(_ => ())
 
@@ -94,7 +109,6 @@ class ArticleRepositoryImpl @Inject() (private val dbConfigProvider: DatabaseCon
     }
   }
 
-  private def deleteArticleTagRef(articleId: Long): Future[Unit] = db.run(articleTags.filter(_.articleId === articleId).delete).map(_ => ())
 
   private def insertArticleTagRef(articleId: Long, tags: Seq[Long]): Future[Unit] = {
     val articleTagRows = tags.map(tag => (articleId, tag))

@@ -4,13 +4,13 @@ import common.{Page, PageQuery}
 import infra.db.po.CommentsPo
 import infra.db.po.CommentsPo.CommentTable
 import infra.db.repository.CommentQueryRepository
-import interfaces.dto.{ArticlePageQuery, CommentPageQuery}
+import interfaces.dto.CommentPageQuery
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfig}
 import slick.basic.DatabaseConfig
-import slick.jdbc.{GetResult, PostgresProfile, SQLActionBuilder}
+import slick.jdbc.PostgresProfile
 import slick.jdbc.PostgresProfile.api._
-import slick.sql.SqlAction
 
+import java.time.LocalDateTime
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -23,7 +23,7 @@ class CommentQueryRepositoryImpl @Inject() (private val dbConfigProvider: Databa
 
   private val comments = TableQuery[CommentTable]
 
-  override def get(id: Long): Future[Option[CommentsPo]] = ???
+  override def get(id: Long): Future[Option[CommentsPo]] = db.run(comments.filter(_.id === id).result.headOption)
 
   override def list(): Future[Seq[CommentsPo]] = ???
 
@@ -38,7 +38,7 @@ class CommentQueryRepositoryImpl @Inject() (private val dbConfigProvider: Databa
 
       db.run {
         for {
-          pageResult <- finalQuery.drop(query.offset).take(query.limit).sorted(_.createAt.asc).result
+          pageResult <- finalQuery.sorted(_.createAt.desc).drop(query.offset).take(query.limit).result
           count      <- finalQuery.length.result
         } yield Page(query.page, query.size, count, pageResult)
       }
@@ -62,23 +62,39 @@ class CommentQueryRepositoryImpl @Inject() (private val dbConfigProvider: Databa
     if (rootCommentIds.isEmpty) {
       return Future.successful(Map.empty)
     }
-    val limitSql = limit.map(l => s"where row <= $l").getOrElse("")
-    val replyTo  = rootCommentIds.mkString(",")
-    val sqlAction =
+    val limitSql1 = limit.get
+    val replyTo   = rootCommentIds.mkString(",")
+    val sqlAction1 =
       sql"""
-          with cte as (
-              select id,
-                     row_number() over (partition by reply_to order by create_at ) as row
-              from comments where reply_to in (#$replyTo)
-          )
-          select id from cte #$limitSql;
+        WITH RECURSIVE cte AS (SELECT id, reply_to FROM comments WHERE reply_to = -1 AND id IN (#$replyTo)
+
+                             UNION ALL
+
+                             (SELECT c.id, c.reply_to FROM comments as c
+                                 JOIN cte ON c.reply_to = cte.id  order by c.create_at LIMIT #$limitSql1)
+        )
+        SELECT id FROM cte;
          """.as[Long]
 
     db.run {
       for {
-        replyIds <- sqlAction
-        pos      <- comments.filter(_.id inSet replyIds).sorted(_.createAt).result
-      } yield pos.groupBy(_.replyTo)
+        replyIds <- sqlAction1
+        pos      <- comments.filter(_.id inSet replyIds).sorted(_.createAt.desc).result
+      } yield {
+        val poMap    = pos.map(po => po.id -> po).toMap
+        val replyMap = pos.filter(_.replyTo != -1).groupMap(_.replyTo)(_.id)
+
+        def loop(parent: Long, sub: Set[Long]): Set[Long] =
+          if (replyMap.contains(parent)) {
+            val replies = replyMap(parent).toSet
+            val allSub  = sub ++ replies
+            replies.flatMap(r => loop(r, allSub))
+          } else sub
+        pos
+          .filter(_.replyTo == -1)
+          .map(po => po.id -> loop(po.id, Set.empty).map(poMap(_)).toSeq.sortBy(_.createAt)(Ordering[LocalDateTime].reverse))
+          .toMap
+      }
     }
   }
 
@@ -86,17 +102,18 @@ class CommentQueryRepositoryImpl @Inject() (private val dbConfigProvider: Databa
     // 构建 sql
     def buildQuery(select: String, page: Option[PageQuery] = None) = {
       val limitOffset = page.map(p => s"limit ${p.limit} offset ${p.offset}").getOrElse("")
+      val order       = page.map(_ => s"order by create_at").getOrElse("")
       sql"""with recursive cte as (
-                select id, reply_to from comments where reply_to = 1
+                select id, reply_to from comments where reply_to = #$parent
                 union
                 select a.id, a.reply_to from comments as a join cte on a.reply_to = cte.id
-            ) select #$select from comments where id in (select id from cte) #$limitOffset"""
+            ) select #$select from comments where id in (select id from cte) #$order #$limitOffset"""
     }
 
     db.run {
       for {
         ids        <- buildQuery("id", Some(pageQuery)).as[Long]
-        pageResult <- comments.filter(_.id inSet ids).sorted(_.createAt).result
+        pageResult <- comments.filter(_.id inSet ids).sorted(_.createAt.desc).result
         count      <- buildQuery("count(1)", None).as[Int].head
       } yield Page(pageQuery.page, pageQuery.size, count, pageResult)
     }
@@ -107,15 +124,21 @@ class CommentQueryRepositoryImpl @Inject() (private val dbConfigProvider: Databa
     if (ids.isEmpty) {
       return Future.successful(Map.empty)
     }
-    val idString = ids.mkString(",")
-    val sqlAction =
+
+    def buildCountSql(parent: Long) =
       sql"""
-            with recursive cte as (
-                    select id, reply_to from comments where reply_to in (#$idString)
-                    union
-                    select a.id, a.reply_to from comments as a join cte on a.reply_to = cte.id
-                ) select reply_to, count(1) from comments where id in (select id from cte)  group by reply_to
-         """.as[(Long, Int)]
-    db.run(sqlAction).map(vector => vector.map(tuple => tuple._1 -> tuple._2).toMap)
+        WITH RECURSIVE cte AS (
+          SELECT id, reply_to FROM comments WHERE id = #$parent
+          UNION ALL
+          SELECT comments.id, comments.reply_to FROM comments JOIN cte ON cte.id = comments.reply_to
+      )
+      SELECT COUNT(*) FROM cte where reply_to != -1;
+         """.as[Int]
+    db.run(DBIO.sequence(ids.map(buildCountSql))).map { counts =>
+      ids.zip(counts.flatten).toMap
+    }
+
   }
+
+  override def listRecent(): Future[Seq[CommentsPo]] = db.run(comments.sorted(_.createAt.desc).drop(0).take(5).result)
 }

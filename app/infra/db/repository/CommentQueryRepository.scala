@@ -13,4 +13,6 @@ trait CommentQueryRepository extends QueryRepository[CommentsPo] {
 
   def replyCountMap(ids: Seq[Long]): Future[Map[Long, Int]]
 
+  def listRecent(): Future[Seq[CommentsPo]]
+
 }

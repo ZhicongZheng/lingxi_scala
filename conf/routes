@@ -45,7 +45,7 @@ DELETE        /articles/$id<[0-9]+>                              interfaces.cont
 
 POST          /articles/release/$id<[0-9]+>                      interfaces.controller.ArticleController.releaseArticle(id: Long)
 
-POST          /articles/like/$id<[0-9]+>                         interfaces.controller.ArticleController.likeArticle(id: Long)
+POST          /articles/like/$id<[0-9]+>                         interfaces.controller.ArticleController.likeArticle(id: Long, like: Boolean ?= true)
 
 PUT           /articles                                          interfaces.controller.ArticleController.updateArticle
 
@@ -77,6 +77,8 @@ POST          /actions                                           interfaces.cont
 POST          /comments                                          interfaces.controller.CommentController.addComment
 
 GET           /comments                                          interfaces.controller.CommentController.listComment(page: Int ?= 1,size: Int ?= 10, resourceId: Long)
+
+GET           /comments/recent                                   interfaces.controller.CommentController.listRecentComment
 
 GET           /comments/$parent<[0-9]+>/replies                  interfaces.controller.CommentController.listReplyBypage(page: Int ?= 1,size: Int ?= 10, parent: Long)
 

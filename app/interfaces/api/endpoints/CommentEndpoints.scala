@@ -14,7 +14,8 @@ object CommentEndpoints {
 
   val authEndpoint = securedWithBearerEndpoint.in("comments").tag("Comments")
 
-  def endpoints = Seq(addCommentEndpoint, listCommentByPageEndpoint, deleteCommentEndpoint, listReplyByPageEndpoint)
+  def endpoints =
+    Seq(addCommentEndpoint, listCommentByPageEndpoint, deleteCommentEndpoint, listReplyByPageEndpoint, listRecentCommentEndpoint)
 
   val addCommentEndpoint = withoutAuthEndpoint.post
     .name("addComment")
@@ -42,6 +43,14 @@ object CommentEndpoints {
     .summary("删除评论")
     .description("根据id删除评论")
     .in(path[Long]("id"))
+    .out(statusCode(StatusCode.Ok))
+
+  val listRecentCommentEndpoint = withoutAuthEndpoint.get
+    .name("listRecentComment")
+    .summary("获取最新评论")
+    .description("获取最新评论")
+    .in("recent")
+    .out(jsonBody[Array[CommentDto]])
     .out(statusCode(StatusCode.Ok))
 
 }
