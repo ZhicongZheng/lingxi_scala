@@ -45,7 +45,7 @@ DELETE        /articles/$id<[0-9]+>                              interfaces.cont
 
 POST          /articles/release/$id<[0-9]+>                      interfaces.controller.ArticleController.releaseArticle(id: Long)
 
-POST          /articles/like/$id<[0-9]+>                         interfaces.controller.ArticleController.likeArticle(id: Long)
+POST          /articles/like/$id<[0-9]+>                         interfaces.controller.ArticleController.likeArticle(id: Long, like: Boolean ?= true)
 
 PUT           /articles                                          interfaces.controller.ArticleController.updateArticle
 

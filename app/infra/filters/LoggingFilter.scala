@@ -17,11 +17,13 @@ class LoggingFilter @Inject() (implicit val mat: Materializer, ec: ExecutionCont
     nextFilter(requestHeader).map { result =>
       val remoteAddress = requestHeader.remoteAddress
       val path          = requestHeader.path
+      val query         = requestHeader.rawQueryString
       val method        = requestHeader.method
       val endTime       = System.currentTimeMillis
       val requestTime   = endTime - startTime
 
-      logger.info(s"$method  $path, status: ${result.header.status}, took ${requestTime}ms, ip: $remoteAddress")
+      val queryString = if (query.isEmpty) "" else s"?$query"
+      logger.info(s"$method  $path$queryString, status: ${result.header.status}, took ${requestTime}ms, ip: $remoteAddress")
       result.withHeaders("Request-Time" -> requestTime.toString)
     }
 

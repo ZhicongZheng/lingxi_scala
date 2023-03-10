@@ -63,8 +63,8 @@ class ArticleController @Inject() (
     articleCommandService.releaseArticle(id).map(_ => Ok).recover(ex => Results.fail(ex))
   }
 
-  def likeArticle(id: Long) = Action async { request: Request[AnyContent] =>
-    articleCommandService.likeArticle(id).map(_ => Ok).recover(ex => Results.fail(ex))
+  def likeArticle(id: Long, like: Boolean) = Action async { request: Request[AnyContent] =>
+    articleCommandService.likeArticle(id, like).map(_ => Ok).recover(ex => Results.fail(ex))
   }
 
   def listArticleByPage(page: Int, size: Int, tag: Option[Long] = None, category: Option[Long] = None, searchTitle: Option[String] = None) =

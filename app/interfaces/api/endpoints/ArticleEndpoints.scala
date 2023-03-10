@@ -89,7 +89,7 @@ object ArticleEndpoints {
     .summary("点赞文章")
     .description("点赞文章")
     .in("like")
-    .in(path[Long]("id"))
+    .in(path[Long]("id") / query[Boolean]("like").default(true))
     .out(statusCode(StatusCode.Ok))
 
   val listArticleByPageEndpoint = articleWithoutAuthEndpoint.get
