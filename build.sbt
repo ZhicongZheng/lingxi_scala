@@ -7,10 +7,6 @@ maintainer   := "1064275075@qq.com"
 version      := "1.0.0-SNAPSHOT"
 scalaVersion := Versions.scala
 
-//libraryDependencySchemes := Seq(
-//  "org.scala-lang.modules" %% "scala-xml" % "1.2.0"
-//)
-
 lazy val root = (project in file("."))
   .enablePlugins(PlayScala, ScalafmtPlugin, GraalVMNativeImagePlugin, DockerPlugin, JavaServerAppPackaging)
   .settings(
