@@ -83,7 +83,6 @@ object Dependencies {
   lazy val dependencies: Setting[Seq[ModuleID]] =
     libraryDependencies ++= Seq(
       config,
-      ws,
       guice,
       caffeine,
       postgresql,

@@ -1,8 +1,8 @@
 # common api
 
-->            /                                                  interfaces.api.ApiRouter
-
-GET           /                                                  controllers.Default.redirect(to = "./docs/")
+#->            /                                                  interfaces.api.ApiRouter
+#
+#GET           /                                                  controllers.Default.redirect(to = "./docs/")
 
 POST          /files/upload                                      interfaces.controller.FileController.upload
 # users api

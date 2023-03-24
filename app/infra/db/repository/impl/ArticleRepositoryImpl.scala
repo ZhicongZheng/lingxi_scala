@@ -109,7 +109,6 @@ class ArticleRepositoryImpl @Inject() (private val dbConfigProvider: DatabaseCon
     }
   }
 
-
   private def insertArticleTagRef(articleId: Long, tags: Seq[Long]): Future[Unit] = {
     val articleTagRows = tags.map(tag => (articleId, tag))
     db.run(articleTags.map(t => (t.articleId, t.tagId)) ++= articleTagRows).map(_ => ())
