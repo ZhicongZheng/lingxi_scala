@@ -60,6 +60,8 @@ final case class Article(
 
   def release(): Article = this.copy(status = Status.RELEASE)
 
+  def offline(): Article = this.copy(status = Status.DRAFT)
+
 }
 
 object Article {

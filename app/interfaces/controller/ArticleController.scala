@@ -63,6 +63,10 @@ class ArticleController @Inject() (
     articleCommandService.releaseArticle(id).map(_ => Ok).recover(ex => Results.fail(ex))
   }
 
+  def offlineArticle(id: Long) = authenticationAction andThen authorizationAction async {
+    articleCommandService.offlineArticle(id).map(_ => Ok).recover(ex => Results.fail(ex))
+  }
+
   def likeArticle(id: Long, like: Boolean) = Action async { request: Request[AnyContent] =>
     articleCommandService.likeArticle(id, like).map(_ => Ok).recover(ex => Results.fail(ex))
   }

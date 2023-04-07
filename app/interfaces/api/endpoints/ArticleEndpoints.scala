@@ -43,6 +43,7 @@ object ArticleEndpoints {
       updateArticleEndpoint,
       listArticleByPageEndpoint,
       releaseArticleEndpoint,
+      offlineArticleEndpoint,
       likeArticleEndpoint,
       updateCategoryEndpoint
     )
@@ -81,6 +82,14 @@ object ArticleEndpoints {
     .summary("发布文章")
     .description("发布文章")
     .in("release")
+    .in(path[Long]("id"))
+    .out(statusCode(StatusCode.Ok))
+
+  val offlineArticleEndpoint = articleAuthEndpoint.post
+    .name("offlineArticle")
+    .summary("下架文章")
+    .description("下架文章")
+    .in("offline")
     .in(path[Long]("id"))
     .out(statusCode(StatusCode.Ok))
 

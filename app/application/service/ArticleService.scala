@@ -15,12 +15,11 @@ import scala.concurrent.Future
 @Singleton
 class ArticleService @Inject() (articleRepository: ArticleRepository, articleQueryRepository: ArticleQueryRepository) {
 
-  def getArticle(id: Long): Future[Either[Errors, ArticleDto]] = articleRepository.get(id).flatMap {
-    case None => Future.successful(Left(ARTICLE_NOT_EXIST))
-    case Some(article) =>
+  def getArticle(id: Long): Future[Either[Errors, ArticleDto]] =
+    processArticle(id) { article =>
       val result = article.onView()
       articleRepository.save(result).map(_ => Right(result))
-  }
+    }
 
   def createArticle(command: ArticleCommand): Future[Either[Errors, Long]] = {
 
@@ -48,30 +47,29 @@ class ArticleService @Inject() (articleRepository: ArticleRepository, articleQue
 
   def updateArticle(command: ArticleCommand): Future[Either[Errors, Long]] =
     // 如果没传id, 默认按照 -1 查找，返回 文章不存在
-    articleRepository.get(command.id.getOrElse(Constant.domainCreateId)).flatMap {
-      case None => Future.successful(Left(ARTICLE_NOT_EXIST))
-      case Some(article) =>
-        val updatedArticle: Article = article
-          .updateBrief(command.title, command.introduction, command.frontCover)
-          .updateContent(command.contentMd, command.contentHtml)
-          .changeTags(command.tags.map(ArticleTag.justId))
-          .changeCategory(command.category.map(ArticleCategory.justId))
-        articleRepository.save(updatedArticle).map(id => Right(id))
+    processArticle(command.id.getOrElse(Constant.domainCreateId)) { article =>
+      val updatedArticle: Article = article
+        .updateBrief(command.title, command.introduction, command.frontCover)
+        .updateContent(command.contentMd, command.contentHtml)
+        .changeTags(command.tags.map(ArticleTag.justId))
+        .changeCategory(command.category.map(ArticleCategory.justId))
+      articleRepository.save(updatedArticle).map(id => Right(id))
     }
 
   def releaseArticle(id: Long): Future[Either[Errors, Unit]] =
-    articleRepository.get(id).flatMap {
-      case None => Future.successful(Left(ARTICLE_NOT_EXIST))
-      case Some(article) =>
-        articleRepository.save(article.release()).map(_ => Right(()))
+    processArticle(id) { article =>
+      articleRepository.save(article.release()).map(_ => Right(()))
+    }
+
+  def offlineArticle(id: Long): Future[Either[Errors, Unit]] =
+    processArticle(id) { article =>
+      articleRepository.save(article.offline()).map(_ => Right(()))
     }
 
   def likeArticle(id: Long, like: Boolean): Future[Either[Errors, Unit]] =
-    articleRepository.get(id) flatMap {
-      case None => Future.successful(Left(ARTICLE_NOT_EXIST))
-      case Some(article) =>
-        val likedArticle = if (like) article.onLike() else article.onUnLike()
-        articleRepository.save(likedArticle).map(_ => Right(()))
+    processArticle(id) { article =>
+      val likedArticle = if (like) article.onLike() else article.onUnLike()
+      articleRepository.save(likedArticle).map(_ => Right(()))
     }
 
   def deleteArticle(id: Long): Future[Unit] = articleRepository.remove(id)
@@ -99,5 +97,13 @@ class ArticleService @Inject() (articleRepository: ArticleRepository, articleQue
     }
 
   def removeCategory(id: Long): Future[Unit] = articleRepository.removeCategory(id)
+
+  // 定义一个通用的处理函数 processArticle，将具体的文章操作函数作为参数传入
+  // 返回文章处理结果：要么文章不存在，要么调用具体文章操作函数得到的结果
+  private[this] def processArticle[T](id: Long)(action: Article => Future[Either[Errors, T]]): Future[Either[Errors, T]] =
+    articleRepository.get(id).flatMap {
+      case None          => Future.successful(Left(ARTICLE_NOT_EXIST))
+      case Some(article) => action(article)
+    }
 
 }

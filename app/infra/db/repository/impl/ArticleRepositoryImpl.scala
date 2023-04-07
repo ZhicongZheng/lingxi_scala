@@ -72,8 +72,8 @@ class ArticleRepositoryImpl @Inject() (private val dbConfigProvider: DatabaseCon
       articleTag <- db.run(articleTags.filter(_.articleId === article.id).result)
       currentTags = article.tags.map(_.id)
       delRowId    = articleTag.map(_._1).filter(rowId => !currentTags.contains(rowId))
-      del <- if (delRowId.nonEmpty) db.run(articleTags.filter(_.id inSet delRowId).delete) else Future.successful(())
-      add            = currentTags.filter(tagId => articleTag.map(_._2).contains(tagId))
+      _ <- if (delRowId.nonEmpty) db.run(articleTags.filter(_.id inSet delRowId).delete) else Future.successful(())
+      add            = currentTags.filter(tagId => !articleTag.map(_._2).contains(tagId))
       articleTagRows = add.map(tag => (article.id, tag))
       _ <- if (add.nonEmpty) db.run(articleTags.map(t => (t.articleId, t.tagId)) ++= articleTagRows) else Future.successful(())
     } yield ()
@@ -108,7 +108,6 @@ class ArticleRepositoryImpl @Inject() (private val dbConfigProvider: DatabaseCon
       } yield ()
     }
   }
-
 
   private def insertArticleTagRef(articleId: Long, tags: Seq[Long]): Future[Unit] = {
     val articleTagRows = tags.map(tag => (articleId, tag))
