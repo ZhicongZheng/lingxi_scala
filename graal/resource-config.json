@@ -2,10 +2,22 @@
   "resources": {
     "includes": [
       {
-        "pattern": "^conf/.*"
+        "pattern": "\\Qapplication.conf\\E"
+      },
+      {
+        "pattern": "\\Qlogback.xml\\E"
+      },
+      {
+        "pattern": "\\Qmessages\\E"
+      },
+      {
+        "pattern": "\\Qproduction.conf\\E"
       },
       {
         "pattern": "\\Qroutes\\E"
+      },
+      {
+        "pattern": "\\Qipdb/ip2region.xdb\\E"
       },
       {
         "pattern": "\\QMETA-INF/MANIFEST.MF\\E"
@@ -17,16 +29,10 @@
         "pattern": "\\Qcom/fasterxml/jackson/module/scala/build.properties\\E"
       },
       {
-        "pattern": "\\Qlogback.xml\\E"
-      },
-      {
         "pattern": "\\Qlogger-configurator.properties\\E"
       },
       {
         "pattern": "\\Qmessages.default\\E"
-      },
-      {
-        "pattern": "\\Qmessages\\E"
       },
       {
         "pattern": "\\Qorg/slf4j/impl/StaticLoggerBinder.class\\E"
